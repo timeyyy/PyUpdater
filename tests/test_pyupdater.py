@@ -112,7 +112,7 @@ class TestPyiUpdater(object):
             pyi.process_packages()
             pyi.sign_update()
         files = os.listdir(os.path.join(pyu_data_dir, u'deploy'))
-        assert len(files) == 4
+        assert len(files) == 5
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               archive_name))
         assert os.path.exists(os.path.join(pyu_data_dir, u'files',
