@@ -25,22 +25,22 @@ from jms_utils.paths import ChDir
 import stevedore
 
 
-from pyi_updater import PyiUpdater, __version__
-from pyi_updater import settings
-from pyi_updater.config import Loader, SetupConfig
-from pyi_updater.exceptions import UploaderError, UploaderPluginError
-from pyi_updater.utils import (check_repo,
-                               initial_setup,
-                               pretty_time,
-                               repo_update,
-                               setup_appname,
-                               setup_company,
-                               setup_urls,
-                               setup_patches,
-                               setup_scp,
-                               setup_object_bucket)
-from pyi_updater.wrapper.builder import Builder
-from pyi_updater.wrapper.options import get_parser
+from pyupdater import PyiUpdater, __version__
+from pyupdater import settings
+from pyupdater.config import Loader, SetupConfig
+from pyupdater.exceptions import UploaderError, UploaderPluginError
+from pyupdater.utils import (check_repo,
+                             initial_setup,
+                             pretty_time,
+                             repo_update,
+                             setup_appname,
+                             setup_company,
+                             setup_urls,
+                             setup_patches,
+                             setup_scp,
+                             setup_object_bucket)
+from pyupdater.wrapper.builder import Builder
+from pyupdater.wrapper.options import get_parser
 
 
 CWD = os.getcwd()

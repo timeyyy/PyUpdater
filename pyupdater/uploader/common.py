@@ -14,5 +14,5 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 # ToDo: Remove in v0.22
-from pyi_updater.uploader import BaseUploader
+from pyupdater.uploader import BaseUploader
 # End ToDo

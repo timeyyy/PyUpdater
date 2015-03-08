@@ -22,25 +22,25 @@ try:
 except ImportError:  # pragma: no cover
     pyi_version = (0, 0, 0)
 
-from pyi_updater.utils import lazy_import
+from pyupdater.utils import lazy_import
 
 log = logging.getLogger()
 
 
 @lazy_import
-def pyi_updater():
-    import pyi_updater
-    import pyi_updater.core
-    import pyi_updater.exceptions
-    return pyi_updater
+def pyupdater():
+    import pyupdater
+    import pyupdater.core
+    import pyupdater.exceptions
+    return pyupdater
 
-PyiUpdater = pyi_updater.core.Core
+PyiUpdater = pyupdater.core.Core
 
 
 if pyi_version < (2, 1, 0):  # pragma: no cover
-    raise pyi_updater.exceptions.PyiUpdaterError(u'Must have at least '
-                                                 u'PyInstaller v2.1',
-                                                 expected=True)
+    raise pyupdater.exceptions.PyiUpdaterError(u'Must have at least '
+                                               u'PyInstaller v2.1',
+                                               expected=True)
 
 
 @lazy_import
@@ -66,12 +66,12 @@ log.setLevel(logging.DEBUG)
 nh = logging.NullHandler()
 nh.setLevel(logging.DEBUG)
 log.addHandler(nh)
-LOG_DIR = appdirs.user_log_dir(pyi_updater.settings.APP_NAME,
-                               pyi_updater.settings.APP_AUTHOR)
+LOG_DIR = appdirs.user_log_dir(pyupdater.settings.APP_NAME,
+                               pyupdater.settings.APP_AUTHOR)
 if not os.path.exists(LOG_DIR):  # pragma: no cover
     os.makedirs(LOG_DIR)
 LOG_FILENAME_DEBUG = os.path.join(LOG_DIR,
-                                  pyi_updater.settings.LOG_FILENAME_DEBUG)
+                                  pyupdater.settings.LOG_FILENAME_DEBUG)
 rh = RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=5,
                          maxBytes=10000000)
 rh.setLevel(logging.DEBUG)

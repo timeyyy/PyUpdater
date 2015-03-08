@@ -21,16 +21,16 @@ try:
 except ImportError:
     bsdiff4 = None
 
-from pyi_updater.client.downloader import FileDownloader
-from pyi_updater.exceptions import PatcherError
-from pyi_updater import settings
-from pyi_updater.utils import (get_package_hashes,
-                               EasyAccessDict,
-                               lazy_import,
-                               Version)
+from pyupdater.client.downloader import FileDownloader
+from pyupdater.exceptions import PatcherError
+from pyupdater import settings
+from pyupdater.utils import (get_package_hashes,
+                             EasyAccessDict,
+                             lazy_import,
+                             Version)
 
 if bsdiff4 is None:
-    from pyi_updater.utils import bsdiff4_py as bsdiff4
+    from pyupdater.utils import bsdiff4_py as bsdiff4
 
 log = logging.getLogger(__name__)
 

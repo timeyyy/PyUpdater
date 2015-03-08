@@ -16,8 +16,8 @@
 import logging
 import sys
 
-from pyi_updater import settings
-from pyi_updater.exceptions import UtilsError, VersionError
+from pyupdater import settings
+from pyupdater.exceptions import UtilsError, VersionError
 
 log = logging.getLogger(__name__)
 

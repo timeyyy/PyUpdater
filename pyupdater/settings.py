@@ -13,46 +13,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-APP_NAME = u'PyiUpdater App'
+APP_NAME = u'PyUpdater App'
 APP_AUTHOR = u'Digital Sapphire'
 
-# Used to hold PyiUpdater config info for repo
-CONFIG_DATA_FOLDER = u'.pyiupdater'
+# Used to hold PyUpdater config info for repo
+CONFIG_DATA_FOLDER = u'.pyupdater'
 
 # ToDo: Remove v1.0
-# PyiUpdater config file
+# PyUpdater config file
 CONFIG_FILE = u'data.json'
 
-DEBUG_ARCHIVE = u'pyiupdater-debug.tar.bz2'
+DEBUG_ARCHIVE = u'pyupdater-debug.tar.bz2'
 
 # User config file
-CONFIG_FILE_USER = u'pyiuconfig.db'
+CONFIG_FILE_USER = u'pyuconfig.db'
 # ToDo: Remove v1.0
 OLD_CONFIG_FILE_USER = U'config.data'
 
 CONFIG_DB_KEY_APP_CONFIG = u'app_config'
 CONFIG_DB_KEY_KEYS = u'signing_keys'
 CONFIG_DB_KEY_VERSION_META = u'version_meta'
-CONFIG_DB_KEY_PYI_REPO_CONFIG = u'pyi_repo_config'
+CONFIG_DB_KEY_PY_REPO_CONFIG = u'py_repo_config'
 
-GENERIC_APP_NAME = u'PyiUpdater App'
-GENERIC_COMPANY_NAME = u'PyiUpdater'
+GENERIC_APP_NAME = u'PyUpdater App'
+GENERIC_COMPANY_NAME = u'PyUpdater'
 
 # Log filename
-LOG_FILENAME = u'pyiu.log'
-LOG_FILENAME_DEBUG = u'pyiu-debug.log'
+LOG_FILENAME = u'pyu.log'
+LOG_FILENAME_DEBUG = u'pyu-debug.log'
 
 # Used for plugins
-UPLOAD_PLUGIN_NAMESPACE = 'pyiupdater.plugins.uploaders'
+UPLOAD_PLUGIN_NAMESPACE = 'pyupdater.plugins.uploaders'
 
 # Name of client config file
 USER_CLIENT_CONFIG_FILENAME = u'client_config.py'
 
 # Main user visible data folder
-USER_DATA_FOLDER = u'pyi-data'
+USER_DATA_FOLDER = u'py-data'
 
 # Name of env var to get users passwrod from
-USER_PASS_ENV = u'PYIUPDATER_PASS'
+USER_PASS_ENV = u'PYUPDATER_PASS'
 
 # Key in version file where value are update meta data
 UPDATES_KEY = u'updates'

@@ -18,7 +18,7 @@ import logging
 import time
 import sys
 
-from pyi_updater.utils import get_hash, lazy_import
+from pyupdater.utils import get_hash, lazy_import
 
 log = logging.getLogger(__name__)
 

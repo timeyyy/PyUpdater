@@ -2,7 +2,7 @@
 import logging
 from threading import Thread
 
-from pyi_updater import Client
+from pyupdater import Client
 
 from client_config import ClientConfig
 
@@ -17,7 +17,7 @@ log = logging.getLogger()
 #                    'https://acme.com/updates']
 
 
-# PyiUpdater uses callbacks for download progress
+# PyUpdater uses callbacks for download progress
 def print_status_info(info):
     # Here you could as the user here if they would
     # like to install the new update and restart

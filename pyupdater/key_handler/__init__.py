@@ -15,10 +15,10 @@
 # --------------------------------------------------------------------------
 from __future__ import print_function
 
-from pyi_updater import settings
-from pyi_updater.key_handler.keydb import KeyDB
-from pyi_updater.storage import Storage
-from pyi_updater.utils import lazy_import
+from pyupdater import settings
+from pyupdater.key_handler.keydb import KeyDB
+from pyupdater.storage import Storage
+from pyupdater.utils import lazy_import
 
 
 @lazy_import

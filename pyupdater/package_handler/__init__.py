@@ -25,15 +25,15 @@ try:  # pragma: no cover
 except ImportError:  # pragma: no cover
     bsdiff4 = None
 
-from pyi_updater import settings
-from pyi_updater.exceptions import PackageHandlerError
-from pyi_updater.package_handler.package import Package, Patch
-from pyi_updater.storage import Storage
-from pyi_updater.utils import (EasyAccessDict,
-                               get_package_hashes as gph,
-                               lazy_import,
-                               remove_dot_files
-                               )
+from pyupdater import settings
+from pyupdater.exceptions import PackageHandlerError
+from pyupdater.package_handler.package import Package, Patch
+from pyupdater.storage import Storage
+from pyupdater.utils import (EasyAccessDict,
+                             get_package_hashes as gph,
+                             lazy_import,
+                             remove_dot_files
+                             )
 
 log = logging.getLogger(__name__)
 
@@ -191,13 +191,13 @@ class PackageHandler(object):
                 with open(self.config_file, u'r') as f:
                     config = json.loads(f.read())
                     log.info(u'Loaded config file')
-                self.db.save(settings.CONFIG_DB_KEY_PYI_REPO_CONFIG)
+                self.db.save(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
             except Exception as err:
                 log.error(u'Failed to load config file')
                 log.debug(str(err), exc_info=True)
             os.remove(self.config_file)
         else:
-            config = self.db.load(settings.CONFIG_DB_KEY_PYI_REPO_CONFIG)
+            config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
 
         if config is None:  # pragma: no cover
             log.info(u'Creating new config file')
@@ -394,7 +394,7 @@ class PackageHandler(object):
 
     def _write_config_to_file(self, json_data):
         log.debug(u'Saving config data')
-        self.db.save(settings.CONFIG_DB_KEY_PYI_REPO_CONFIG, json_data)
+        self.db.save(settings.CONFIG_DB_KEY_PY_REPO_CONFIG, json_data)
 
     def _move_packages(self, package_manifest):
         if len(package_manifest) < 1:

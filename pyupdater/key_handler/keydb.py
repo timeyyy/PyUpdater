@@ -18,8 +18,8 @@ import logging
 import os
 import time
 
-from pyi_updater import settings
-from pyi_updater.storage import Storage
+from pyupdater import settings
+from pyupdater.storage import Storage
 
 log = logging.getLogger(__name__)
 

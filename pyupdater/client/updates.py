@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from pyi_updater.client.downloader import FileDownloader
-from pyi_updater.client.patcher import Patcher
-from pyi_updater.exceptions import ClientError, UtilsError, VersionError
-from pyi_updater import settings
-from pyi_updater.utils import (get_filename,
-                               get_hash,
-                               get_highest_version,
-                               get_mac_dot_app_dir,
-                               lazy_import,
-                               Version)
+from pyupdater.client.downloader import FileDownloader
+from pyupdater.client.patcher import Patcher
+from pyupdater.exceptions import ClientError, UtilsError, VersionError
+from pyupdater import settings
+from pyupdater.utils import (get_filename,
+                             get_hash,
+                             get_highest_version,
+                             get_mac_dot_app_dir,
+                             lazy_import,
+                             Version)
 
 
 @lazy_import

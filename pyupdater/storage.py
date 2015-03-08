@@ -17,7 +17,7 @@ import logging
 import os
 import shelve
 
-from pyi_updater import settings
+from pyupdater import settings
 
 
 log = logging.getLogger(__name__)

@@ -7,10 +7,10 @@ import sys
 import versioneer
 
 versioneer.VCS = 'git'
-versioneer.versionfile_source = 'pyi_updater/_version.py'
-versioneer.versionfile_build = 'pyi_updater/_version.py'
+versioneer.versionfile_source = 'pyupdater/_version.py'
+versioneer.versionfile_build = 'pyupdater/_version.py'
 versioneer.tag_prefix = ''  # tags are like 1.2.0
-versioneer.parentdir_prefix = 'PyiUpdater-'  # dirname like 'myproject-1.2.0'
+versioneer.parentdir_prefix = 'PyUpdater-'  # dirname like 'myproject-1.2.0'
 
 
 class PyTest(Command):
@@ -24,7 +24,7 @@ class PyTest(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'-v', u'-x',
-                                u'--cov', u'pyi_updater', u'-n', u'4'])
+                                u'--cov', u'pyupdater', u'-n', u'4'])
         raise SystemExit(errno)
 
 
@@ -39,7 +39,7 @@ class PyTestCover(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
-                                 u'--cov', u'pyi_updater', u'-n', u'1'])
+                                 u'--cov', u'pyupdater', u'-n', u'1'])
         raise SystemExit(errno)
 
 
@@ -55,7 +55,7 @@ class PyTestMyCover(Command):
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
                                  u'--cov-report', u'html', u'--cov',
-                                 u'pyi_updater', u'-n', u'4'])
+                                 u'pyupdater', u'-n', u'4'])
         raise SystemExit(errno)
 
 cmd_class = versioneer.get_cmdclass()
@@ -63,18 +63,18 @@ cmd_class.update({u'test': PyTest,
                   u'ctest': PyTestCover,
                   u'mytest': PyTestMyCover})
 
-extra_s3 = 'PyiUpdater-s3-Plugin == 1.3'
-extra_scp = 'PyiUpdater-scp-Plugin == 1.3'
+extra_s3 = 'PyUpdater-s3-Plugin == 1.3'
+extra_scp = 'PyUpdater-scp-Plugin == 1.3'
 extra_patch = 'bsdiff4'
 
 setup(
-    name='PyiUpdater',
+    name='PyUpdater',
     version=versioneer.get_version(),
     description='Simple App update framwork',
     author='Johny Mo Swag',
     author_email='johnymoswag@gmail.com',
-    url='docs.pyiupdater.org',
-    download_url=('https://github.com/JohnyMoSwag/Pyi'
+    url='docs.pyupdater.org',
+    download_url=('https://github.com/JohnyMoSwag/Py'
                   'Updater/archive/master.zip'),
     license='Apache License 2.0',
     extras_require={
@@ -97,7 +97,7 @@ setup(
     packages=find_packages(),
     entry_points="""
     [console_scripts]
-    pyiupdater=pyi_updater.wrapper:main
+    pyupdater=pyupdater.wrapper:main
     """,
     classifiers=[
         'Development Status :: 4 - Beta',

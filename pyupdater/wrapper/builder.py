@@ -19,13 +19,13 @@ import shutil
 import sys
 import time
 
-from pyi_updater import settings
-from pyi_updater.hooks import get_hook_dir
-from pyi_updater.utils import (check_repo,
-                               lazy_import,
-                               make_archive,
-                               run,
-                               Version)
+from pyupdater import settings
+from pyupdater.hooks import get_hook_dir
+from pyupdater.utils import (check_repo,
+                             lazy_import,
+                             make_archive,
+                             run,
+                             Version)
 
 log = logging.getLogger(__name__)
 

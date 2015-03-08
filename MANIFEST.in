@@ -1,2 +1,2 @@
 include versioneer.py
-include pyi_updater/_version.py
+include pyupdater/_version.py

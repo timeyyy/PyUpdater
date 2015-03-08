@@ -1,5 +1,12 @@
 Changelog
 =========
+v0.20.0 - Beta
+~~~~~~~~~~~~~~
+.. note:: This version is not yet released and is under active development.
+*** Renamed to PyUpdater ***
+
+
+
 v0.19.3 - 2015/02/22
 ~~~~~~~~~~~~~~~~~~~~
 

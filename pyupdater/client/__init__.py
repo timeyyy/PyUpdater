@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from pyi_updater import settings, __version__
-from pyi_updater.client.downloader import FileDownloader
-from pyi_updater.client.updates import AppUpdate, LibUpdate
-from pyi_updater.config import PyiUpdaterConfig
-from pyi_updater.utils import (convert_to_list,
-                               EasyAccessDict,
-                               get_highest_version,
-                               gzip_decompress,
-                               lazy_import,
-                               Version)
+from pyupdater import settings, __version__
+from pyupdater.client.downloader import FileDownloader
+from pyupdater.client.updates import AppUpdate, LibUpdate
+from pyupdater.config import PyiUpdaterConfig
+from pyupdater.utils import (convert_to_list,
+                             EasyAccessDict,
+                             get_highest_version,
+                             gzip_decompress,
+                             lazy_import,
+                             Version)
 
 
 @lazy_import

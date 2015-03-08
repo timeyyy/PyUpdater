@@ -17,11 +17,11 @@ import logging
 import os
 import re
 
-from pyi_updater.exceptions import UtilsError, VersionError
-from pyi_updater.utils import (get_package_hashes,
-                               parse_platform,
-                               Version,
-                               )
+from pyupdater.exceptions import UtilsError, VersionError
+from pyupdater.utils import (get_package_hashes,
+                             parse_platform,
+                             Version,
+                             )
 
 log = logging.getLogger(__name__)
 

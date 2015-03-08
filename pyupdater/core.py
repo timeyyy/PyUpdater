@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from pyi_updater.config import PyiUpdaterConfig
-from pyi_updater.key_handler import KeyHandler
-from pyi_updater.package_handler import PackageHandler
-from pyi_updater.uploader import Uploader
+from pyupdater.config import PyiUpdaterConfig
+from pyupdater.key_handler import KeyHandler
+from pyupdater.package_handler import PackageHandler
+from pyupdater.uploader import Uploader
 
 
 class Core(object):
