@@ -34,7 +34,7 @@ def add_build_parser(subparsers):
     # start a clean build
     build_parser.add_argument(u'--clean', help=u'Clean build. '
                               u'Bypass the cache', action="store_true")
-    # This will be set to the pyi-data/new directory.
+    # This will be set to the pyu-data/new directory.
     # When we make the final compressed archive we will look
     # for an exe in that dir.
     build_parser.add_argument(u'-o', help=argparse.SUPPRESS)
@@ -109,7 +109,7 @@ def add_make_spec_parser(subparsers):
     # start a clean build
     make_spec_parser.add_argument(u'--clean', help=u'Clean build. '
                                   u'Bypass the cache', action="store_true")
-    # This will be set to the pyi-data/new directory.
+    # This will be set to the pyu-data/new directory.
     # When we make the final compressed archive we will look
     # for an exe in that dir.
     make_spec_parser.add_argument(u'-o', help=argparse.SUPPRESS)
@@ -179,7 +179,7 @@ def add_clean_parser(subparsers):
                                          help=u'* WARNING * removes all '
                                          u'traces of pyiupdater')
     clean_parser.add_argument(u'-y', '--yes', help=u'Confirms removal of '
-                              u'pyi-data & .pyiupdater folder',
+                              u'pyu-data & .pyiupdater folder',
                               action='store_true')
 
 

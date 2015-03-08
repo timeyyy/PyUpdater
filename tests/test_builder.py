@@ -19,9 +19,9 @@ from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 import pytest
 
-from pyi_updater import PyiUpdater
-from pyi_updater.wrapper.builder import Builder
-from pyi_updater.wrapper.options import get_parser
+from pyupdater import PyiUpdater
+from pyupdater.wrapper.builder import Builder
+from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
 
 
@@ -38,7 +38,7 @@ class TestBuilder(object):
         t_config.DATA_DIR = os.getcwd()
         pyi = PyiUpdater(t_config)
         pyi.setup()
-        new_folder = os.path.join(u'pyi-data', u'new')
+        new_folder = os.path.join(u'pyu-data', u'new')
         spec_cmd = [u'make-spec', u'app.py', u'-F']
         spec_file_name = get_system() + u'.spec'
         build_cmd = [u'build', u'--app-name', u'MyApp',

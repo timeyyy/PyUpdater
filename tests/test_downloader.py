@@ -15,13 +15,13 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from pyi_updater.client.downloader import FileDownloader
+from pyupdater.client.downloader import FileDownloader
 
 
-FILENAME = u'dont+delete+nst+test.txt'
-FILENAME_WITH_SPACES = 'dont delete nst test.txt'
+FILENAME = u'dont+delete+pyu+test.txt'
+FILENAME_WITH_SPACES = 'dont delete pyu test.txt'
 FILE_HASH = u'9da856b0b8b77c838d6945e0bfbc62fff978a9dd5256eed231fc499b5d4b183c'
-URL = u'https://s3-us-west-1.amazonaws.com/not-so-tuf/'
+URL = u'https://s3-us-west-1.amazonaws.com/pyupdater-test/'
 
 
 @pytest.mark.usefixtue("cleandir")

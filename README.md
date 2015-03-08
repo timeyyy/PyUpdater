@@ -1,16 +1,16 @@
-[![Downloads](https://pypip.in/download/PyiUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyiUpdater/)
-[![Development Status](https://pypip.in/status/PyiUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyiUpdater/)
-[![Coverage Status](https://coveralls.io/repos/JohnyMoSwag/PyiUpdater/badge.svg?branch=master)](https://coveralls.io/r/JohnyMoSwag/PyiUpdater?branch=master)
-[![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JohnyMoSwag/PyiUpdater)
+[![Downloads](https://pypip.in/download/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
+[![Development Status](https://pypip.in/status/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
+[![Coverage Status](https://coveralls.io/repos/JohnyMoSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JohnyMoSwag/PyUpdater?branch=master)
+[![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JohnyMoSwag/PyUpdater)
 
-# PyiUpdater
+# PyUpdater
 ##### An update framework for managing, signing & uploading your app updates
-[Documentation](http://docs.pyiupdater.com)
+[Documentation](http://docs.pyupdater.com)
 
-[Dev Documentation](http://dev-docs.pyiupdater.com)
+[Dev Documentation](http://dev-docs.pyupdater.com)
 
 
-[Full changelog](https://github.com/JohnyMoSwag/PyiUpdater/blob/master/changelog.txt)
+[Full changelog](https://github.com/JohnyMoSwag/PyUpdater/blob/master/changelog.txt)
 
 #### Made for [PyInstaller](http://www.pyinstaller.org) >= 2.1
 
@@ -19,47 +19,47 @@
 
 ######Stable:
 
-    $ pip install -U PyiUpdater
+    $ pip install -U PyUpdater
 
 ######Dev:
 
-    $ pip install -U https://github.com/JohnyMoSwag/PyiUpdater/tarball/master
+    $ pip install -U https://github.com/JohnyMoSwag/PyUpdater/tarball/master
 
 ######Extras: S3 & SCP upload plugins are available with
 
-    $ pip install -U PyiUpdater[s3]
+    $ pip install -U PyUpdater[s3]
 
 or
 
-    $ pip install -U PyiUpdater[scp]
+    $ pip install -U PyUpdater[scp]
 
 
 ## Usage:
 
 ###### To compile & package your script
 
-    $ pyiupdater build example_app.py --app-name="Example APP" --app-version=0.1.0
+    $ pyupdater build example_app.py --app-name="Example APP" --app-version=0.1.0
 
 
 ###### For creating update diff's, updating your version file & uploading your update
 
-    $ pyiupdater pkg --process
+    $ pyupdater pkg --process
 
-    $ pyiupdater pkg --sign
+    $ pyupdater pkg --sign
 
 ###### Upload your updates to Amazon S3
 
-    $ pyiupdater upload --service s3
+    $ pyupdater upload --service s3
 
 
 ######For help & extra commands
 
-    $ pyiupdater -h
-    $ pyiupdater command -h
+    $ pyupdater -h
+    $ pyupdater command -h
 
 
 ###### Using programmatically
-######[Click Here](https://github.com/JohnyMoSwag/PyiUpdater/tree/master/demos "Example Usage") To See Example Work Flow
+######[Click Here](https://github.com/JohnyMoSwag/PyUpdater/tree/master/demos "Example Usage") To See Example Work Flow
 
 
 ## Write your own upload plugin
@@ -99,14 +99,14 @@ or
 Example from s3 upload plugin
 
     entry_points={
-        'pyiupdater.plugins.uploaders': [
+        'pyupdater.plugins.uploaders': [
             's3 = s3_plugin:S3Uploader',
         ]
 
 
 #### Examples available
-###### [S3 Plugin](https://github.com/JohnyMoSwag/pyiupdater-s3-plugin "S3 Plugin")
-###### [SCP Plugin](https://github.com/JohnyMoSwag/pyiupdater-scp-plugin "SCP Plugin")
+###### [S3 Plugin](https://github.com/JohnyMoSwag/PyUpdater-S3-Plugin "S3 Plugin")
+###### [SCP Plugin](https://github.com/JohnyMoSwag/PyUpdater-SCP-Plugin "SCP Plugin")
 
 ## Support Archive Formats
 ###### Zip for Windows and GZip for Mac & Linux.  Constraints being on patch size.

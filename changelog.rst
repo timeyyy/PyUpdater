@@ -30,7 +30,7 @@ v0.19.1 - 2015/02/22
 
 * Fixed
 
-  - PyiUpdater
+  - PyUpdater
 
     - Creating new config db when running any command
 
@@ -41,7 +41,7 @@ v0.19 - 2015/02/22
 
   - CLI
 
-    - Update command. Used after updating PyiUpdater to update repository
+    - Update command. Used after updating PyUpdater to update repository
 
   - Logging
 
@@ -61,7 +61,7 @@ v0.19 - 2015/02/22
     - Using requests instead of urllib3.
     - More reliable https verification
 
-  - PyiUpdater
+  - PyUpdater
 
     - Potential incorrect comparison of pyinstaller versions
     - Archive version parsing
@@ -69,7 +69,7 @@ v0.19 - 2015/02/22
     - Pinning version of plugins
     - Initial support for pre release versions
     - Moved some uploader config to plugins. Check plugin docs for more info.
-    - Updated config attributes. * Make sure to run pyiupdater update
+    - Updated config attributes. * Make sure to run pyupdater update
     - Install commands
 
       $ pip install[patch] # To enable patch support
@@ -92,13 +92,13 @@ v0.19 - 2015/02/22
 
     - Migration of repo meta config
 
-  - PyiUpdater
+  - PyUpdater
 
     - Potential error when adding key add key.db isn't loaded
 
 * Removed
 
-  - PyiUpdater
+  - PyUpdater
 
     - Some unused attributes on config object
     - Unsed functions
@@ -117,7 +117,7 @@ v0.18.0 - 2015/2/7
     - Increased log rotation size to 10mb
     - Using bzip2 to compress logs for export
 
-  - PyiUpdater
+  - PyUpdater
 
     - More lazy import to decrease start up times
     - Code refactoring
@@ -137,7 +137,7 @@ v0.17.3 - 2015/2/7
 ~~~~~~~~~~~~~~~~~~
 * Fixed
 
-  - PyiUpdater
+  - PyUpdater
 
     - Mac .app's binary now has correct app name
 
@@ -165,22 +165,22 @@ v0.17.1 - 2015/2/1
 ~~~~~~~~~~~~~~~~~~
 * Added
 
-  - PyiUpdater
+  - PyUpdater
 
     - Spec file support. Examples below
     ::
 
-      $ pyiupdater make-spec [opts] script.py
+      $ pyupdater make-spec [opts] script.py
 
       # Then build your app
 
-      $ pyiupdater script.spec --app-name=script --app-version=0.1.0
+      $ pyupdater script.spec --app-name=script --app-version=0.1.0
 
     - Debugging will be turned on by default on dev builds
 
 * Updated
 
-  - PyiUpdater
+  - PyUpdater
 
     - Added more checks to repo verification
 
@@ -208,11 +208,11 @@ v0.16 - 2015/25/1
     - Todo list
     - Updated demos to match api & code comments more descriptive
 
-  - PyiUpdater
+  - PyUpdater
 
     - Hooks for certifi
     - Settings module to make updating easier.
-    - PyiUpdater settings db
+    - PyUpdater settings db
     - Unified utils modules
     - Added version object
 
@@ -228,7 +228,7 @@ v0.16 - 2015/25/1
     - Builder is now a class
     - Utils class
     - Added --clean to compile a fresh build
-    - Handling of args for pyiupdater
+    - Handling of args for pyupdater
 
   - Client
 
@@ -236,7 +236,7 @@ v0.16 - 2015/25/1
     - logging difference between patch & full update
     - Version objects for better version comparison & conversion
 
-  - PyiUpdater
+  - PyUpdater
 
     - Lowered pyinstaller requirement to 2.1
     - Added hooks included in newer versions of pyinstaller
@@ -262,7 +262,7 @@ v0.16 - 2015/25/1
 
     - Build: Spec file support - will be coming back bigger & better.
 
-  - PyiUpdater
+  - PyUpdater
 
     - Storing pickled config in plain file
     - Unused requirements
@@ -284,9 +284,9 @@ If you update to this release, do not revoke any keys until you are sure all cli
     - Can now revoke signing keys. The number of keys to revoke from oldest.
       ::
 
-      $ pyiupdater keys --revoke 1
+      $ pyupdater keys --revoke 1
 
-    - clean command: can remove PyiUpdater data & support file from root dir
+    - clean command: can remove PyUpdater data & support file from root dir
 
 
   - PackageHandlder
@@ -330,8 +330,8 @@ Demos have been update with the changes. Also its very important to make a decry
   - CLI
 
     - Updated with subcommands
-    - pyiupdater -h
-    - pyiupdater sub_command -h
+    - pyupdater -h
+    - pyupdater sub_command -h
 
   - Client
 
@@ -339,15 +339,15 @@ Demos have been update with the changes. Also its very important to make a decry
 
   - KeyHandler
 
-    - Moved key storage to .pyiupdater folder
+    - Moved key storage to .pyupdater folder
 
-  - PyiUpdater
+  - PyUpdater
 
     - Simplified config
 
 * Fixed
 
-  - PyiUpdater
+  - PyUpdater
 
     - Logging when pyi.log is next to Mac .app bundles
 
@@ -361,7 +361,7 @@ Demos have been update with the changes. Also its very important to make a decry
 
     - Passwords for remote locations will need to be set as env vars
 
-  - PyiUpdater
+  - PyUpdater
 
     - Redundant system calls
 
@@ -422,7 +422,7 @@ v0.12.0 - 2014/11/29
 
 * Added
 
-  - .pyiupdater data directory. Used to keep track of packages & patch numbers.
+  - .pyupdater data directory. Used to keep track of packages & patch numbers.
 
 * Updated
 
@@ -459,7 +459,7 @@ v0.11.0 - 2014/11/22
 
   - CLI
 
-    - start cli with pyiupdater-cli instead of pyi-cli
+    - start cli with pyupdater-cli instead of pyi-cli
 
 
 * Removed
@@ -484,7 +484,7 @@ v0.10.0 - 2014/11/16
 
     - Using the following command compiles your script and archives it ready for file diff and upload::
 
-      $ pyiupdater app.py --app-name=APP --app-version=0.1.0
+      $ pyupdater app.py --app-name=APP --app-version=0.1.0
 
   - Deprecated Warnings
 
@@ -515,7 +515,7 @@ v0.9.2 - 2014/10/19
 
 * Fixed
 
-  - Require PyInstaller 2.1.1 for PyiUpdater usage
+  - Require PyInstaller 2.1.1 for PyUpdater usage
 
 
 v0.9.1 - 2014/10/19
@@ -523,7 +523,7 @@ v0.9.1 - 2014/10/19
 
 * Added
 
-  - Require PyInstaller 2.1.1 for PyiUpdater usage
+  - Require PyInstaller 2.1.1 for PyUpdater usage
 
 
 v0.9.0 - 2014/10/18
@@ -723,7 +723,7 @@ v0.7 - 2014/8/3
 v0.6.0 - 2014/7/27
 ~~~~~~~~~~~~~~~~~~
 
-*** Renamed to PyiUpdater ***
+*** Renamed to PyUpdater ***
 
 * Removed
 

@@ -16,8 +16,8 @@
 import pytest
 import requests
 
-from pyi_updater.exceptions import UploaderError, UploaderPluginError
-from pyi_updater.uploader import BaseUploader, Uploader
+from pyupdater.exceptions import UploaderError, UploaderPluginError
+from pyupdater.uploader import BaseUploader, Uploader
 
 from tconfig import TConfig
 

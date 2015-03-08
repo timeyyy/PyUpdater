@@ -15,17 +15,17 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from pyi_updater.wrapper.options import (make_parser,
-                                         make_subparser,
-                                         add_build_parser,
-                                         add_clean_parser,
-                                         add_init_parser,
-                                         add_keys_parser,
-                                         add_log_parser,
-                                         add_make_spec_parser,
-                                         add_package_parser,
-                                         add_upload_parser,
-                                         add_version_parser)
+from pyupdater.wrapper.options import (make_parser,
+                                       make_subparser,
+                                       add_build_parser,
+                                       add_clean_parser,
+                                       add_init_parser,
+                                       add_keys_parser,
+                                       add_log_parser,
+                                       add_make_spec_parser,
+                                       add_package_parser,
+                                       add_upload_parser,
+                                       add_version_parser)
 
 
 @pytest.mark.usefixtures('cleandir')

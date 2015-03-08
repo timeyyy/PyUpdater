@@ -38,7 +38,7 @@ class TConfig(object):
     # Online repository where you host your packages
     # and version file
     # REQUIRED
-    UPDATE_URLS = [u'https://s3-us-west-1.amazonaws.com/pyi-test/']
+    UPDATE_URLS = [u'https://s3-us-west-1.amazonaws.com/pyupdater-test/']
     UPDATE_PATCHES = True
 
     # Upload Setup

@@ -64,10 +64,7 @@ class FileDownloader(object):
         else:
             self.urls = urls
         self.hexdigest = hexdigest
-        # ToDo: Find solution that verifies certs consistently
-        # self.verify = verify
-        self.verify = False
-        # End ToDo
+        self.verify = verify
         self.b_size = 4096 * 4
         self.file_binary_data = None
         self.my_file = BytesIO()

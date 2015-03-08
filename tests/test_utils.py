@@ -17,15 +17,15 @@ import os
 
 import pytest
 
-from pyi_updater.exceptions import VersionError
-from pyi_updater.utils import (check_repo,
-                               convert_to_list,
-                               EasyAccessDict,
-                               get_hash,
-                               get_mac_dot_app_dir,
-                               get_package_hashes,
-                               Version
-                               )
+from pyupdater.exceptions import VersionError
+from pyupdater.utils import (check_repo,
+                             convert_to_list,
+                             EasyAccessDict,
+                             get_hash,
+                             get_mac_dot_app_dir,
+                             get_package_hashes,
+                             Version
+                             )
 
 
 @pytest.mark.usefixtures('cleandir')

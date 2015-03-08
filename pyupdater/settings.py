@@ -49,7 +49,7 @@ UPLOAD_PLUGIN_NAMESPACE = 'pyupdater.plugins.uploaders'
 USER_CLIENT_CONFIG_FILENAME = u'client_config.py'
 
 # Main user visible data folder
-USER_DATA_FOLDER = u'py-data'
+USER_DATA_FOLDER = u'pyu-data'
 
 # Name of env var to get users passwrod from
 USER_PASS_ENV = u'PYUPDATER_PASS'

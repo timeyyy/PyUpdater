@@ -20,12 +20,12 @@ import urllib2
 
 import pytest
 
-from pyi_updater.client.patcher import Patcher
+from pyupdater.client.patcher import Patcher
 
 TEST_DATA_DIR = os.path.join(os.getcwd(), 'tests', 'test data',
                              'patcher-test-data')
 
-version_file_url = 'https://s3-us-west-1.amazonaws.com/pyi-test/version.json'
+version_file_url = 'https://s3-us-west-1.amazonaws.com/pyupdater-test/version.json'
 json_data = json.loads(urllib2.urlopen(version_file_url).read())
 
 update_data = {
@@ -34,7 +34,7 @@ update_data = {
     u'current_version': u'0.0.1',
     u'highest_version': u'0.0.3',
     u'update_folder': None,
-    u'update_urls': [u'https://s3-us-west-1.amazonaws.com/pyi-test/'],
+    u'update_urls': [u'https://s3-us-west-1.amazonaws.com/pyupdater-test/'],
     u'platform': u'mac',
     }
 

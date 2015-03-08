@@ -17,10 +17,10 @@ import os
 
 import pytest
 
-from pyi_updater import settings
-from pyi_updater.config import PyiUpdaterConfig
-from pyi_updater.exceptions import PackageHandlerError
-from pyi_updater.package_handler import PackageHandler
+from pyupdater import settings
+from pyupdater.config import PyiUpdaterConfig
+from pyupdater.exceptions import PackageHandlerError
+from pyupdater.package_handler import PackageHandler
 from tconfig import TConfig
 
 s_dir = settings.USER_DATA_FOLDER

@@ -17,7 +17,7 @@ import os
 
 import pytest
 
-from pyi_updater.client import Client
+from pyupdater.client import Client
 from tconfig import TConfig
 
 
@@ -38,13 +38,13 @@ class TestClient(object):
     def test_new_init(self, client):
         assert client.app_name == u'jms'
         assert client.update_urls[0] == (u'https://s3-us-west-1.amazon'
-                                         'aws.com/pyi-test/')
+                                         'aws.com/pyupdater-test/')
 
     def test_no_cert(self, client):
         client.verify = False
         assert client.app_name == u'jms'
         assert client.update_urls[0] == (u'https://s3-us-west-1.amazon'
-                                         'aws.com/pyi-test/')
+                                         'aws.com/pyupdater-test/')
 
     def test_bad_pub_key(self, client):
         t_config = TConfig()

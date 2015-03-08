@@ -58,14 +58,17 @@ class PyTestMyCover(Command):
                                  u'pyupdater', u'-n', u'4'])
         raise SystemExit(errno)
 
+with open(u'requirements.txt', u'r') as f:
+    required = f.read().splitlines()
+
 cmd_class = versioneer.get_cmdclass()
 cmd_class.update({u'test': PyTest,
                   u'ctest': PyTestCover,
                   u'mytest': PyTestMyCover})
 
-extra_s3 = 'PyUpdater-s3-Plugin == 1.3'
-extra_scp = 'PyUpdater-scp-Plugin == 1.3'
-extra_patch = 'bsdiff4'
+extra_s3 = 'PyUpdater-s3-Plugin == 2.0.2'
+extra_scp = 'PyUpdater-scp-Plugin == 2.0.1'
+extra_patch = 'bsdiff4 == 1.1.4'
 
 setup(
     name='PyUpdater',
@@ -85,15 +88,7 @@ setup(
         },
     tests_require=['pytest', ],
     cmdclass=cmd_class,
-    install_requires=[
-        'appdirs',
-        'ed25519',
-        'jms-utils >= 0.6.2',
-        'pyinstaller >= 2.1',
-        'requests',
-        'six',
-        'stevedore',
-        ],
+    install_requires=required,
     packages=find_packages(),
     entry_points="""
     [console_scripts]

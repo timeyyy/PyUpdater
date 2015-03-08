@@ -89,7 +89,7 @@ def init(args):  # pragma: no cover
     if not os.path.exists(os.path.join(settings.CONFIG_DATA_FOLDER,
                           settings.CONFIG_FILE_USER)):
         config = initial_setup(SetupConfig())
-        log.info(u'Creating pyi-data dir...')
+        log.info(u'Creating pyu-data dir...')
         pyiu = PyiUpdater(config)
         pyiu.setup()
         log.info(u'Making signing keys...')

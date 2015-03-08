@@ -1,9 +1,15 @@
 asciinema
-line_profiler==1.0
+coverage
+line_profiler == 1.0
 memory_profiler
+pytest
+pytest-cov
+pytest-httpbin
+pytest-xdist
+pyupdater-s3-plugin
 sphinx
 sphinx-better-theme
 sphinx-bootstrap-theme
 twine
-versioneer
+versioneer == 0.13
 wheel

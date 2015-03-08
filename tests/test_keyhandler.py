@@ -17,7 +17,7 @@ import os
 
 import pytest
 
-from pyi_updater.key_handler.keydb import KeyDB
+from pyupdater.key_handler.keydb import KeyDB
 
 
 @pytest.mark.usefixtures("cleandir")

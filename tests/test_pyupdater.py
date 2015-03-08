@@ -19,10 +19,10 @@ import pytest
 from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 
-from pyi_updater import PyiUpdater
-from pyi_updater.config import Loader, PyiUpdaterConfig
-from pyi_updater.wrapper.builder import Builder
-from pyi_updater.wrapper.options import get_parser
+from pyupdater import PyiUpdater
+from pyupdater.config import Loader, PyiUpdaterConfig
+from pyupdater.wrapper.builder import Builder
+from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
 
 cmd = [u'build', u'--app-name', u'myapp', u'--app-version',
@@ -46,25 +46,25 @@ class TestPyiUpdater(object):
         myconfig = TConfig()
         myconfig.APP_NAME = None
         updater.update_config(myconfig)
-        assert updater[u'APP_NAME'] == u'PyiUpdater App'
+        assert updater[u'APP_NAME'] == u'PyUpdater App'
 
     def test_setup(self):
         data_dir = os.getcwd()
-        pyi_data_dir = os.path.join(data_dir, u'pyi-data')
+        pyu_data_dir = os.path.join(data_dir, u'pyu-data')
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         pyi = PyiUpdater(t_config)
         pyi.setup()
-        assert os.path.exists(pyi_data_dir)
-        assert os.path.exists(os.path.join(pyi_data_dir, u'deploy'))
-        assert os.path.exists(os.path.join(pyi_data_dir, u'files'))
-        assert os.path.exists(os.path.join(pyi_data_dir, u'new'))
+        assert os.path.exists(pyu_data_dir)
+        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy'))
+        assert os.path.exists(os.path.join(pyu_data_dir, u'files'))
+        assert os.path.exists(os.path.join(pyu_data_dir, u'new'))
 
     def test_execution(self, pyi):
         archive_name = u'myapp-{}-0.1.0.tar.gz'.format(get_system())
         parser = get_parser()
         data_dir = pyi.config[u'DATA_DIR']
-        pyi_data_dir = os.path.join(data_dir, u'pyi-data')
+        pyu_data_dir = os.path.join(data_dir, u'pyu-data')
         pyi.setup()
         pyi.make_keys(3)
         with ChDir(data_dir):
@@ -76,24 +76,24 @@ class TestPyiUpdater(object):
             b = Builder(args, pyi_args)
             b.build()
 
-        assert os.path.exists(os.path.join(pyi_data_dir, u'new',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'new',
                               archive_name))
         pyi.process_packages()
-        assert os.path.exists(os.path.join(pyi_data_dir, u'deploy',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               archive_name))
-        assert os.path.exists(os.path.join(pyi_data_dir, u'files',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'files',
                               archive_name))
         pyi.sign_update()
-        assert os.path.exists(os.path.join(pyi_data_dir, u'deploy',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               'versions.gz'))
-        assert os.path.exists(os.path.join(pyi_data_dir, u'deploy',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               'version.json'))
 
     def test_execution_patch(self, pyi):
         archive_name = u'myapp-{}-0.1.1.tar.gz'.format(get_system())
         parser = get_parser()
         data_dir = pyi.config[u'DATA_DIR']
-        pyi_data_dir = os.path.join(data_dir, u'pyi-data')
+        pyu_data_dir = os.path.join(data_dir, u'pyu-data')
         pyi.setup()
         pyi.make_keys(3)
         with ChDir(data_dir):
@@ -111,9 +111,9 @@ class TestPyiUpdater(object):
             b.build()
             pyi.process_packages()
             pyi.sign_update()
-        files = os.listdir(os.path.join(pyi_data_dir, u'deploy'))
-        assert len(files) == 5
-        assert os.path.exists(os.path.join(pyi_data_dir, u'deploy',
+        files = os.listdir(os.path.join(pyu_data_dir, u'deploy'))
+        assert len(files) == 4
+        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               archive_name))
-        assert os.path.exists(os.path.join(pyi_data_dir, u'files',
+        assert os.path.exists(os.path.join(pyu_data_dir, u'files',
                               archive_name))
