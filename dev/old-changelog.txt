@@ -1,0 +1,435 @@
+v0.5.5 - 6/19/2014
+-------------------
+* Added
+  - More tests
+
+* Fixed
+  - Uploader
+    - scp user-name error
+  - Misc. bug fixes
+
+* Removed
+  - NotSoTuf
+    - Unused/Redundant code
+
+v0.5.4 - 6/14/14
+-------------------
+** Backwards Incompatible Changes **
+  - Make sure you have a decrypted copy of your
+    config.data & private key file
+
+* Updated
+  - Using PBDKF instead of my own implementation
+  - KeyHandler
+    - More error checking
+  - Client
+    - Dynamically generates urls for update files
+    - Easier testing of updater
+
+* Fixed
+  - Client
+    - Patch updater now working
+
+v0.5.3 - 6/10/2013
+-------------------
+* Added
+  - Cleanup of temp files while nst was running
+
+* Fixed
+  - CLI
+    - Leaving input blank when no default
+  - nst-lib
+    - Using mac cache dir on all platforms
+
+
+* Updated
+  - Client
+    - Dynamically generates cache dir on load
+  - ClI
+    - Can update company/user name from settings
+    - Checks if you have write permission for dev
+      data directory
+
+v0.5.2 - 6/8/2014
+-------------------
+* Fixed
+  - Error updating to new data dir
+
+* Updated
+  - UI
+    - More descriptive when no default available
+
+v0.5.1 - 6/7/2014
+-------------------
+* Added
+  - Arm support
+    - Only test on raspberry pi
+
+* Fixed
+  - Loading decrypted config file
+  - Util error on load
+    - Visual error only
+
+* Updated
+  - Another try for wrong password input
+  - More py3 compat
+  - App data dir
+    - Used standardized location on each platform
+  - Naming of keys
+    - Defaults to appname
+
+* Removed
+  - Asking to name your keys
+
+v0.5.0 - 6/5/2014
+-------------------
+** Backwards Incompatible Changes **
+  - Before updating make sure to make a
+    decrypt copy of your config and private
+    key.  This is very important. Encryption used
+    to be cross platform but TripleSec's scrypt dependency
+    won't compile on windows.
+
+  - Now using AES encryption by way of the Cryptography
+    python library.
+
+* Updated
+  - Now uses sha256 for file hashes
+  - User Interface
+    - Removed unused options
+
+* Fixed
+  - Encryption
+    - Using one library across platforms
+
+
+v0.4.11 - 4/12/2014
+-------------------
+* Fixed
+  - Crash on startup when not connected to the web
+  - Crash when trying do decrypt non existent file.
+
+
+v0.4.10 - 4/11/2014
+-------------------
+* Added
+  - Triplesec encryption
+    - Just use not-so-tuf normally and your
+      encrypted files will be converted automatically
+
+  - Update notification for pip installs
+
+* Fixed
+  - Client error handling
+    - Wont blow up if client cannot find patches
+
+
+v0.4.9 - 4/6/2014
+-------------------
+* Updated
+  - Code optimizations
+    - Some performance
+    - More error resilient
+
+  - Docs
+    - Removed a lot of noise from api docs
+
+* Fixed
+  - Can now update platforms independently and
+    updates latest in version file accordingly
+
+
+v0.4.8 - 4/4/2014
+--------------------
+* Fixed
+  - Client updater
+
+
+v0.4.7 - 4/4/2014
+--------------------
+* Added
+  - Client refresh method
+    - Gets updated version file without initializing
+      a new client object
+  - Deploy folder cleanup after successful upload
+    - Files already safe in files folder
+
+  - Initial plugin support *Experimental*
+    - Now its easy to add your own upload providers.
+      Plugins are loaded with uploader.set_uploader('mega')
+      Example entry point section for plugin setup.py
+      entry_points {
+      'not_so_tuf.uploader':[
+      'mega = not_so_tuf.uplaoder.mega:Mega',
+      ]}
+
+* Updated
+  - All internal libs used Not So TUF
+  - Client only makes a network request on initialization
+    or on refresh call
+  - Version File Format
+    - Backwards compatible
+    - Can update an app or lib up to 8 times before the
+      package handler will stop adding duplicate entries
+      in your version file
+    - Old format will be dropped once stable
+
+* Fixed
+  - App signing on windows - (Binary only)
+    - Multiprocessing wall failing hard!
+  - Adding .exe extension to libs on windows
+
+
+v0.4.6 - 4/3/2014
+--------------------
+* Fixed
+  - S3 Uploader
+
+
+v0.4.5 - 4/3/2014
+--------------------
+* Updated
+  - Client
+    - Places current version in cache if not already present
+    - Removes old updates from cache
+
+
+v0.4.4 - 4/3/2014
+--------------------
+* Fixed
+  - Missing uploader package on
+    pypi
+
+
+v0.4.3 - 4/3/2014
+--------------------
+* Added
+  - More py3 compatibility
+
+* Updated
+  - Client
+    - Can initialize client with config object directly. Is backwards
+      compatible.
+
+* Fixed
+  - Output during updates of nst binary
+
+
+v0.4.2 - 3/31/2013
+--------------------
+* Fixed
+  - Missing lib in client package
+
+
+v0.4.1 - 3/29/2014
+--------------------
+* Added
+  - More py3 compat
+
+* Updated
+  - CLI: Initial Setup
+    - Make sure keys are divisible of 256
+  - Version File Output
+    - indent 2 instead of 4
+
+* Removed
+  - Duplicate library
+
+
+v0.4.0 - 3/21/2014
+--------------------
+* Added
+  - More tests
+  - Open Source Software declaration
+  - Some python3 compatibility
+    - Only usable if your not using a pyinstaller app
+
+* Updated
+  - Docs
+  - Example Scripts
+  - CLI
+    - More descriptive menu options
+
+  - Can now import modules from not_so_tuf
+    - from not_so_tuf import Client instead of
+      from not_so_tuf.client import Client
+
+* Fixed
+  - Deletion of folder password
+
+* Removed
+  - Dependency
+    - beefish
+    - scp
+  - Duplicate code
+
+
+v0.3.3 - No Release
+--------------------
+* Fixed
+  - Only write client config when
+    frozen
+
+
+v0.3.2 - 3/16/2014
+--------------------
+* Fixed
+  - Writing config for client
+  - Copying decrypted config file
+  - Copying decrypted private key
+
+
+v0.3.1 - 3/16/2014
+--------------------
+* Fixed
+  - Internal changes to fix build
+    on windows
+
+
+v0.3.0 - 3/14/2014
+--------------------
+* Added
+  - not_so_tuf package creation
+    - automatically creates package
+    - automatically creates client config
+      - based off inputs during initial setup or settings updates
+
+* Updated
+  - Package Handler
+    - Only allow supported platforms
+
+* Fixed
+  - Exit after upload
+
+
+v0.2.8 - 3/9/2014
+--------------------
+* Fixed
+  - Uploader
+
+
+v0.2.7 - 3/9/2014
+--------------------
+* Added
+  - S3 Uploader
+  - Upload progress indicator for S3 and scp
+  - Parallel package patching
+  - Option to delete password for current folder. Make sure you have a
+    decrypted copy of your config and private key.
+
+* Fixed
+  - redundant status messages
+
+* Removed
+  - More unused code...
+
+
+v0.2.5 - 3/8/2014
+--------------------
+* Added
+  - Option to separately install then restart later.
+
+* Updated
+  - UI
+    - Shows more output of whats going on behind the scenes
+  - Required packages
+
+* Removed
+  - Some duplicate code.
+
+
+v0.2.4 - 3/5/2014
+--------------------
+* Fixed
+  - Reboot Loop
+
+
+v0.2.3 - 3/5/2014
+--------------------
+* Fixed
+  - Patch updates
+
+
+v0.2.2 - 3/5/2014
+--------------------
+* Fixed
+  - Import Error when recommended packages are not installed.
+
+
+v0.2.1 - 3/4/2014
+--------------------
+* Added
+  - CLI
+    - Make decrypted copy of config file
+  - Client
+    - client can now install updates and restart the app
+
+* Updated
+  - Cross Platform support
+
+* Fixed
+  - Incorrect handling of version numbers
+
+
+v0.2.0 - 2/28/2014
+--------------------
+* Added
+  - Uploading
+    - Can upload to server right after signing updates
+  - CLI options
+    - Update/add SSH settings
+    - View current settings
+  - Config file encryption
+    - If you forget your password there is no recovery option
+  - Frozen App support
+
+* Updated
+  - File Encryption
+    - More secure password hashing
+      - Uses PBKDF2
+    - Uses system keyring to store hashed password
+    - Will exit app on more then 2 failed login attempts
+
+* Fixed
+  - Finding current dir
+    - In frozen app
+  - Logger
+
+* Removed
+  - Some unused code
+
+
+v0.1.2 - 2/18/2014
+--------------------
+* Added
+  - Private key encryption
+    - If you forget your password there is no recovery option
+  - Make copy of decrypted private key
+    - for backup purposes
+  - CLI test
+
+* Fixed
+  - CLI
+    - paths given with spaces are now handled correctly.
+    - config file loading
+
+* Removed
+  - Some old unused code
+
+
+v0.1.1 - 2/8/2014
+--------------------
+* Added
+  - Changelog
+  - Todo to change-log
+
+* Updated
+  - CLI
+    - Can update config from CLI
+
+* Removed
+  - ToDo.txt
+
+v0.1.0 - 1/3/2014
+--------------------
+* Initial Release *

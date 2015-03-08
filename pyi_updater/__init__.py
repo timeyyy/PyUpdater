@@ -1,0 +1,84 @@
+# --------------------------------------------------------------------------
+# Copyright 2014 Digital Sapphire Development Team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# --------------------------------------------------------------------------
+import logging
+from logging.handlers import RotatingFileHandler
+
+try:
+    from PyInstaller import VERSION as temp_version
+    pyi_version = (temp_version[0], temp_version[1], temp_version[2])
+except ImportError:  # pragma: no cover
+    pyi_version = (0, 0, 0)
+
+from pyi_updater.utils import lazy_import
+
+log = logging.getLogger()
+
+
+@lazy_import
+def pyi_updater():
+    import pyi_updater
+    import pyi_updater.core
+    import pyi_updater.exceptions
+    return pyi_updater
+
+PyiUpdater = pyi_updater.core.Core
+
+
+if pyi_version < (2, 1, 0):  # pragma: no cover
+    raise pyi_updater.exceptions.PyiUpdaterError(u'Must have at least '
+                                                 u'PyInstaller v2.1',
+                                                 expected=True)
+
+
+@lazy_import
+def os():
+    import os
+    return os
+
+
+@lazy_import
+def appdirs():
+    import appdirs
+    return appdirs
+
+
+@lazy_import
+def jms_utils():
+    import jms_utils
+    import jms_utils.logger
+    return jms_utils
+
+
+log.setLevel(logging.DEBUG)
+nh = logging.NullHandler()
+nh.setLevel(logging.DEBUG)
+log.addHandler(nh)
+LOG_DIR = appdirs.user_log_dir(pyi_updater.settings.APP_NAME,
+                               pyi_updater.settings.APP_AUTHOR)
+if not os.path.exists(LOG_DIR):  # pragma: no cover
+    os.makedirs(LOG_DIR)
+LOG_FILENAME_DEBUG = os.path.join(LOG_DIR,
+                                  pyi_updater.settings.LOG_FILENAME_DEBUG)
+rh = RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=5,
+                         maxBytes=10000000)
+rh.setLevel(logging.DEBUG)
+rh.setFormatter(jms_utils.logger.log_format_string())
+log.addHandler(rh)
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+log.debug('Version - {}'.format(__version__))

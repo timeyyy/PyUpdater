@@ -1,0 +1,6 @@
+# command to install dependencies
+dependencies:
+    pre:
+        - pip install -U pip
+        - make deps-upgrade
+        - pip install python-coveralls

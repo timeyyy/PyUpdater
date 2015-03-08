@@ -1,0 +1,9 @@
+asciinema
+line_profiler==1.0
+memory_profiler
+sphinx
+sphinx-better-theme
+sphinx-bootstrap-theme
+twine
+versioneer
+wheel

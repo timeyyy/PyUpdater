@@ -1,0 +1,2 @@
+include versioneer.py
+include pyi_updater/_version.py
