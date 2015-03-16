@@ -22,6 +22,7 @@ import tarfile
 from appdirs import user_log_dir
 from jms_utils.logger import log_formatter
 from jms_utils.paths import ChDir
+from jms_utils.terminal import ask_yes_no
 import stevedore
 
 
@@ -29,6 +30,7 @@ from pyupdater import PyiUpdater, __version__
 from pyupdater import settings
 from pyupdater.config import Loader, SetupConfig
 from pyupdater.exceptions import UploaderError, UploaderPluginError
+from pyupdater.storage import Storage
 from pyupdater.utils import (check_repo,
                              initial_setup,
                              pretty_time,
@@ -58,28 +60,38 @@ sh.setFormatter(fmt)
 sh.setLevel(logging.INFO)
 log.addHandler(sh)
 
-
-loader = Loader()
+db = Storage()
+loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
 
 
 def clean(args):  # pragma: no cover
     if args.yes is True:
-        cleaned = False
-        if os.path.exists(settings.CONFIG_DATA_FOLDER):
-            cleaned = True
-            shutil.rmtree(settings.CONFIG_DATA_FOLDER, ignore_errors=True)
-            log.info(u'Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
-        if os.path.exists(settings.USER_DATA_FOLDER):
-            cleaned = True
-            shutil.rmtree(settings.USER_DATA_FOLDER, ignore_errors=True)
-            log.info(u'Removed {} folder'.format(settings.USER_DATA_FOLDER))
-        if cleaned is True:
-            log.info(u'Clean complete...')
-        else:
-            log.info(u'Nothing to clean...')
+        _clean()
+
     else:
-        log.info(u'Must pass -y to confirm')
+        answer = ask_yes_no(u'Are you sure you want to remove '
+                            u'pyupdater data?', default=u'no')
+        if answer is True:
+            _clean()
+        else:
+            log.info(u'Clean canceled.')
+
+
+def _clean():
+    cleaned = False
+    if os.path.exists(settings.CONFIG_DATA_FOLDER):
+        cleaned = True
+        shutil.rmtree(settings.CONFIG_DATA_FOLDER, ignore_errors=True)
+        log.info(u'Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
+    if os.path.exists(settings.USER_DATA_FOLDER):
+        cleaned = True
+        shutil.rmtree(settings.USER_DATA_FOLDER, ignore_errors=True)
+        log.info(u'Removed {} folder'.format(settings.USER_DATA_FOLDER))
+    if cleaned is True:
+        log.info(u'Clean complete...')
+    else:
+        log.info(u'Nothing to clean...')
 
 
 def init(args):  # pragma: no cover
@@ -271,15 +283,18 @@ def _real_main(args):  # pragma: no cover
 def main(args=None):  # pragma: no cover
     try:
         _real_main(args)
+        exit = 0
     except KeyboardInterrupt:
         print(u'\n')
         msg = u'Exited by user'
         log.warning(msg)
-        sys.exit(1)
+        exit = 1
     except Exception as err:
         log.debug(str(err), exc_info=True)
         log.error(str(err))
-        sys.exit(1)
+
+    db._sync_db()
+    sys.exit(exit)
 
 if __name__ == u'__main__':  # pragma: no cover
     args = sys.argv[1:]

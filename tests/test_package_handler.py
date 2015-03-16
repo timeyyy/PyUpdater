@@ -26,37 +26,37 @@ from tconfig import TConfig
 s_dir = settings.USER_DATA_FOLDER
 
 
-@pytest.mark.usefixtures(u'cleandir')
+@pytest.mark.usefixtures(u'cleandir', u'db')
 class TestPackageHanlder(object):
 
-    def test_init(self):
+    def test_init(self, db):
         data_dir = os.getcwd()
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         config = PyiUpdaterConfig(t_config)
-        p = PackageHandler(config)
+        p = PackageHandler(config, db)
         assert p.files_dir == os.path.join(data_dir, s_dir, u'files')
         assert p.deploy_dir == os.path.join(data_dir, s_dir, u'deploy')
 
-    def test_no_patch_support(self):
+    def test_no_patch_support(self, db):
         data_dir = os.getcwd()
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         t_config.UPDATE_PATCHES = False
         config = PyiUpdaterConfig(t_config)
-        p = PackageHandler(config)
+        p = PackageHandler(config, db)
         p.process_packages()
 
-    def test_process_packages(self):
+    def test_process_packages(self, db):
         data_dir = os.getcwd()
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         t_config.UPDATE_PATCHES = False
         config = PyiUpdaterConfig(t_config)
-        p = PackageHandler(config)
+        p = PackageHandler(config, db)
         p.process_packages()
 
-    def test_process_packages_fail(self):
+    def test_process_packages_fail(self, db):
         with pytest.raises(PackageHandlerError):
             p = PackageHandler()
             p.process_packages()

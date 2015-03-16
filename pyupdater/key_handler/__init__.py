@@ -17,7 +17,6 @@ from __future__ import print_function
 
 from pyupdater import settings
 from pyupdater.key_handler.keydb import KeyDB
-from pyupdater.storage import Storage
 from pyupdater.utils import lazy_import
 
 
@@ -72,14 +71,16 @@ class KeyHandler(object):
     Kwargs:
 
         app (obj): Config object to get config values from
+
+        db (dict): Framework metadata
     """
 
-    def __init__(self, app=None):
+    def __init__(self, app=None, db=None):
         self.key_encoding = 'base64'
-        if app:
-            self.init_app(app)
+        if app is not None:
+            self.init_app(app, db)
 
-    def init_app(self, obj):
+    def init_app(self, obj, db):
         """Sets up client with config values from obj
 
         Args:
@@ -92,9 +93,9 @@ class KeyHandler(object):
         self.private_key_name = self.app_name + u'.pem'
         self.public_key_name = self.app_name + u'.pub'
         data_dir = obj.get(u'DATA_DIR', os.getcwd())
-        self.db = Storage(data_dir)
+        self.db = db
         self.config_dir = os.path.join(data_dir, u'.pyiupdater')
-        self.keysdb = KeyDB(self.config_dir)
+        self.keysdb = KeyDB(db)
         # ToDo: Remove in v1.0 No longer using keys dir
         self.keys_dir = os.path.join(self.config_dir, u'keys')
         # End ToDo

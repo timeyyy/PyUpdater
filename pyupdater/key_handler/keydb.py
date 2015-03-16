@@ -14,11 +14,9 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 import logging
-import os
 import time
 
 from pyupdater import settings
-from pyupdater.storage import Storage
 
 log = logging.getLogger(__name__)
 
@@ -39,10 +37,8 @@ class KeyDB(object):
                 False: Do not load db on initialization
     """
 
-    def __init__(self, data_dir, load=False):
-        self.data_dir = data_dir
-        self.key_file = os.path.join(self.data_dir, 'key.db')
-        self.db = Storage(self.data_dir)
+    def __init__(self, db, load=False):
+        self.db = db
         self.data = None
         if load is True:
             self.load()

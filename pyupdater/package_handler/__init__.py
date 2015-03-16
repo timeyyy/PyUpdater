@@ -28,7 +28,6 @@ except ImportError:  # pragma: no cover
 from pyupdater import settings
 from pyupdater.exceptions import PackageHandlerError
 from pyupdater.package_handler.package import Package, Patch
-from pyupdater.storage import Storage
 from pyupdater.utils import (EasyAccessDict,
                              get_package_hashes as gph,
                              lazy_import,
@@ -55,12 +54,12 @@ class PackageHandler(object):
 
     data_dir = None
 
-    def __init__(self, app=None):
+    def __init__(self, app=None, db=None):
         self.config_loaded = False
-        if app:
-            self.init_app(app)
+        if app is not None:
+            self.init_app(app, db)
 
-    def init_app(self, obj):
+    def init_app(self, obj, db):
         """Sets up client with config values from obj
 
         Args:
@@ -76,7 +75,7 @@ class PackageHandler(object):
             log.info(u'Patch support disabled')
             self.patch_support = False
         data_dir = obj.get(u'DATA_DIR', os.getcwd())
-        self.db = Storage(data_dir)
+        self.db = db
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
         self.files_dir = os.path.join(self.data_dir, u'files')
         self.deploy_dir = os.path.join(self.data_dir, u'deploy')

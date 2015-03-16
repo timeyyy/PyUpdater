@@ -2,6 +2,8 @@ import os
 import shutil
 import tempfile
 
+from pyupdater.storage import Storage
+
 import pytest
 
 
@@ -14,3 +16,9 @@ def cleandir(request):
         shutil.rmtree(newpath, ignore_errors=True)
     request.addfinalizer(fin)
     os.chdir(newpath)
+
+
+@pytest.fixture
+def db():
+    db = Storage()
+    return db
