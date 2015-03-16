@@ -4,6 +4,26 @@ v0.20.0 - Beta
 ~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
 *** Renamed to PyUpdater ***
+* Added
+
+* Updated
+
+  - PyUpdater
+
+    - Using json to store config data
+    - Header performance improvements - upstream
+
+* Fixed
+
+  - PyUpdater
+
+    - session fixation attacks and potentially cookie stealing - upstream
+
+* Removed
+
+  - PyUpdater
+
+    - RC4 from default cipher list - upstream
 
 
 

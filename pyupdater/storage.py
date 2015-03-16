@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+import json
 import logging
 import os
-import shelve
+import pickle
 
 from pyupdater import settings
 
@@ -40,8 +41,10 @@ class Storage(object):
             log.info('Creating config dir')
             os.makedirs(config_dir)
         self.filename = os.path.join(config_dir, settings.CONFIG_FILE_USER)
+        if not os.path.exists(self.filename):
+            with open(self.filename, u'w') as f:
+                f.write('{}')
         log.debug('Config DB: {}'.format(self.filename))
-        log.debug('Config db path: {}'.format(self.filename))
 
     def save(self, key, value):
         """Saves key & value to database
@@ -57,9 +60,14 @@ class Storage(object):
             log.debug('Key Name: {}'.format(key))
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
-        db = shelve.open(self.filename)
-        db[key] = value
-        db.close()
+
+        with open(self.filename, u'r') as f:
+            db = json.loads(f.read())
+
+        db[key] = pickle.dumps(value, 2)
+
+        with open(self.filename, u'w') as f:
+            f.write(json.dumps(db, indent=2, sort_keys=True))
 
     def load(self, key):
         """Loads value for given key
@@ -77,7 +85,11 @@ class Storage(object):
             log.debug('Key Name: {}'.format(key))
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
-        db = shelve.open(self.filename)
+
+        with open(self.filename, u'r') as f:
+            db = json.loads(f.read())
+
         value = db.get(key)
-        db.close()
+        if value is not None:
+            value = pickle.loads(value)
         return value
