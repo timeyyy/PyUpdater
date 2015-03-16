@@ -322,19 +322,25 @@ class PackageHandler(object):
         if patches is not None and len(patches) >= 1:
             log.info(u'Adding patches to package list')
             for p in patches:
+                # Not adding patch that are not complete
                 if hasattr(p, u'ready') is False:
                     continue
+                # Not adding patch that are not complete
                 if hasattr(p, u'ready') and p.ready is False:
                     continue
                 for pm in package_manifest:
+                    #
                     if p.dst_filename == pm.filename:
                         pm.patch_info[u'patch_name'] = \
                             os.path.basename(p.patch_name)
+                        # Don't try to get hash on a ghost file
                         if not os.path.exists(p.patch_name):
                             p_name = ''
                         else:
                             p_name = gph(p.patch_name)
                         pm.patch_info[u'patch_hash'] = p_name
+                        # No need to keep searching
+                        # We have the info we need for this patch
                         break
                     else:
                         log.debug('No patch match found')
@@ -351,7 +357,7 @@ class PackageHandler(object):
             patch_name = p.patch_info.get(u'patch_name')
             patch_hash = p.patch_info.get(u'patch_hash')
 
-            # Converting info to version file format
+            # Converting info to format compatible for version file
             info = {u'file_hash': p.file_hash,
                     u'filename': p.filename}
             if patch_name and patch_hash:

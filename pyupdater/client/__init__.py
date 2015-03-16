@@ -91,9 +91,9 @@ def six():
 
 log = logging.getLogger(__name__)
 
-if os.path.exists(os.path.join(jms_utils.paths.app_cwd, u'pyiu.log')):
+if os.path.exists(os.path.join(jms_utils.paths.app_cwd, u'pyu.log')):
     ch = logging.FileHandler(os.path.join(jms_utils.paths.app_cwd,
-                             u'pyiu.log'))
+                             u'pyu.log'))
     ch.setLevel(logging.DEBUG)
     ch.setFormatter(jms_utils.logger.log_format_string())
     log.addHandler(ch)

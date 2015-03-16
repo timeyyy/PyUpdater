@@ -1,9 +1,8 @@
 - Framework
 
-  - PyiUpdater
+  - PyUpdater
 
     - More logging
-    - move data.json, keys.db & version-meta.db to pyiuconfig.db
 
   - Package Handler
 
@@ -15,7 +14,3 @@
     - Cli needs coverage
     - Add more tests!
     - Coverage is lacking
-
-  - Client
-
-    - Check manifest download for duplicate downloading

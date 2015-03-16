@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-import json
 import logging
 import os
 import time
@@ -142,26 +141,10 @@ class KeyDB(object):
 
     def load(self):
         u"Loads data from key.db"
-        # ToDo: Remove in v1.0
-        if os.path.exists(self.key_file):  # pragma: no cover
-            log.info('Beginning key.db migration')
-            try:
-                with open(self.key_file, u'r') as f:
-                    self.data = json.loads(f.read())
-                log.debug(u'Loaded key.db')
-                self.save()
-                log.info(u'key.db migration successful')
-                os.remove(self.key_file)
-                log.info(u'Removed {}'.format(self.key_file))
-            except Exception as err:
-                log.error(u'Failed to load key.db')
-                log.debug(str(err), exc_info=True)
-                log.error(u'Migration failed')
-        else:
-            self.data = self.db.load(settings.CONFIG_DB_KEY_KEYS)
-            if self.data is None:
-                log.info('Key.db file not found creating new')
-                self.data = dict()
+        self.data = self.db.load(settings.CONFIG_DB_KEY_KEYS)
+        if self.data is None:
+            log.info('Key.db file not found creating new')
+            self.data = dict()
 
     def save(self):
         u"Saves data to key.db"

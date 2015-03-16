@@ -41,9 +41,6 @@ class Storage(object):
             log.info('Creating config dir')
             os.makedirs(config_dir)
         self.filename = os.path.join(config_dir, settings.CONFIG_FILE_USER)
-        if not os.path.exists(self.filename):
-            with open(self.filename, u'w') as f:
-                f.write('{}')
         log.debug('Config DB: {}'.format(self.filename))
 
     def save(self, key, value):
@@ -60,11 +57,14 @@ class Storage(object):
             log.debug('Key Name: {}'.format(key))
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
+        if not os.path.exists(self.filename):
+            with open(self.filename, u'w') as f:
+                f.write('{}')
 
         with open(self.filename, u'r') as f:
             db = json.loads(f.read())
 
-        db[key] = pickle.dumps(value, 2)
+        db[key] = pickle.dumps(value)
 
         with open(self.filename, u'w') as f:
             f.write(json.dumps(db, indent=2, sort_keys=True))
@@ -85,6 +85,10 @@ class Storage(object):
             log.debug('Key Name: {}'.format(key))
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
+
+        if not os.path.exists(self.filename):
+            with open(self.filename, u'w') as f:
+                f.write('{}')
 
         with open(self.filename, u'r') as f:
             db = json.loads(f.read())

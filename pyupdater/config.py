@@ -31,10 +31,6 @@ class Loader(object):
         self.cwd = os.getcwd()
         self.config_dir = os.path.join(self.cwd, settings.CONFIG_DATA_FOLDER)
         self.db = Storage(self.cwd)
-        # ToDo: Remove v1.0
-        self.old_config_file = os.path.join(self.config_dir,
-                                            settings.OLD_CONFIG_FILE_USER)
-        # End ToDo:
         self.password = os.environ.get(settings.USER_PASS_ENV)
         self.config_key = settings.CONFIG_DB_KEY_APP_CONFIG
 
@@ -43,15 +39,8 @@ class Loader(object):
 
             Returns (obj): Config object
         """
-        # ToDo: Remove v1.0
-        if os.path.exists(self.old_config_file):
-            config_data = self._load_config()
-            self.save_config(config_data)
-            os.remove(self.old_config_file)
-        else:
-            # End ToDo:
-            config_data = self.db.load(self.config_key)
-            config_data.DATA_DIR = os.getcwd()
+        config_data = self.db.load(self.config_key)
+        config_data.DATA_DIR = os.getcwd()
         return config_data
 
     def save_config(self, obj):
@@ -66,25 +55,6 @@ class Loader(object):
         log.info('Config saved')
         self.write_config_py(obj)
         log.info('Wrote client config')
-
-    # ToDo: Remove v1.0
-    def _load_config(self):
-        """Load config file from file system
-
-        .. deprecated:: 0.16
-        Use :func:`load_config` instead.
-        """
-        try:
-            log.info(u'Loading old config')
-            with open(self.old_config_file, u'r') as f:
-                config_data = pickle.loads(f.read())
-                log.info(u'Loaded old config')
-        except Exception as err:
-            log.error(u'Failed to load old config')
-            log.debug(str(err), exc_info=True)
-            log.info(u'Loading setup config')
-            config_data = SetupConfig()
-        return config_data
 
     def write_config_py(self, obj):
         """Writes client config to client_config.py

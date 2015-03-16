@@ -32,6 +32,12 @@ class Core(object):
         if config is not None:
             self.update_config(config)
 
+    def __enter__(*args, **kwargs):
+        pass
+
+    def __exit__(*args, **kwargs):
+        pass
+
     def update_config(self, config):
         """Updates internal config
 

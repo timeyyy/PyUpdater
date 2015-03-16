@@ -4,6 +4,7 @@ v0.20.0 - Beta
 ~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
 *** Renamed to PyUpdater ***
+
 * Added
 
 * Updated

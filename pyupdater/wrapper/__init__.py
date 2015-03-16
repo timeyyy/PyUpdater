@@ -45,8 +45,8 @@ from pyupdater.wrapper.options import get_parser
 
 CWD = os.getcwd()
 log = logging.getLogger()
-if os.path.exists(os.path.join(CWD, u'pyiu.log')):  # pragma: no cover
-    fh = logging.FileHandler(os.path.join(CWD, u'pyiu.log'))
+if os.path.exists(os.path.join(CWD, u'pyu.log')):  # pragma: no cover
+    fh = logging.FileHandler(os.path.join(CWD, u'pyu.log'))
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(log_formatter())
     log.addHandler(fh)

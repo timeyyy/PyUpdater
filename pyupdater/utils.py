@@ -589,9 +589,6 @@ class bsdiff4_py(object):
 class EasyAccessDict(object):
 
     def __init__(self, dict_=None, sep=u'*'):
-        self.load(dict_, sep)
-
-    def load(self, dict_, sep=u'*'):
         self.sep = sep
         if not isinstance(dict_, dict):
             log.debug(u'Did not pass dict')
