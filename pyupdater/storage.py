@@ -70,6 +70,8 @@ class Storage(object):
         self.count += 1
 
     def _sync_db(self):
+        if self.db is None:
+            self.load_db()
         if os.path.exists(self.config_dir):
             log.debug('Syncing db to filesystem')
             with open(self.filename, u'w') as f:

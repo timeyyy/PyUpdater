@@ -102,7 +102,7 @@ def init(args):  # pragma: no cover
                           settings.CONFIG_FILE_USER)):
         config = initial_setup(SetupConfig())
         log.info(u'Creating pyu-data dir...')
-        pyiu = PyiUpdater(config)
+        pyiu = PyiUpdater(config, db)
         pyiu.setup()
         log.info(u'Making signing keys...')
         pyiu.make_keys(count)
@@ -116,7 +116,7 @@ def init(args):  # pragma: no cover
 def keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
-    pyiu = PyiUpdater(config)
+    pyiu = PyiUpdater(config, db)
     if args.revoke is not None:
         count = args.revoke
         pyiu.revoke_key(count)
@@ -163,7 +163,7 @@ def _log(args):  # pragma: no cover
 
 def pkg(args):  # pragma: no cover
     check_repo()
-    pyiu = PyiUpdater(loader.load_config())
+    pyiu = PyiUpdater(loader.load_config(), db)
     if args.process is False and args.sign is False:
         sys.exit(u'You must specify a command')
 
@@ -212,7 +212,7 @@ def upload(args):  # pragma: no cover
         log.error('Must provide service name')
         sys.exit(1)
 
-    pyiu = PyiUpdater(loader.load_config())
+    pyiu = PyiUpdater(loader.load_config(), db)
 
     try:
         pyiu.set_uploader(upload_service)
@@ -255,6 +255,7 @@ def _real_main(args):  # pragma: no cover
         builder.build()
     elif cmd == u'clean':
         clean(args)
+        return True
     elif cmd == u'init':
         init(args)
     elif cmd == u'keys':
@@ -281,19 +282,21 @@ def _real_main(args):  # pragma: no cover
 
 
 def main(args=None):  # pragma: no cover
+    exit = 0
+    clean = None
     try:
-        _real_main(args)
-        exit = 0
+        clean = _real_main(args)
     except KeyboardInterrupt:
         print(u'\n')
         msg = u'Exited by user'
         log.warning(msg)
         exit = 1
     except Exception as err:
+        exit = 1
         log.debug(str(err), exc_info=True)
         log.error(str(err))
-
-    db._sync_db()
+    if clean is None:
+        db._sync_db()
     sys.exit(exit)
 
 if __name__ == u'__main__':  # pragma: no cover

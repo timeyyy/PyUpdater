@@ -27,7 +27,6 @@ class Loader(object):
 
     def __init__(self, db):
         self.cwd = os.getcwd()
-        self.config_dir = os.path.join(self.cwd, settings.CONFIG_DATA_FOLDER)
         self.db = db
         self.password = os.environ.get(settings.USER_PASS_ENV)
         self.config_key = settings.CONFIG_DB_KEY_APP_CONFIG

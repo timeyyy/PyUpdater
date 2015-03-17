@@ -12,6 +12,7 @@ v0.20.0 - Beta
   - PyUpdater
 
     - Using json to store config data
+    - Less IO during execution
     - Header performance improvements - upstream
 
 * Fixed

@@ -50,6 +50,8 @@ class PackageHandler(object):
     Kwargs:
 
         app (instance): Config object
+
+        db (dict): Framework metadata
     """
 
     data_dir = None
