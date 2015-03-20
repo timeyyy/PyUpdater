@@ -102,7 +102,7 @@ class PatcherError(STDError):
 class PyUpdaterError(STDError):
     """Raised for Framework exceptions"""
     def __init__(self, *args, **kwargs):
-        super(PyiUpdaterError, self).__init__(*args, **kwargs)
+        super(PyUpdaterError, self).__init__(*args, **kwargs)
 
 
 class UpdaterError(STDError):

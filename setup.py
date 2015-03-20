@@ -66,7 +66,7 @@ cmd_class.update({u'test': PyTest,
                   u'ctest': PyTestCover,
                   u'mytest': PyTestMyCover})
 
-extra_s3 = 'PyUpdater-s3-Plugin == 2.0.3'
+extra_s3 = 'PyUpdater-s3-Plugin == 2.0.4'
 extra_scp = 'PyUpdater-scp-Plugin == 2.0.2'
 extra_patch = 'bsdiff4 == 1.1.4'
 

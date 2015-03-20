@@ -221,7 +221,7 @@ def upload(args):  # pragma: no cover
         sys.exit(1)
     except UploaderPluginError as err:
         log.debug(str(err))
-        mgr = stevedore.ExtensionManager(u'pyiupdater.plugins.uploaders')
+        mgr = stevedore.ExtensionManager(settings.UPLOAD_PLUGIN_NAMESPACE)
         plugin_names = mgr.names()
         log.debug(u'Plugin names: {}'.format(plugin_names))
         if len(plugin_names) == 0:
