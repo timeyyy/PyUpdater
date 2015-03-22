@@ -33,7 +33,9 @@ class TConfig(object):
 
     # Public Key used by your app to verify update data
     # REQUIRED
-    PUBLIC_KEYS = ['yuUGTdPXaQfcv8enzVZrJKrAgyxrU+Bs1vQGlZziGVs']
+    PUBLIC_KEYS = ['iBFNlFxQZ17n3SakBmF2fI6dZhrbkdf5GtP9m/wVrTQ',
+                   'zj1LPcRgx5I3GcxUHlLtltMAdo8v0P1rCMMZEqZeB9U',
+                   'QIRqZkFmavnQz4U55kOMIEJQqEx3cWCek0zCTSATb14']
 
     # Online repository where you host your packages
     # and version file

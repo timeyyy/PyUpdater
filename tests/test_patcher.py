@@ -75,4 +75,5 @@ class TestPatcher(object):
         data = update_data.copy()
         data[u'update_folder'] = setup
         p = Patcher(**data)
-        assert p.start() is True
+        status = p.start()
+        assert status is True
