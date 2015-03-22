@@ -249,6 +249,8 @@ class Client(object):
         if latest is None:
             return None
         latest = Version(latest)
+        log.debug('Current vesion: {}'.format(str(version)))
+        log.debug('Latest version: {}'.format(str(latest)))
         if latest <= version:
             log.info(u'{} already updated to the latest version'.format(name))
             return None
@@ -297,14 +299,15 @@ class Client(object):
     def _download_manifest(self):
         log.info('Downloading online version file')
         try:
-            # On Mac ssl cert verficiation fails random
-            # Will be relying on signature verification
-            # for secutiry
             fd = FileDownloader(self.version_file, self.update_urls,
                                 verify=self.verify)
             data = fd.download_verify_return()
+            try:
+                decompressed_data = gzip_decompress(data)
+            except IOError:
+                log.error('Failed to decompress gzip file')
+                raise
             log.info('Version file download successful')
-            decompressed_data = gzip_decompress(data)
             self._write_manifest_2_filesystem(decompressed_data)
             return decompressed_data
         except Exception as err:

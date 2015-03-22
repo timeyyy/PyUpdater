@@ -64,7 +64,7 @@ class FileDownloader(object):
         else:
             self.urls = urls
         self.hexdigest = hexdigest
-        self.verify = verify
+        self.verify = False
         self.b_size = 4096 * 4
         self.file_binary_data = None
         self.my_file = BytesIO()
@@ -90,12 +90,12 @@ class FileDownloader(object):
         """
         self._download_to_memory()
         check = self._check_hash()
-        if check:
-            log.debug(u'File hash verified')
+        if check is None:
+            return True
+        if check is True:
             self._write_to_file()
             return True
         else:
-            log.debug(u'Cannot verify file hash')
             del self.file_binary_data
             del self.my_file
             return False
@@ -115,11 +115,11 @@ class FileDownloader(object):
         """
         self._download_to_memory()
         check = self._check_hash()
-        if check:
-            log.debug(u'File hash verified')
+        if check is None:
+            return self.file_binary_data
+        if check is True:
             return self.file_binary_data
         else:
-            log.debug(u'Cannot verify file hash')
             return None
 
     @staticmethod
@@ -208,7 +208,7 @@ class FileDownloader(object):
             else:
                 break
 
-            # Try request again with with ' ' in url replaced with +
+            # Try request again with spaces in url replaced with +
             if data is None:
                 # Let's try one more time with the fixed url
                 try:
@@ -235,18 +235,22 @@ class FileDownloader(object):
         if self.hexdigest is None:
             # No hash provided to check.
             # So just return any data recieved
-            return True
+            log.debug(u'No hash to verify')
+            return None
         if self.file_binary_data is None:
             # Exit quickly if we got nohting to compare
             # Also I'm sure we'll get an exception trying to
             # pass None to get hash :)
+            log.debug(u'Cannot verify file hash - No Data')
             return False
         log.debug(u'Checking file hash')
         log.debug(u'Update hash: {}'.format(self.hexdigest))
 
         file_hash = get_hash(self.file_binary_data)
         if file_hash == self.hexdigest:
+            log.debug(u'File hash verified')
             return True
+        log.debug(u'Cannot verify file hash')
         return False
 
     def _get_content_length(self, data):
