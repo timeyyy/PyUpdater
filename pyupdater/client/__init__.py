@@ -251,6 +251,7 @@ class Client(object):
         latest = Version(latest)
         log.debug('Current vesion: {}'.format(str(version)))
         log.debug('Latest version: {}'.format(str(latest)))
+        log.debug('Update Truth: {}'.format(latest >= version))
         if latest <= version:
             log.info(u'{} already updated to the latest version'.format(name))
             return None

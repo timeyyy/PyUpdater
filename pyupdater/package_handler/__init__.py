@@ -71,7 +71,7 @@ class PackageHandler(object):
         """
         self.patches = obj.get(u'UPDATE_PATCHES', True)
         if self.patches:
-            log.info(u'Patch support enabled')
+            log.debug(u'Patch support enabled')
             self.patch_support = True
         else:
             log.info(u'Patch support disabled')

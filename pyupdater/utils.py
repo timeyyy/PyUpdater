@@ -655,7 +655,11 @@ class Version(object):
         elif release == u'a':
             self.release = 0
         else:
-            self.release = release
+            try:
+                self.release = int(release)
+            except ValueError:
+                log.debug('Cannot parse release. Setting as stable')
+                self.release = 2
 
         release_version = version_data.get('releaseversion')
         if release_version is None:
