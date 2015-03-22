@@ -75,7 +75,7 @@ class Patcher(object):
         self.json_data = kwargs.get(u'json_data')
         self.star_access_update_data = EasyAccessDict(self.json_data)
         self.current_version = Version(kwargs.get(u'current_version'))
-        self.highest_version = Version(kwargs.get(u'highest_version'))
+        self.highest_version = kwargs.get(u'highest_version')
         self.update_folder = kwargs.get(u'update_folder')
         self.update_urls = kwargs.get(u'update_urls', [])
         self.verify = kwargs.get(u'verify', True)
@@ -229,6 +229,7 @@ class Patcher(object):
         for i in self.patch_binary_data:
             try:
                 self.new_binary = bsdiff4.patch(self.new_binary, i)
+                log.debug(u'Applied patch successfully')
             except Exception as err:
                 log.debug(err, exc_info=True)
                 log.error(err)

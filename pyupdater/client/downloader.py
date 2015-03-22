@@ -64,7 +64,7 @@ class FileDownloader(object):
         else:
             self.urls = urls
         self.hexdigest = hexdigest
-        self.verify = False
+        self.verify = verify
         self.b_size = 4096 * 4
         self.file_binary_data = None
         self.my_file = BytesIO()

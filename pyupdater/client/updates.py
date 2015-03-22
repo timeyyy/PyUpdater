@@ -106,7 +106,7 @@ class LibUpdate(object):
         self.progress_hooks = data.get(u'progress_hooks')
         self.update_folder = os.path.join(self.data_dir,
                                           settings.UPDATE_FOLDER)
-        self.verify = data.get(u'verify')
+        self.verify = data.get(u'verify', True)
         self.current_app_dir = os.path.dirname(sys.argv[0])
 
     def is_downloaded(self):
