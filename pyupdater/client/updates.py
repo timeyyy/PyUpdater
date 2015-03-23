@@ -182,14 +182,6 @@ class LibUpdate(object):
             return False
         return True
 
-    def install(self):
-        # ToDo: Remove in v1.0
-        """DEPRECATED! Proxy method for :meth:`extract`.
-        """
-        warnings.warn('Will be removed in v1.0, use the extract method',
-                      DeprecationWarning)
-        self.extract()
-
     def _extract_update(self):
         with jms_utils.paths.ChDir(self.update_folder):
             platform_name = self.name
@@ -399,14 +391,6 @@ class AppUpdate(LibUpdate):
         except ClientError as err:
             log.error(str(err))
             log.debug(str(err), exc_info=True)
-
-    def install_restart(self):
-        # ToDo: Remove in v1.0
-        """DEPRECATED!  Proxy method for :meth:`extract_restart`.
-        """
-        warnings.warn('Will be removed in v1.0, use extract_restart',
-                      DeprecationWarning)
-        self.extract_restart()
 
     def restart(self):
         """Will overwrite old binary with updated binary and

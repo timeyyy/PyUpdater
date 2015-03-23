@@ -146,6 +146,7 @@ class Client(object):
         update_url = config.get(u'UPDATE_URL')
         update_urls = config.get(u'UPDATE_URLS')
 
+        # Here we combine all urls & add trailing / if one isn't present
         self.update_urls = self._sanatize_update_url(update_url, update_urls)
         self.app_name = config.get(u'APP_NAME', u'PyiUpdater')
         self.company_name = config.get(u'COMPANY_NAME', u'Digital Sapphire')
@@ -153,11 +154,6 @@ class Client(object):
             self.data_dir = obj.DATA_DIR
             self.platform = 'mac'
         else:
-            # ToDo: Remove v0.19
-            old_dir = appdirs.user_cache_dir(self.app_name, self.company_name)
-            if os.path.exists(old_dir):
-                shutil.rmtree(old_dir, ignore_errors=True)
-            # End ToDo
             self.data_dir = appdirs.user_data_dir(self.app_name,
                                                   self.company_name,
                                                   roaming=True)
@@ -167,16 +163,10 @@ class Client(object):
         self.public_keys = convert_to_list(config.get(u'PUBLIC_KEYS'),
                                            default=list())
         if len(self.public_keys) == 0:
-            log.warning(u'May have pass an incorrect data type to PUBLIC_KEYS')
-        # ToDo: Remove in v1.0
-        if config.get(u'PUBLIC_KEY') is not None:
-            pub_key = convert_to_list(config.get(u'PUBLIC_KEY'),
-                                      default=list())
-            if len(pub_key) == 0:
-                log.warning(u'May have pass an incorrect data type '
-                            u'to PUBLIC_KEY')
-            self.public_keys += pub_key
-        # Sometimes a little bit goes a long way
+            log.warning(u'May have passed an incorrect'
+                        u'data type to PUBLIC_KEYS')
+
+        # Ensuring only one occurrence of a public key is present
         self.public_keys = list(set(self.public_keys))
         self.verify = config.get(u'VERIFY_SERVER_CERT', True)
         self.version_file = settings.VERSION_FILE
@@ -270,7 +260,11 @@ class Client(object):
             u'verify': self.verify,
             u'progress_hooks': self.progress_hooks,
             }
+        # Return update object with which handles downloading,
+        # extracting updates
         if app is True:
+            # AppUpdate objects also has methods to restart
+            # the app with the new version
             return AppUpdate(data)
         else:
             return LibUpdate(data)
@@ -278,6 +272,8 @@ class Client(object):
     def add_call_back(self, cb):
         self.progress_hooks.append(cb)
 
+    # Here we attempt to read the manifest from the filesystem
+    # in case of no Internet connection
     def _get_manifest_filesystem(self):
         with jms_utils.paths.ChDir(self.data_dir):
             if not os.path.exists(self.version_file):
@@ -297,6 +293,7 @@ class Client(object):
 
                 return gzip_decompress(data)
 
+    # Downloading the manifest. If successful also writes it to file-system
     def _download_manifest(self):
         log.info('Downloading online version file')
         try:
@@ -333,6 +330,9 @@ class Client(object):
         try:
             log.debug('Data type: {}'.format(type(data)))
             self.json_data = json.loads(data)
+            # Ready to check for updates.
+            # If json fails to load self.ready will stay false
+            # which will cause _update_check to exit early
             self.ready = True
         except ValueError as err:
             log.debug(str(err), exc_info=True)
@@ -344,6 +344,8 @@ class Client(object):
             log.error(str(err))
             log.debug(str(err), exc_info=True)
 
+        # Setting to default dict to not raise any errors
+        # in _verify_sig
         if self.json_data is None:
             self.json_data = {}
 
@@ -356,17 +358,16 @@ class Client(object):
         # Checking to see if there is a sig in the version file.
         if u'sigs' in data.keys():
             signatures = data[u'sigs']
-            # ToDo: Remove in v1.0: Fix for migragtion & tests
-            if u'sig' in data.keys():
-                log.debug(u'Deleting sig from update data')
-                del data[u'sig']
             log.debug(u'Deleting sigs from update data')
             del data[u'sigs']
 
-            # After removing the sig we turn the json data back
+            # After removing the signatures we turn the json data back
             # into a string to use as data to verify the sig.
             update_data = json.dumps(data, sort_keys=True)
 
+            # Attempting to verify signature of version file by
+            # looping through public keys and testing. If found
+            # will break out of the loop
             for pk in self.public_keys:
                 log.debug(u'Public Key: {}'.format(pk))
                 for s in signatures:
@@ -393,8 +394,6 @@ class Client(object):
         else:
             log.warning(u'Version file not verified, no signature found')
 
-        if data is None:
-            data = {}
         return data
 
     def _setup(self):
@@ -410,18 +409,7 @@ class Client(object):
 
     def _sanatize_update_url(self, url, urls):
         _urls = []
-        if isinstance(url, list):
-            log.warning(u'UPDATE_URL value should only be string.')
-            _urls += url
-        elif isinstance(url, tuple):
-            log.warning(u'UPDATE_URL value should only be string.')
-            _urls += list(url)
-        elif isinstance(url, six.string_types):
-            _urls.append(url)
-        else:
-            log.warning(u'UPDATE_URL should be type "{}" got '
-                        u'"{}"'.format(type(''), type(url)))
-
+        # Making sure final output is a list
         if isinstance(urls, list):
             _urls += urls
         elif isinstance(url, tuple):
@@ -442,5 +430,5 @@ class Client(object):
                 sanatized_urls.append(u + u'/')
             else:
                 sanatized_urls.append(u)
-        # Just removing duplicates
+        # Removing duplicates
         return list(set(sanatized_urls))

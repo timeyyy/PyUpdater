@@ -75,11 +75,6 @@ class Loader(object):
             if hasattr(obj, u'UPDATE_URLS') and obj.UPDATE_URLS is not None:
                 f.write(attr_format.format(u'UPDATE_URLS', obj.UPDATE_URLS))
                 log.debug(u'Wrote UPDATE_URLS to client config')
-            # ToDo: Remove in v1.0
-            if hasattr(obj, u'PUBLIC_KEY') and obj.PUBLIC_KEY is not None:
-                f.write(attr_str_format.format(u'PUBLIC_KEY', obj.PUBLIC_KEY))
-                log.debug(u'Wrote PUBLIC_KEY to client config')
-            # End ToDo
             if hasattr(obj, u'PUBLIC_KEYS') and obj.PUBLIC_KEYS is not None:
                 f.write(attr_format.format(u'PUBLIC_KEYS', obj.PUBLIC_KEYS))
                 log.debug(u'Wrote PUBLIC_KEYS to client config')
@@ -158,9 +153,6 @@ class SetupConfig(object):
     # Company/Your name
     COMPANY_NAME = None
 
-    # ToDo: Remove in v1.0
-    # Deprecated use a list for PUBLIC_KEYS instead
-    PUBLIC_KEY = None
     # Public Keys used by your app to verify update data
     # REQUIRED
     PUBLIC_KEYS = None

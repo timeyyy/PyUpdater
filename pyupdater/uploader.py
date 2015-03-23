@@ -49,11 +49,7 @@ class Uploader(object):
     """
     def __init__(self, app=None):
         if app:
-            self.init_app(app)
-
-    # ToDo: Remove in v1.0
-    def init_app(self, obj):
-        self.init(obj)
+            self.init(app)
 
     def init(self, obj):
         """Sets up client with config values from obj

@@ -96,9 +96,6 @@ class KeyHandler(object):
         self.db = db
         self.config_dir = os.path.join(data_dir, u'.pyiupdater')
         self.keysdb = KeyDB(db)
-        # ToDo: Remove in v1.0 No longer using keys dir
-        self.keys_dir = os.path.join(self.config_dir, u'keys')
-        # End ToDo
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
         self.deploy_dir = os.path.join(self.data_dir, u'deploy')
         self.version_data = os.path.join(self.config_dir,
@@ -162,12 +159,6 @@ class KeyHandler(object):
         # Writes version file back to disk
         self._add_sig()
 
-    # ToDo: Remove in v1.0
-    def get_public_key(self):
-        """Returns (object): Public Key
-        """
-        return self.get_public_keys()[0]
-
     def get_public_keys(self):
         """Returns (object): Public Key
         """
@@ -177,11 +168,6 @@ class KeyHandler(object):
     def get_recent_revoked_key(self):
         self.keysdb.load()
         return self.keysdb.get_revoked_key()
-
-    # ToDo: Remove in v1.0
-    def print_public_key(self):
-        """Prints public key data to console"""
-        self.print_public_keys()
 
     def print_public_keys(self):
         """Prints public key data to console"""
@@ -213,11 +199,6 @@ class KeyHandler(object):
         update_data_str = json.dumps(update_data, sort_keys=True)
 
         signatures = list()
-        signature = None
-
-        # ToDo: Remove in v1.0: Used for migration to v0.14 & above
-        old = False
-        # ToDo: End
         for p in private_keys:
             if six.PY2 is True and isinstance(p, unicode) is True:
                 log.debug('Got type: {}'.format(type(p)))
@@ -226,25 +207,16 @@ class KeyHandler(object):
             privkey = ed25519.SigningKey(p, encoding=self.key_encoding)
             sig = privkey.sign(six.b(update_data_str),
                                encoding=self.key_encoding)
-            # ToDo: Remove in v1.0: Used for migration to v0.14 & above
-            if old is False:
-                signature = sig
-                old = True
-            # ToDo: End
             log.debug('Sig: {}'.format(sig))
             signatures.append(sig)
 
         og_data = json.loads(update_data_str)
         update_data = og_data.copy()
         update_data[u'sigs'] = signatures
-        # ToDo: Remove in v1.0: Used for migration to v0.14 & above
-        old_update_data = og_data.copy()
-        old_update_data[u'sig'] = signature
-        # ToDo: End
         log.info(u'Adding sig to update data')
-        self._write_update_data(og_data, update_data, old_update_data)
+        self._write_update_data(og_data, update_data)
 
-    def _write_update_data(self, data, version, old_version):
+    def _write_update_data(self, data, version):
         # Write version file to disk
         self.db.save(settings.CONFIG_DB_KEY_VERSION_META, data)
         log.debug(u'Saved version meta data')
@@ -252,11 +224,6 @@ class KeyHandler(object):
         with gzip.open(self.version_file, u'wb') as f:
             f.write(json.dumps(version, indent=2, sort_keys=True))
         log.info(u'Created gzipped version manifest in deploy dir')
-        # ToDo: Remove in v1.0
-        with open(self.old_version_file, u'w') as f:
-            f.write(json.dumps(old_version, indent=2, sort_keys=True))
-        log.info(u'Created json version manifest in deploy dir')
-        # ToDo: End
 
     def _load_update_data(self):
         log.debug(u"Loading version data")

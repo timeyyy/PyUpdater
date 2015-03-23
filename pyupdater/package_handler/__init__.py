@@ -151,31 +151,7 @@ class PackageHandler(object):
     def _load_version_file(self):
         # If version file is found its loaded to memory
         # If no version file is found then one is created.
-        json_data = None
-        # ToDo: Remove v1.0
-        if os.path.exists(self.version_data):  # pragma: no cover
-            log.info(u'Migrating version file...')
-            with open(self.version_data, u'r') as f:
-                try:
-                    log.info(u'Loading version file...')
-                    json_data = json.loads(f.read())
-                    log.info(u'Loaded version file')
-                except Exception as err:
-                    log.debug(str(err), exc_info=True)
-
-            if json_data is not None:
-                log.info(u'Checking for valid data in version file...')
-                updates = json_data.get(settings.UPDATES_KEY)
-                if updates is None:
-                    log.error(u'Invalid data in version file...')
-                    json_data[settings.UPDATES_KEY] = {}
-                    log.info(u'Updated version file format')
-            self.db.save(settings.CONFIG_DB_KEY_VERSION_META, json_data)
-            os.remove(self.version_data)
-            log.info(u'Migration complete')
-        else:
-            json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
-
+        json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
         if json_data is None:  # pragma: no cover
             log.error(u'Version file not found')
             json_data = {'updates': {}}
@@ -183,23 +159,7 @@ class PackageHandler(object):
         return json_data
 
     def _load_config(self):
-        config = None
-        # ToDo: Remove in v1.0
-        if os.path.exists(self.config_file):  # pragma: no cover
-            log.info('Migrating config file')
-            try:
-                log.info(u'Loading config file')
-                with open(self.config_file, u'r') as f:
-                    config = json.loads(f.read())
-                    log.info(u'Loaded config file')
-                self.db.save(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
-            except Exception as err:
-                log.error(u'Failed to load config file')
-                log.debug(str(err), exc_info=True)
-            os.remove(self.config_file)
-        else:
-            config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
-
+        config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
         if config is None:  # pragma: no cover
             log.info(u'Creating new config file')
             config = {
