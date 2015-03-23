@@ -98,33 +98,8 @@ class KeyHandler(object):
         self.keysdb = KeyDB(db)
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
         self.deploy_dir = os.path.join(self.data_dir, u'deploy')
-        self.version_data = os.path.join(self.config_dir,
-                                         settings.VERSION_FILE_DB)
-
-        self.old_version_file = os.path.join(self.deploy_dir,
-                                             settings.VERSION_FILE_OLD)
         self.version_file = os.path.join(self.deploy_dir,
                                          settings.VERSION_FILE)
-        self._migrate()
-
-    def _migrate(self):
-        self.keysdb.load()
-        pub = os.path.join(self.keys_dir, self.public_key_name)
-        pri = os.path.join(self.keys_dir, self.private_key_name)
-        if os.path.exists(pub) and os.path.exists(pri):
-            log.info('Migrating keys...')
-            with open(pub, u'r') as f:
-                public = f.read()
-            with open(pri, u'r') as f:
-                private = f.read()
-            self.keysdb.add_key(public, private)
-            if os.path.exists(pub):
-                os.remove(pub)
-            if os.path.exists(pri):
-                os.remove(pri)
-            if os.path.exists(self.keys_dir):
-                shutil.rmtree(self.keys_dir, ignore_errors=True)
-            self.make_keys()
 
     def make_keys(self, count=3):
         """Makes public and private keys for signing and verification

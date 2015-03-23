@@ -14,7 +14,6 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 from __future__ import print_function
-import json
 import logging
 import multiprocessing
 import os
@@ -84,9 +83,6 @@ class PackageHandler(object):
         self.new_dir = os.path.join(self.data_dir, u'new')
         self.config_dir = os.path.join(os.path.dirname(self.data_dir),
                                        settings.CONFIG_DATA_FOLDER)
-        self.config_file = os.path.join(self.config_dir, settings.CONFIG_FILE)
-        self.version_data = os.path.join(self.config_dir,
-                                         settings.VERSION_FILE_DB)
         self.config = None
         self.json_data = None
 

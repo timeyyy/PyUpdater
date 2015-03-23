@@ -16,7 +16,6 @@
 from io import BytesIO
 import logging
 import time
-import sys
 
 from pyupdater.utils import get_hash, lazy_import
 

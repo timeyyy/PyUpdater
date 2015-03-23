@@ -86,8 +86,6 @@ class TestPyiUpdater(object):
         pyi.sign_update()
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               'versions.gz'))
-        assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
-                              'version.json'))
 
     def test_execution_patch(self, pyi, db):
         archive_name = u'myapp-{}-0.1.1.tar.gz'.format(get_system())
@@ -112,7 +110,7 @@ class TestPyiUpdater(object):
             pyi.process_packages()
             pyi.sign_update()
         files = os.listdir(os.path.join(pyu_data_dir, u'deploy'))
-        assert len(files) == 4
+        assert len(files) == 3
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               archive_name))
         assert os.path.exists(os.path.join(pyu_data_dir, u'files',
