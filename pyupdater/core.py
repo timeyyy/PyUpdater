@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+import os
+
 from pyupdater.config import PyiUpdaterConfig
 from pyupdater.key_handler import KeyHandler
 from pyupdater.package_handler import PackageHandler
+from pyupdater.storage import Storage
 from pyupdater.uploader import Uploader
 
 
@@ -26,46 +29,49 @@ class Core(object):
 
             config (obj): config object
     """
-
-    def __init__(self, config=None):
+    def __init__(self, config=None, db=None):
         self.config = PyiUpdaterConfig()
+        # Important to keep this before updating config
         if config is not None:
-            self.update_config(config)
+            self.update_config(config, db)
 
-    def __enter__(*args, **kwargs):
-        pass
-
-    def __exit__(*args, **kwargs):
-        pass
-
-    def update_config(self, config):
-        """Updates internal config
+    def update_config(self, config, db):
+        u"""Updates internal config
 
         Args:
 
             config (obj): config object
         """
-        self.config.update_config(config)
-        self._update(self.config)
+        if not hasattr(config, u'DATA_DIR'):
+            config.DATA_DIR = None
+        if config.DATA_DIR is None:
+            config.DATA_DIR = os.getcwd()
 
-    def _update(self, config):
-        self.kh = KeyHandler(config)
-        self.ph = PackageHandler(config)
+        if db is None:
+            self.db = Storage(config.DATA_DIR)
+        else:
+            self.db = db
+        self.config.update_config(config)
+        self._update(self.config, self.db)
+
+    def _update(self, config, db):
+        self.kh = KeyHandler(config, db)
+        self.ph = PackageHandler(config, db)
         self.up = Uploader(config)
 
     def setup(self):
-        """Sets up root dir with required PyiUpdater folders
+        u"""Sets up root dir with required PyiUpdater folders
         """
         self.ph.setup()
 
     def process_packages(self):
-        """Creates hash for updates & adds information about update to
+        u"""Creates hash for updates & adds information about update to
         version file
         """
         self.ph.process_packages()
 
     def set_uploader(self, requested_uploader):
-        """Sets upload destination
+        u"""Sets upload destination
 
         Args:
 
@@ -74,12 +80,12 @@ class Core(object):
         self.up.set_uploader(requested_uploader)
 
     def upload(self):
-        """Uploads files in deploy folder
+        u"""Uploads files in deploy folder
         """
         self.up.upload()
 
     def make_keys(self, count=3):
-        """Creates signing keys
+        u"""Creates signing keys
         """
         self.kh.make_keys(count)
 
@@ -90,13 +96,13 @@ class Core(object):
         return self.kh.get_recent_revoked_key()
 
     def sign_update(self):
-        "Signs version file with signing key"
+        u"Signs version file with signing key"
         self.kh.sign_update()
 
     def get_public_keys(self):
-        "Returns public key"
+        u"Returns public key"
         return self.kh.get_public_keys()
 
     def print_public_key(self):
-        "Prints public key to console"
+        u"Prints public key to console"
         self.kh.print_public_key()

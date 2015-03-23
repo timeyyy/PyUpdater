@@ -14,7 +14,6 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 from __future__ import print_function
-import json
 import logging
 import multiprocessing
 import os
@@ -28,7 +27,6 @@ except ImportError:  # pragma: no cover
 from pyupdater import settings
 from pyupdater.exceptions import PackageHandlerError
 from pyupdater.package_handler.package import Package, Patch
-from pyupdater.storage import Storage
 from pyupdater.utils import (EasyAccessDict,
                              get_package_hashes as gph,
                              lazy_import,
@@ -51,16 +49,18 @@ class PackageHandler(object):
     Kwargs:
 
         app (instance): Config object
+
+        db (dict): Framework metadata
     """
 
     data_dir = None
 
-    def __init__(self, app=None):
+    def __init__(self, app=None, db=None):
         self.config_loaded = False
-        if app:
-            self.init_app(app)
+        if app is not None:
+            self.init_app(app, db)
 
-    def init_app(self, obj):
+    def init_app(self, obj, db):
         """Sets up client with config values from obj
 
         Args:
@@ -70,22 +70,19 @@ class PackageHandler(object):
         """
         self.patches = obj.get(u'UPDATE_PATCHES', True)
         if self.patches:
-            log.info(u'Patch support enabled')
+            log.debug(u'Patch support enabled')
             self.patch_support = True
         else:
             log.info(u'Patch support disabled')
             self.patch_support = False
         data_dir = obj.get(u'DATA_DIR', os.getcwd())
-        self.db = Storage(data_dir)
+        self.db = db
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
         self.files_dir = os.path.join(self.data_dir, u'files')
         self.deploy_dir = os.path.join(self.data_dir, u'deploy')
         self.new_dir = os.path.join(self.data_dir, u'new')
         self.config_dir = os.path.join(os.path.dirname(self.data_dir),
                                        settings.CONFIG_DATA_FOLDER)
-        self.config_file = os.path.join(self.config_dir, settings.CONFIG_FILE)
-        self.version_data = os.path.join(self.config_dir,
-                                         settings.VERSION_FILE_DB)
         self.config = None
         self.json_data = None
 
@@ -150,31 +147,7 @@ class PackageHandler(object):
     def _load_version_file(self):
         # If version file is found its loaded to memory
         # If no version file is found then one is created.
-        json_data = None
-        # ToDo: Remove v1.0
-        if os.path.exists(self.version_data):  # pragma: no cover
-            log.info(u'Migrating version file...')
-            with open(self.version_data, u'r') as f:
-                try:
-                    log.info(u'Loading version file...')
-                    json_data = json.loads(f.read())
-                    log.info(u'Loaded version file')
-                except Exception as err:
-                    log.debug(str(err), exc_info=True)
-
-            if json_data is not None:
-                log.info(u'Checking for valid data in version file...')
-                updates = json_data.get(settings.UPDATES_KEY)
-                if updates is None:
-                    log.error(u'Invalid data in version file...')
-                    json_data[settings.UPDATES_KEY] = {}
-                    log.info(u'Updated version file format')
-            self.db.save(settings.CONFIG_DB_KEY_VERSION_META, json_data)
-            os.remove(self.version_data)
-            log.info(u'Migration complete')
-        else:
-            json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
-
+        json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
         if json_data is None:  # pragma: no cover
             log.error(u'Version file not found')
             json_data = {'updates': {}}
@@ -182,23 +155,7 @@ class PackageHandler(object):
         return json_data
 
     def _load_config(self):
-        config = None
-        # ToDo: Remove in v1.0
-        if os.path.exists(self.config_file):  # pragma: no cover
-            log.info('Migrating config file')
-            try:
-                log.info(u'Loading config file')
-                with open(self.config_file, u'r') as f:
-                    config = json.loads(f.read())
-                    log.info(u'Loaded config file')
-                self.db.save(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
-            except Exception as err:
-                log.error(u'Failed to load config file')
-                log.debug(str(err), exc_info=True)
-            os.remove(self.config_file)
-        else:
-            config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
-
+        config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
         if config is None:  # pragma: no cover
             log.info(u'Creating new config file')
             config = {

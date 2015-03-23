@@ -19,16 +19,10 @@ APP_AUTHOR = u'Digital Sapphire'
 # Used to hold PyUpdater config info for repo
 CONFIG_DATA_FOLDER = u'.pyupdater'
 
-# ToDo: Remove v1.0
-# PyUpdater config file
-CONFIG_FILE = u'data.json'
-
 DEBUG_ARCHIVE = u'pyupdater-debug.tar.bz2'
 
 # User config file
 CONFIG_FILE_USER = u'pyuconfig.db'
-# ToDo: Remove v1.0
-OLD_CONFIG_FILE_USER = U'config.data'
 
 CONFIG_DB_KEY_APP_CONFIG = u'app_config'
 CONFIG_DB_KEY_KEYS = u'signing_keys'
@@ -63,7 +57,3 @@ UPDATE_FOLDER = u'update'
 # Name of version file place in online repo
 VERSION_FILE = u'versions.gz'
 VERSION_FILE_OLD = u'version.json'
-
-# ToDo: Remove v1.0
-# Name of version file for internal user
-VERSION_FILE_DB = u'version-meta.db'

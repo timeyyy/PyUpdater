@@ -22,6 +22,7 @@ import tarfile
 from appdirs import user_log_dir
 from jms_utils.logger import log_formatter
 from jms_utils.paths import ChDir
+from jms_utils.terminal import ask_yes_no
 import stevedore
 
 
@@ -29,6 +30,7 @@ from pyupdater import PyiUpdater, __version__
 from pyupdater import settings
 from pyupdater.config import Loader, SetupConfig
 from pyupdater.exceptions import UploaderError, UploaderPluginError
+from pyupdater.storage import Storage
 from pyupdater.utils import (check_repo,
                              initial_setup,
                              pretty_time,
@@ -58,28 +60,38 @@ sh.setFormatter(fmt)
 sh.setLevel(logging.INFO)
 log.addHandler(sh)
 
-
-loader = Loader()
+db = Storage()
+loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
 
 
 def clean(args):  # pragma: no cover
     if args.yes is True:
-        cleaned = False
-        if os.path.exists(settings.CONFIG_DATA_FOLDER):
-            cleaned = True
-            shutil.rmtree(settings.CONFIG_DATA_FOLDER, ignore_errors=True)
-            log.info(u'Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
-        if os.path.exists(settings.USER_DATA_FOLDER):
-            cleaned = True
-            shutil.rmtree(settings.USER_DATA_FOLDER, ignore_errors=True)
-            log.info(u'Removed {} folder'.format(settings.USER_DATA_FOLDER))
-        if cleaned is True:
-            log.info(u'Clean complete...')
-        else:
-            log.info(u'Nothing to clean...')
+        _clean()
+
     else:
-        log.info(u'Must pass -y to confirm')
+        answer = ask_yes_no(u'Are you sure you want to remove '
+                            u'pyupdater data?', default=u'no')
+        if answer is True:
+            _clean()
+        else:
+            log.info(u'Clean canceled.')
+
+
+def _clean():
+    cleaned = False
+    if os.path.exists(settings.CONFIG_DATA_FOLDER):
+        cleaned = True
+        shutil.rmtree(settings.CONFIG_DATA_FOLDER, ignore_errors=True)
+        log.info(u'Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
+    if os.path.exists(settings.USER_DATA_FOLDER):
+        cleaned = True
+        shutil.rmtree(settings.USER_DATA_FOLDER, ignore_errors=True)
+        log.info(u'Removed {} folder'.format(settings.USER_DATA_FOLDER))
+    if cleaned is True:
+        log.info(u'Clean complete...')
+    else:
+        log.info(u'Nothing to clean...')
 
 
 def init(args):  # pragma: no cover
@@ -90,7 +102,7 @@ def init(args):  # pragma: no cover
                           settings.CONFIG_FILE_USER)):
         config = initial_setup(SetupConfig())
         log.info(u'Creating pyu-data dir...')
-        pyiu = PyiUpdater(config)
+        pyiu = PyiUpdater(config, db)
         pyiu.setup()
         log.info(u'Making signing keys...')
         pyiu.make_keys(count)
@@ -104,7 +116,7 @@ def init(args):  # pragma: no cover
 def keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
-    pyiu = PyiUpdater(config)
+    pyiu = PyiUpdater(config, db)
     if args.revoke is not None:
         count = args.revoke
         pyiu.revoke_key(count)
@@ -151,7 +163,7 @@ def _log(args):  # pragma: no cover
 
 def pkg(args):  # pragma: no cover
     check_repo()
-    pyiu = PyiUpdater(loader.load_config())
+    pyiu = PyiUpdater(loader.load_config(), db)
     if args.process is False and args.sign is False:
         sys.exit(u'You must specify a command')
 
@@ -200,7 +212,7 @@ def upload(args):  # pragma: no cover
         log.error('Must provide service name')
         sys.exit(1)
 
-    pyiu = PyiUpdater(loader.load_config())
+    pyiu = PyiUpdater(loader.load_config(), db)
 
     try:
         pyiu.set_uploader(upload_service)
@@ -209,7 +221,7 @@ def upload(args):  # pragma: no cover
         sys.exit(1)
     except UploaderPluginError as err:
         log.debug(str(err))
-        mgr = stevedore.ExtensionManager(u'pyiupdater.plugins.uploaders')
+        mgr = stevedore.ExtensionManager(settings.UPLOAD_PLUGIN_NAMESPACE)
         plugin_names = mgr.names()
         log.debug(u'Plugin names: {}'.format(plugin_names))
         if len(plugin_names) == 0:
@@ -243,6 +255,7 @@ def _real_main(args):  # pragma: no cover
         builder.build()
     elif cmd == u'clean':
         clean(args)
+        return True
     elif cmd == u'init':
         init(args)
     elif cmd == u'keys':
@@ -269,17 +282,22 @@ def _real_main(args):  # pragma: no cover
 
 
 def main(args=None):  # pragma: no cover
+    exit = 0
+    clean = None
     try:
-        _real_main(args)
+        clean = _real_main(args)
     except KeyboardInterrupt:
         print(u'\n')
         msg = u'Exited by user'
         log.warning(msg)
-        sys.exit(1)
+        exit = 1
     except Exception as err:
+        exit = 1
         log.debug(str(err), exc_info=True)
         log.error(str(err))
-        sys.exit(1)
+    if clean is None:
+        db._sync_db()
+    sys.exit(exit)
 
 if __name__ == u'__main__':  # pragma: no cover
     args = sys.argv[1:]

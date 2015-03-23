@@ -177,12 +177,6 @@ def check_repo():
     if not os.path.exists(settings.CONFIG_DATA_FOLDER):
         log.warning('PyiUpdater config data folder is missing')
         repo = False
-    data_file = os.path.join(settings.CONFIG_DATA_FOLDER,
-                             settings.CONFIG_FILE_USER)
-    if not os.path.exists(data_file):
-        log.warning('App config database is missing')
-        repo = False
-
     if repo is False:
         log.error('Not a PyiUpdater repo: must init first.')
         sys.exit(1)
@@ -627,6 +621,9 @@ class Version(object):
     re_3 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
                       u'patch>\d+)(?P<release>[b])?(?P<rele'
                       u'aseversion>\d+)?')
+    re_4 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
+                      u'patch>\d+)\.(?P<release>\d+)\.(?P<re'
+                      u'leaseversion>\d+)')
 
     def __init__(self, version):
         self.version_str = version
@@ -637,8 +634,10 @@ class Version(object):
         try:
             if count == 1:
                 version_data = self._major_minor_re(version)
-            else:
+            elif count == 2:
                 version_data = self._major_minor_patch_re(version)
+            else:
+                version_data = self._version_re(version)
         except AssertionError:
             raise VersionError('Cannot parse version')
 
@@ -648,18 +647,25 @@ class Version(object):
             self.patch = int(version_data.get(u'patch', 0))
         else:
             self.patch = 0
-        release = version_data['release']
+        release = version_data.get('release')
         if release is None:
-            self.release = 0
-        # elif release == u'a':
-            # self.release = -2
+            self.release = 2
         elif release == u'b':
-            self.release = -1
+            self.release = 1
+        elif release == u'a':
+            self.release = 0
+        else:
+            try:
+                self.release = int(release)
+            except ValueError:
+                log.debug('Cannot parse release. Setting as stable')
+                self.release = 2
 
-        if version_data['releaseversion'] is None:
+        release_version = version_data.get('releaseversion')
+        if release_version is None:
             self.release_version = 0
         else:
-            self.release_version = int(version_data['releaseversion'])
+            self.release_version = int(release_version)
         self.version_tuple = (self.major, self.minor, self.patch,
                               self.release, self.release_version)
 
@@ -670,6 +676,11 @@ class Version(object):
 
     def _major_minor_patch_re(self, version):
         r = self.re_3.search(version)
+        assert r is not None
+        return r.groupdict()
+
+    def _version_re(self, version):
+        r = self.re_4.search(version)
         assert r is not None
         return r.groupdict()
 
@@ -684,15 +695,15 @@ class Version(object):
             log.debug('Removed ".tar.gz"')
             version = version[:-7]
         count = version.count('.')
-        if count not in [1, 2]:
-            msg = (u'Incorrect version format. 1 dot min & 2 '
-                   u'max. You have {} dots'.format(count))
+        if count not in [1, 2, 4]:
+            msg = (u'Incorrect version format. 1, 2 or 4 dots '
+                   u'You have {} dots'.format(count))
             log.error(msg)
             raise VersionError(msg)
         return count
 
     def __str__(self):
-        return self.version_str
+        return '.'.join(map(str, self.version_tuple))
 
     def __repr__(self):
         return '{}: {}'.format(self.__class__.__name__,

@@ -16,7 +16,6 @@
 from io import BytesIO
 import logging
 import time
-import sys
 
 from pyupdater.utils import get_hash, lazy_import
 
@@ -88,14 +87,16 @@ class FileDownloader(object):
 
                 False - Hash not verified
         """
+        # Downloading data internally
         self._download_to_memory()
         check = self._check_hash()
-        if check:
-            log.debug(u'File hash verified')
+        # Nothing to verify against so return true
+        if check is None:
+            return True
+        if check is True:
             self._write_to_file()
             return True
         else:
-            log.debug(u'Cannot verify file hash')
             del self.file_binary_data
             del self.my_file
             return False
@@ -115,16 +116,16 @@ class FileDownloader(object):
         """
         self._download_to_memory()
         check = self._check_hash()
-        if check:
-            log.debug(u'File hash verified')
+        if check is None:
+            return self.file_binary_data
+        if check is True:
             return self.file_binary_data
         else:
-            log.debug(u'Cannot verify file hash')
             return None
 
     @staticmethod
     def _best_block_size(elapsed_time, bytes):
-        # Returns best block size for current internet connection speed
+        # Returns best block size for current Internet connection speed
         new_min = max(bytes / 2.0, 1.0)
         new_max = min(max(bytes * 2.0, 1.0), 4194304)  # Do not surpass 4 MB
         if elapsed_time < 0.001:
@@ -137,7 +138,7 @@ class FileDownloader(object):
         return int(rate)
 
     def _download_to_memory(self):
-        data = self._make_response()
+        data = self._create_response()
         if data is None or data == '':
             return None
 
@@ -145,10 +146,13 @@ class FileDownloader(object):
         recieved_data = 0
 
         while 1:
+            # Grabbing start time for use with best block size
             start_block = time.time()
             block = data.read(self.b_size)
+            # Grabbing end time for use with best block size
             end_block = time.time()
             if len(block) == 0:
+                # No more data, get out of this never ending loop!
                 break
             self.b_size = self._best_block_size(end_block - start_block,
                                                 len(block))
@@ -157,15 +161,12 @@ class FileDownloader(object):
             recieved_data += len(block)
             percent = self._calc_progress_percent(recieved_data,
                                                   self.content_length)
-            sys.stdout.write(u'\r{} Percent Complete '.format(percent))
-            sys.stdout.flush()
             status = {u'total': self.content_length,
                       u'downloaed': recieved_data,
-                      u'status': u'downloading'}
+                      u'status': u'downloading',
+                      u'percent_complete': percent}
             self._call_progress_hooks(status)
 
-        sys.stdout.write('\n')
-        sys.stdout.flush()
         self.my_file.flush()
         self.my_file.seek(0)
         self.file_binary_data = self.my_file.read()
@@ -173,14 +174,14 @@ class FileDownloader(object):
                   u'downloaed': recieved_data,
                   u'status': u'finished'}
         self._call_progress_hooks(status)
-        log.debug(status)
         log.debug(u'Download Complete')
 
     def _call_progress_hooks(self, data):
+        log.debug(data)
         for ph in self.progress_hooks:
             ph(data)
 
-    def _make_response(self):
+    def _create_response(self):
         # Downloads file to memory.  Keeps internal reference
         data = None
         for url in self.urls:
@@ -208,7 +209,7 @@ class FileDownloader(object):
             else:
                 break
 
-            # Try request again with with ' ' in url replaced with +
+            # Try request again with spaces in url replaced with +
             if data is None:
                 # Let's try one more time with the fixed url
                 try:
@@ -235,18 +236,22 @@ class FileDownloader(object):
         if self.hexdigest is None:
             # No hash provided to check.
             # So just return any data recieved
-            return True
+            log.debug(u'No hash to verify')
+            return None
         if self.file_binary_data is None:
             # Exit quickly if we got nohting to compare
             # Also I'm sure we'll get an exception trying to
             # pass None to get hash :)
+            log.debug(u'Cannot verify file hash - No Data')
             return False
         log.debug(u'Checking file hash')
         log.debug(u'Update hash: {}'.format(self.hexdigest))
 
         file_hash = get_hash(self.file_binary_data)
         if file_hash == self.hexdigest:
+            log.debug(u'File hash verified')
             return True
+        log.debug(u'Cannot verify file hash')
         return False
 
     def _get_content_length(self, data):

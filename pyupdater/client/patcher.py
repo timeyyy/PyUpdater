@@ -126,7 +126,7 @@ class Patcher(object):
                 self._write_update_to_disk()
             except PatcherError:
                 return False
-
+        # Looks like all is well
         return True
 
     def _verify_installed_binary(self):
@@ -179,11 +179,14 @@ class Patcher(object):
     def _get_required_patches(self, name):
         needed_patches = []
         try:
+            # Get list of Version objects initialized with keys
+            # from update manifest
             versions = map(Version,
                            self.json_data[settings.UPDATES_KEY][name].keys())
         except KeyError:
             log.debug(u'No updates found in updates dict')
 
+        # Ensuring we apply patches in correct order
         versions = sorted(versions)
         log.debug(u'getting required patches')
         for i in versions:
@@ -229,6 +232,7 @@ class Patcher(object):
         for i in self.patch_binary_data:
             try:
                 self.new_binary = bsdiff4.patch(self.new_binary, i)
+                log.debug(u'Applied patch successfully')
             except Exception as err:
                 log.debug(err, exc_info=True)
                 log.error(err)
@@ -242,7 +246,7 @@ class Patcher(object):
                                                self.highest_version,
                                                self.plat,
                                                u'filename')
-
+        # Getting filename to create on filesystem
         filename = self.star_access_update_data.get(filename_key)
         if filename is None:
             raise PatcherError('Filename missing in version file')
@@ -252,7 +256,7 @@ class Patcher(object):
                 with open(filename, u'wb') as f:
                     f.write(self.new_binary)
             except IOError:
-                # Removes file is it somehow got created
+                # Removes file if it somehow got created
                 if os.path.exists(filename):
                     os.remove(filename)
                 log.error(u'Failed to open file for writing')

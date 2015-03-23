@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 class Storage(object):
 
     def __init__(self, data_dir=None):
-        """Loads & saves config file to file-system
+        u"""Loads & saves config file to file-system
 
             Args:
 
@@ -35,16 +35,50 @@ class Storage(object):
         """
         if data_dir is None:
             data_dir = os.getcwd()
-        config_dir = os.path.join(data_dir, settings.CONFIG_DATA_FOLDER)
-        log.debug('Config Dir: {}'.format(config_dir))
-        if not os.path.exists(config_dir):
-            log.info('Creating config dir')
-            os.makedirs(config_dir)
-        self.filename = os.path.join(config_dir, settings.CONFIG_FILE_USER)
-        log.debug('Config DB: {}'.format(self.filename))
+        self.config_dir = os.path.join(data_dir, settings.CONFIG_DATA_FOLDER)
+        log.debug(u'Config Dir: {}'.format(self.config_dir))
+        self.filename = os.path.join(self.config_dir,
+                                     settings.CONFIG_FILE_USER)
+        log.debug(u'Config DB: {}'.format(self.filename))
+        self.db = None
+        self.sync_threshold = 3
+        self.count = 0
+
+    def load_db(self):
+        if not os.path.exists(self.config_dir):
+            log.info(u'Creating config dir')
+            os.makedirs(self.config_dir)
+
+        if not os.path.exists(self.filename):
+            self.db = {}
+            log.debug(u'Created new config data file')
+        else:
+            try:
+                with open(self.filename, u'r') as f:
+                    self.db = json.loads(f.read())
+            except ValueError:
+                log.error(u'Invalid config data file. Saving as '
+                          u'{}.old'.format(self.filename))
+                self.db = {}
+                log.debug(u'Created new config data file')
+        self.sync_db()
+
+    def sync_db(self):
+        if self.count >= self.sync_threshold:
+            self._sync_db()
+            self.count = 0
+        self.count += 1
+
+    def _sync_db(self):
+        if self.db is None:
+            self.load_db()
+        if os.path.exists(self.config_dir):
+            log.debug('Syncing db to filesystem')
+            with open(self.filename, u'w') as f:
+                f.write(json.dumps(self.db, indent=2, sort_keys=True))
 
     def save(self, key, value):
-        """Saves key & value to database
+        u"""Saves key & value to database
 
         Args:
 
@@ -53,24 +87,18 @@ class Storage(object):
             value (obj): python object to store in database
 
         """
+        if self.db is None:
+            self.load_db()
+
         if isinstance(key, unicode) is True:
-            log.debug('Key Name: {}'.format(key))
-            log.debug('Key type: {}'.format(type(key)))
+            log.debug(u'Key Name: {}'.format(key))
+            log.debug(u'Key type: {}'.format(type(key)))
             key = str(key)
-        if not os.path.exists(self.filename):
-            with open(self.filename, u'w') as f:
-                f.write('{}')
 
-        with open(self.filename, u'r') as f:
-            db = json.loads(f.read())
-
-        db[key] = pickle.dumps(value)
-
-        with open(self.filename, u'w') as f:
-            f.write(json.dumps(db, indent=2, sort_keys=True))
+        self.db[key] = pickle.dumps(value)
 
     def load(self, key):
-        """Loads value for given key
+        u"""Loads value for given key
 
             Args:
 
@@ -81,19 +109,15 @@ class Storage(object):
 
                 Object if exists or else None
         """
+        if self.db is None:
+            self.load_db()
+
         if isinstance(key, unicode) is True:
-            log.debug('Key Name: {}'.format(key))
-            log.debug('Key type: {}'.format(type(key)))
+            log.debug(u'Key Name: {}'.format(key))
+            log.debug(u'Key type: {}'.format(type(key)))
             key = str(key)
 
-        if not os.path.exists(self.filename):
-            with open(self.filename, u'w') as f:
-                f.write('{}')
-
-        with open(self.filename, u'r') as f:
-            db = json.loads(f.read())
-
-        value = db.get(key)
+        value = self.db.get(key)
         if value is not None:
             value = pickle.loads(value)
         return value
