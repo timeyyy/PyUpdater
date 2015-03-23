@@ -9,23 +9,37 @@ v0.20.0 - Beta
 
 * Updated
 
+  - Client
+
+    - Better error handling
+
   - PyUpdater
 
     - Using json to store config data
     - Less IO during execution
     - Header performance improvements - upstream
+    - Central db object
 
 * Fixed
+
+  - Client
+
+    - Handling of download with corresponding hash
 
   - PyUpdater
 
     - session fixation attacks and potentially cookie stealing - upstream
+    - Not writing config file when cleaning repo
 
 * Removed
 
   - PyUpdater
 
     - RC4 from default cipher list - upstream
+    - Old migration code
+    - Removed old json version file
+    - Download progress to stdout
+    - Unused imports
 
 
 
