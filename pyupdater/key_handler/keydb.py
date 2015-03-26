@@ -65,7 +65,7 @@ class KeyDB(object):
             u'revoked': False,
             u'key_type': key_type,
         }
-        log.info('Adding public key to db: {}'.format(public))
+        log.info('Adding public key to db. {}'.format(len(public)))
         self.data[num] = data
         self.save()
 
@@ -78,21 +78,21 @@ class KeyDB(object):
         return self._get_keys(u'private')
 
     def _get_keys(self, key):
+        if self.data is None:
+            self.load()
         order = []
         keys = []
-        log.debug(u'KeyDB: {}'.format(self.data.items()))
         for k, v in self.data.items():
             if v[u'revoked'] is False:
                 order.append(int(k))
             else:
-                log.debug(u'Key revoked: {}'.format(k))
+                log.debug(u'Revoked key'.format(len(k)))
         order = sorted(order)
         for o in order:
             try:
                 data = self.data[o]
                 log.debug(u'Got key data')
                 pub_key = data[key]
-                log.debug(u'Pub key: {}'.format(pub_key))
                 keys.append(pub_key)
                 log.debug(u'Got public key')
             except KeyError:  # pragma: no cover
@@ -122,12 +122,11 @@ class KeyDB(object):
         """
         keys = map(str, self.data.keys())
         keys = sorted(keys)
-        log.debug(u'List of keys: {}'.format(keys))
+        log.debug(u'Collecting keys'.format(keys))
         c = 0
         for k in keys:
             if c >= count:
                 break
-            print(u'Key Type: {}'.format(type(k)))
             k = int(k)
             if self.data[k][u'revoked'] is False:
                 self.data[k][u'revoked'] = True

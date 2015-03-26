@@ -72,8 +72,8 @@ if not os.path.exists(LOG_DIR):  # pragma: no cover
     os.makedirs(LOG_DIR)
 LOG_FILENAME_DEBUG = os.path.join(LOG_DIR,
                                   pyupdater.settings.LOG_FILENAME_DEBUG)
-rh = RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=5,
-                         maxBytes=10000000)
+rh = RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=1,
+                         maxBytes=1000000)
 rh.setLevel(logging.DEBUG)
 rh.setFormatter(jms_utils.logger.log_format_string())
 log.addHandler(rh)

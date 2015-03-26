@@ -19,9 +19,9 @@ from pyupdater.wrapper.options import (make_parser,
                                        make_subparser,
                                        add_build_parser,
                                        add_clean_parser,
+                                       add_debug_parser,
                                        add_init_parser,
                                        add_keys_parser,
-                                       add_log_parser,
                                        add_make_spec_parser,
                                        add_package_parser,
                                        add_upload_parser,
@@ -71,8 +71,8 @@ class TestWrapper(object):
 
     def test_log(self, parser):
         subparser = make_subparser(parser)
-        add_log_parser(subparser)
-        assert parser.parse_args([u'log'])
+        add_debug_parser(subparser)
+        assert parser.parse_args([u'collect-debug-info'])
 
     def test_make_spec(self, parser):
         subparser = make_subparser(parser)

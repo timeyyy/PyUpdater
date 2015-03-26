@@ -13,16 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+import json
 import logging
 import os
 import shutil
 import sys
-import tarfile
+import warnings
 
 from appdirs import user_log_dir
 from jms_utils.logger import log_formatter
 from jms_utils.paths import ChDir
 from jms_utils.terminal import ask_yes_no
+import requests
 import stevedore
 
 
@@ -56,7 +58,10 @@ if os.path.exists(os.path.join(CWD, u'pyu.log')):  # pragma: no cover
 fmt = logging.Formatter('[%(levelname)s] %(message)s')
 sh = logging.StreamHandler()
 sh.setFormatter(fmt)
+
+# Used for Development
 # sh.setLevel(logging.DEBUG)
+
 sh.setLevel(logging.INFO)
 log.addHandler(sh)
 
@@ -135,30 +140,33 @@ def keys(args):  # pragma: no cover
     loader.save_config(config)
 
 
-def _log(args):  # pragma: no cover
+def _upload_debug_info(args):  # pragma: no cover
     log.info(u'Starting log export')
-    og_dir = CWD
+
+    def _add_file(payload, filename):
+        with open(filename, u'r') as f:
+            data = f.read()
+        payload[u'files'][filename] = {u'content': data}
+
+    def _upload(data):
+        api = u'https://api.github.com/'
+        gist_url = api + u'gists'
+        headers = {"Accept": "application/vnd.github.v3+json"}
+        r = requests.post(gist_url, headers=headers, data=json.dumps(data))
+        return r.json()[u'html_url']
+
+    upload_data = {u'files': {}}
     with ChDir(LOG_DIR):
-        files = []
         temp_files = os.listdir(CWD)
         log.info(u'Collecting logs')
         for t in temp_files:
             if t.startswith(settings.LOG_FILENAME_DEBUG):
                 log.debug('Adding {} to log'.format(t))
-                files.append(t)
+                _add_file(upload_data, t)
         log.info(u'Found all logs')
-        t = tarfile.open(settings.DEBUG_ARCHIVE, u'w:bz2')
-        log.info(u'Compressing logs')
-        for f in files:
-            log.debug(u'Archiving {}'.format(f))
-            t.add(f)
-        t.close()
-        log.info(u'Log compression complete')
-        old_log_zip = os.path.join(og_dir, settings.DEBUG_ARCHIVE)
-        if os.path.exists(old_log_zip):
-            os.remove(old_log_zip)
-        shutil.move(settings.DEBUG_ARCHIVE, og_dir)
     log.info(u'Log export complete')
+    url = _upload(upload_data)
+    print url
 
 
 def pkg(args):  # pragma: no cover
@@ -260,8 +268,14 @@ def _real_main(args):  # pragma: no cover
         init(args)
     elif cmd == u'keys':
         keys(args)
+    # ToDo: Remove in v1.0
     elif cmd == u'log':
-        _log(args)
+        warnings.simplefilter('always', DeprecationWarning)
+        warnings.warn(u'Use "collect-debug-info" ', DeprecationWarning)
+        _upload_debug_info(args)
+    # End to do
+    elif cmd == u'collect-debug-info':
+        _upload_debug_info(args)
     elif cmd == u'make-spec':
         check_repo()
         builder = Builder(args, pyi_args)

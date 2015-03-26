@@ -1,8 +1,28 @@
 Changelog
 =========
-v0.20.0 - Beta
+v0.21.0 - Beta
 ~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
+
+* Added
+
+* Updated
+
+  - PyUpdater
+
+    - Debug logs are uploaded to a gist on github
+    -
+
+* Fixed
+
+  - PyUpdater
+
+    - Potential leak of sensitive information to log files
+
+* Removed
+
+
+v0.20.0 - Beta
 *** Renamed to PyUpdater ***
 
 * Added

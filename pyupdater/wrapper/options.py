@@ -202,11 +202,15 @@ def add_keys_parser(subparsers):
                              type=int)
 
 
-def add_log_parser(subparsers):
-    log_parser = subparsers.add_parser(u'log', help=u'Generate log archive to '
-                                       u'help debugging. Archive will be '
-                                       u'place in current working directory')
+def add_debug_parser(subparsers):
+    log_parser = subparsers.add_parser(u'collect-debug-info',
+                                       help=u'Upload debug logs to github '
+                                       u'gist and return url.')
     log_parser.add_argument(u'--dummy', help=argparse.SUPPRESS)
+    old_log_parser = subparsers.add_parser(u'log',
+                                           help=u'Upload debug logs to github '
+                                           u'gist and return url.')
+    old_log_parser.add_argument(u'--dummy', help=argparse.SUPPRESS)
 
 
 def add_package_parser(subparsers):
@@ -262,9 +266,9 @@ def get_parser():
     subparsers = make_subparser(parser)
     add_build_parser(subparsers)
     add_clean_parser(subparsers)
+    add_debug_parser(subparsers)
     add_init_parser(subparsers)
     add_keys_parser(subparsers)
-    add_log_parser(subparsers)
     add_make_spec_parser(subparsers)
     add_package_parser(subparsers)
     add_settings_parser(subparsers)

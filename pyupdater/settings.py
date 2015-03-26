@@ -13,13 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-APP_NAME = u'PyUpdater App'
+APP_NAME = u'PyUpdater'
 APP_AUTHOR = u'Digital Sapphire'
 
 # Used to hold PyUpdater config info for repo
 CONFIG_DATA_FOLDER = u'.pyupdater'
-
-DEBUG_ARCHIVE = u'pyupdater-debug.tar.bz2'
 
 # User config file
 CONFIG_FILE_USER = u'pyuconfig.db'
