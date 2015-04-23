@@ -13,6 +13,7 @@ v0.21.0 - Beta
     - Debug logs are uploaded to a gist on github
     - requests lib 2.6.1
     - urllib3 lib 1.10.3
+    - stevedore lib 1.4.0
     - S3 plugin 2.2
     - SCP plugin 2.2
 
