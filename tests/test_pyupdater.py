@@ -20,7 +20,7 @@ from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 
 from pyupdater import PyiUpdater
-from pyupdater.config import Loader, PyiUpdaterConfig
+from pyupdater.utils.config import Loader, PyiUpdaterConfig
 from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig

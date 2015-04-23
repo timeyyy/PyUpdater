@@ -16,13 +16,13 @@
 from pyupdater import settings, __version__
 from pyupdater.client.downloader import FileDownloader
 from pyupdater.client.updates import AppUpdate, LibUpdate
-from pyupdater.config import PyiUpdaterConfig
 from pyupdater.utils import (convert_to_list,
                              EasyAccessDict,
                              get_highest_version,
                              gzip_decompress,
                              lazy_import,
                              Version)
+from pyupdater.utils.config import PyiUpdaterConfig
 
 
 @lazy_import

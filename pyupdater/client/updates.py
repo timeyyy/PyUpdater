@@ -15,7 +15,6 @@
 # --------------------------------------------------------------------------
 from pyupdater.client.downloader import FileDownloader
 from pyupdater.client.patcher import Patcher
-from pyupdater.exceptions import ClientError, UtilsError, VersionError
 from pyupdater import settings
 from pyupdater.utils import (get_filename,
                              get_hash,
@@ -23,6 +22,7 @@ from pyupdater.utils import (get_filename,
                              get_mac_dot_app_dir,
                              lazy_import,
                              Version)
+from pyupdater.utils.exceptions import ClientError, UtilsError, VersionError
 
 
 @lazy_import

@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 
-from pyupdater.storage import Storage
+from pyupdater.utils.storage import Storage
 
 import pytest
 

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from pyupdater.config import PyiUpdaterConfig
+from pyupdater.utils.config import PyiUpdaterConfig
 
 
 class DevConfig(object):

@@ -18,9 +18,9 @@ import os
 import pytest
 
 from pyupdater import settings
-from pyupdater.config import PyiUpdaterConfig
-from pyupdater.exceptions import PackageHandlerError
 from pyupdater.package_handler import PackageHandler
+from pyupdater.utils.config import PyiUpdaterConfig
+from pyupdater.utils.exceptions import PackageHandlerError
 from tconfig import TConfig
 
 s_dir = settings.USER_DATA_FOLDER

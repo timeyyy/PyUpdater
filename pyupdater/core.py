@@ -15,11 +15,11 @@
 # --------------------------------------------------------------------------
 import os
 
-from pyupdater.config import PyiUpdaterConfig
 from pyupdater.key_handler import KeyHandler
 from pyupdater.package_handler import PackageHandler
-from pyupdater.storage import Storage
 from pyupdater.uploader import Uploader
+from pyupdater.utils.config import PyiUpdaterConfig
+from pyupdater.utils.storage import Storage
 
 
 class Core(object):

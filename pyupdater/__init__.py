@@ -13,34 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-import logging
-from logging.handlers import RotatingFileHandler
-
-try:
-    from PyInstaller import VERSION as temp_version
-    pyi_version = (temp_version[0], temp_version[1], temp_version[2])
-except ImportError:  # pragma: no cover
-    pyi_version = (0, 0, 0)
-
 from pyupdater.utils import lazy_import
-
-log = logging.getLogger()
 
 
 @lazy_import
 def pyupdater():
     import pyupdater
     import pyupdater.core
-    import pyupdater.exceptions
+    import pyupdater.utils.exceptions
     return pyupdater
 
-PyiUpdater = pyupdater.core.Core
 
-
-if pyi_version < (2, 1, 0):  # pragma: no cover
-    raise pyupdater.exceptions.PyiUpdaterError(u'Must have at least '
-                                               u'PyInstaller v2.1',
-                                               expected=True)
+@lazy_import
+def logging():
+    import logging
+    import logging.handlers
+    return logging
 
 
 @lazy_import
@@ -62,6 +50,22 @@ def jms_utils():
     return jms_utils
 
 
+try:
+    from PyInstaller import VERSION as temp_version
+    pyi_version = (temp_version[0], temp_version[1], temp_version[2])
+except ImportError:  # pragma: no cover
+    pyi_version = (0, 0, 0)
+
+if pyi_version < (2, 1, 0):  # pragma: no cover
+    raise pyupdater.exceptions.PyiUpdaterError(u'Must have at least '
+                                               u'PyInstaller v2.1',
+                                               expected=True)
+
+
+PyUpdater = pyupdater.core.Core
+__all__ = ['PyUpdater']
+
+log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 nh = logging.NullHandler()
 nh.setLevel(logging.DEBUG)
@@ -72,8 +76,8 @@ if not os.path.exists(LOG_DIR):  # pragma: no cover
     os.makedirs(LOG_DIR)
 LOG_FILENAME_DEBUG = os.path.join(LOG_DIR,
                                   pyupdater.settings.LOG_FILENAME_DEBUG)
-rh = RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=1,
-                         maxBytes=1000000)
+rh = logging.handlers.RotatingFileHandler(LOG_FILENAME_DEBUG, backupCount=1,
+                                          maxBytes=1000000)
 rh.setLevel(logging.DEBUG)
 rh.setFormatter(jms_utils.logger.log_format_string())
 log.addHandler(rh)

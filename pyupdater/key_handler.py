@@ -16,8 +16,8 @@
 from __future__ import print_function
 
 from pyupdater import settings
-from pyupdater.key_handler.keydb import KeyDB
 from pyupdater.utils import lazy_import
+from pyupdater.utils.keydb import KeyDB
 
 
 @lazy_import

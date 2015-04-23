@@ -28,11 +28,8 @@ import requests
 import stevedore
 
 
-from pyupdater import PyiUpdater, __version__
+from pyupdater import PyUpdater, __version__
 from pyupdater import settings
-from pyupdater.config import Loader, SetupConfig
-from pyupdater.exceptions import UploaderError, UploaderPluginError
-from pyupdater.storage import Storage
 from pyupdater.utils import (check_repo,
                              initial_setup,
                              pretty_time,
@@ -43,6 +40,9 @@ from pyupdater.utils import (check_repo,
                              setup_patches,
                              setup_scp,
                              setup_object_bucket)
+from pyupdater.utils.config import Loader, SetupConfig
+from pyupdater.utils.exceptions import UploaderError, UploaderPluginError
+from pyupdater.utils.storage import Storage
 from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 
@@ -107,26 +107,26 @@ def init(args):  # pragma: no cover
                           settings.CONFIG_FILE_USER)):
         config = initial_setup(SetupConfig())
         log.info(u'Creating pyu-data dir...')
-        pyiu = PyiUpdater(config, db)
-        pyiu.setup()
+        pyu = PyUpdater(config, db)
+        pyu.setup()
         log.info(u'Making signing keys...')
-        pyiu.make_keys(count)
-        config.PUBLIC_KEYS = pyiu.get_public_keys()
+        pyu.make_keys(count)
+        config.PUBLIC_KEYS = pyu.get_public_keys()
         loader.save_config(config)
         log.info(u'Setup complete')
     else:
-        sys.exit(u'Not an empty PyiUpdater repository')
+        sys.exit(u'Not an empty PyUpdater repository')
 
 
 def keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
-    pyiu = PyiUpdater(config, db)
+    pyu = PyUpdater(config, db)
     if args.revoke is not None:
         count = args.revoke
-        pyiu.revoke_key(count)
-        config.PUBLIC_KEYS = pyiu.get_public_keys()
-        key = pyiu.get_recent_revoked_key()
+        pyu.revoke_key(count)
+        config.PUBLIC_KEYS = pyu.get_public_keys()
+        key = pyu.get_recent_revoked_key()
         if key is not None:
             log.info('* Most Recent Revoked Key *')
             log.info('Created: {}'.format(pretty_time(key[u'date'])))
@@ -171,17 +171,17 @@ def _upload_debug_info(args):  # pragma: no cover
 
 def pkg(args):  # pragma: no cover
     check_repo()
-    pyiu = PyiUpdater(loader.load_config(), db)
+    pyu = PyUpdater(loader.load_config(), db)
     if args.process is False and args.sign is False:
         sys.exit(u'You must specify a command')
 
     if args.process is True:
         log.info(u'Processing packages...')
-        pyiu.process_packages()
+        pyu.process_packages()
         log.info(u'Processing packages complete')
     if args.sign is True:
         log.info(u'Signing packages...')
-        pyiu.sign_update()
+        pyu.sign_update()
         log.info(u'Signing packages complete')
 
 
@@ -220,10 +220,10 @@ def upload(args):  # pragma: no cover
         log.error('Must provide service name')
         sys.exit(1)
 
-    pyiu = PyiUpdater(loader.load_config(), db)
+    pyu = PyUpdater(loader.load_config(), db)
 
     try:
-        pyiu.set_uploader(upload_service)
+        pyu.set_uploader(upload_service)
     except UploaderError as err:
         log.error(str(err))
         sys.exit(1)
@@ -234,15 +234,15 @@ def upload(args):  # pragma: no cover
         log.debug(u'Plugin names: {}'.format(plugin_names))
         if len(plugin_names) == 0:
             msg = (u'*** No upload plugins instaled! ***\nYou can install the '
-                   u'aws s3 plugin with\n$ pip install pyiupdater[s3]\n\nOr '
-                   u'the scp plugin with\n$ pip install pyiupdater[scp]')
+                   u'aws s3 plugin with\n$ pip install PyUpdater[s3]\n\nOr '
+                   u'the scp plugin with\n$ pip install PyUpdater[scp]')
         else:
             msg = (u'Invalid Uploader\n\nAvailable options:\n'
                    u'{}'.format(' '.join(plugin_names)))
         log.error(msg)
         sys.exit(1)
     try:
-        pyiu.upload()
+        pyu.upload()
     except Exception as e:
         msg = (u'Looks like you forgot to add USERNAME '
                'and/or REMOTE_DIR')
@@ -289,7 +289,7 @@ def _real_main(args):  # pragma: no cover
     elif cmd == u'upload':
         upload(args)
     elif cmd == u'version':
-        print('PyiUpdater {}'.format(__version__))
+        print('PyUpdater {}'.format(__version__))
     else:
         log.error(u'Not Implemented')
         sys.exit(1)
