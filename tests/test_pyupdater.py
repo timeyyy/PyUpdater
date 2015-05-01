@@ -19,8 +19,8 @@ import pytest
 from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 
-from pyupdater import PyiUpdater
-from pyupdater.config import Loader, PyiUpdaterConfig
+from pyupdater import PyUpdater
+from pyupdater.utils.config import Loader, PyUpdaterConfig
 from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
@@ -32,17 +32,17 @@ cmd2 = [u'build', u'--app-name', u'myapp', u'--app-version',
 
 
 @pytest.mark.usefixtures(u'cleandir', u'db')
-class TestPyiUpdater(object):
+class TestPyUpdater(object):
 
     @pytest.fixture
-    def pyi(self):
+    def pyu(self):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
-        pyi = PyiUpdater(t_config)
-        return pyi
+        pyu = PyUpdater(t_config)
+        return pyu
 
     def test_dev_dir_none(self):
-        updater = PyiUpdaterConfig()
+        updater = PyUpdaterConfig()
         myconfig = TConfig()
         myconfig.APP_NAME = None
         updater.update_config(myconfig)
@@ -53,62 +53,62 @@ class TestPyiUpdater(object):
         pyu_data_dir = os.path.join(data_dir, u'pyu-data')
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
-        pyi = PyiUpdater(t_config)
-        pyi.setup()
+        pyu = PyUpdater(t_config)
+        pyu.setup()
         assert os.path.exists(pyu_data_dir)
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy'))
         assert os.path.exists(os.path.join(pyu_data_dir, u'files'))
         assert os.path.exists(os.path.join(pyu_data_dir, u'new'))
 
-    def test_execution(self, pyi, db):
+    def test_execution(self, pyu, db):
         archive_name = u'myapp-{}-0.1.0.tar.gz'.format(get_system())
         parser = get_parser()
-        data_dir = pyi.config[u'DATA_DIR']
+        data_dir = pyu.config[u'DATA_DIR']
         pyu_data_dir = os.path.join(data_dir, u'pyu-data')
-        pyi.setup()
-        pyi.make_keys(3)
+        pyu.setup()
+        pyu.make_keys(3)
         with ChDir(data_dir):
             loader = Loader(db)
-            loader.save_config(pyi.config.copy())
+            loader.save_config(pyu.config.copy())
             with open(u'app.py', u'w') as f:
                 f.write('print "Hello World"')
-            args, pyi_args = parser.parse_known_args(cmd)
-            b = Builder(args, pyi_args)
+            args, pyu_args = parser.parse_known_args(cmd)
+            b = Builder(args, pyu_args)
             b.build()
 
         assert os.path.exists(os.path.join(pyu_data_dir, u'new',
                               archive_name))
-        pyi.process_packages()
+        pyu.process_packages()
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               archive_name))
         assert os.path.exists(os.path.join(pyu_data_dir, u'files',
                               archive_name))
-        pyi.sign_update()
+        pyu.sign_update()
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',
                               'versions.gz'))
 
-    def test_execution_patch(self, pyi, db):
+    def test_execution_patch(self, pyu, db):
         archive_name = u'myapp-{}-0.1.1.tar.gz'.format(get_system())
         parser = get_parser()
-        data_dir = pyi.config[u'DATA_DIR']
+        data_dir = pyu.config[u'DATA_DIR']
         pyu_data_dir = os.path.join(data_dir, u'pyu-data')
-        pyi.setup()
-        pyi.make_keys(3)
+        pyu.setup()
+        pyu.make_keys(3)
         with ChDir(data_dir):
             loader = Loader(db)
-            loader.save_config(pyi.config.copy())
+            loader.save_config(pyu.config.copy())
             with open(u'app.py', u'w') as f:
                 f.write('print "Hello World"')
-            args, pyi_args = parser.parse_known_args(cmd)
-            b = Builder(args, pyi_args)
+            args, pyu_args = parser.parse_known_args(cmd)
+            b = Builder(args, pyu_args)
             b.build()
-            pyi.process_packages()
+            pyu.process_packages()
 
-            args, pyi_args = parser.parse_known_args(cmd2)
-            b = Builder(args, pyi_args)
+            args, pyu_args = parser.parse_known_args(cmd2)
+            b = Builder(args, pyu_args)
             b.build()
-            pyi.process_packages()
-            pyi.sign_update()
+            pyu.process_packages()
+            pyu.sign_update()
         files = os.listdir(os.path.join(pyu_data_dir, u'deploy'))
         assert len(files) == 3
         assert os.path.exists(os.path.join(pyu_data_dir, u'deploy',

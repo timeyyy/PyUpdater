@@ -22,12 +22,12 @@ except ImportError:
     bsdiff4 = None
 
 from pyupdater.client.downloader import FileDownloader
-from pyupdater.exceptions import PatcherError
 from pyupdater import settings
 from pyupdater.utils import (get_package_hashes,
                              EasyAccessDict,
                              lazy_import,
                              Version)
+from pyupdater.utils.exceptions import PatcherError
 
 if bsdiff4 is None:
     from pyupdater.utils import bsdiff4_py as bsdiff4

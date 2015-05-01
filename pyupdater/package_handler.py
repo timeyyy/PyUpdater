@@ -25,13 +25,13 @@ except ImportError:  # pragma: no cover
     bsdiff4 = None
 
 from pyupdater import settings
-from pyupdater.exceptions import PackageHandlerError
-from pyupdater.package_handler.package import Package, Patch
 from pyupdater.utils import (EasyAccessDict,
                              get_package_hashes as gph,
                              lazy_import,
                              remove_dot_files
                              )
+from pyupdater.utils.exceptions import PackageHandlerError
+from pyupdater.utils.package import Package, Patch
 
 log = logging.getLogger(__name__)
 

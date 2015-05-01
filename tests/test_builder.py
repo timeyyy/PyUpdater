@@ -19,7 +19,7 @@ from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 import pytest
 
-from pyupdater import PyiUpdater
+from pyupdater import PyUpdater
 from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
@@ -36,8 +36,8 @@ class TestBuilder(object):
     def test_make_spec(self):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
-        pyi = PyiUpdater(t_config)
-        pyi.setup()
+        pyu = PyUpdater(t_config)
+        pyu.setup()
         new_folder = os.path.join(u'pyu-data', u'new')
         spec_cmd = [u'make-spec', u'app.py', u'-F']
         spec_file_name = get_system() + u'.spec'
@@ -47,12 +47,12 @@ class TestBuilder(object):
         parser = get_parser()
         with open(u'app.py', u'w') as f:
             f.write('print "Hello, World!"')
-        args, pyi_args = parser.parse_known_args(spec_cmd)
-        b = Builder(args, pyi_args)
+        args, pyu_args = parser.parse_known_args(spec_cmd)
+        b = Builder(args, pyu_args)
         b.make_spec()
         assert os.path.exists(spec_file_name)
-        args, pyi_args = parser.parse_known_args(build_cmd)
-        b = Builder(args, pyi_args)
+        args, pyu_args = parser.parse_known_args(build_cmd)
+        b = Builder(args, pyu_args)
         b.build()
         with ChDir(new_folder):
             assert len(os.listdir(os.getcwd())) == 1
@@ -61,8 +61,8 @@ class TestBuilder(object):
         with pytest.raises(SystemExit):
             t_config = TConfig()
             t_config.DATA_DIR = os.getcwd()
-            pyi = PyiUpdater(t_config)
-            pyi.setup()
+            pyu = PyUpdater(t_config)
+            pyu.setup()
             spec_cmd = [u'make-spec', u'app.py', u'-F']
             spec_file_name = get_system() + u'.spec'
             build_cmd = [u'build', u'--app-name', u'MyApp', u'--clean'
@@ -72,10 +72,10 @@ class TestBuilder(object):
             with open(u'app.py', u'w') as f:
                 # Missing closing quote
                 f.write('print "Hello, World!')
-            args, pyi_args = parser.parse_known_args(spec_cmd)
-            b = Builder(args, pyi_args)
+            args, pyu_args = parser.parse_known_args(spec_cmd)
+            b = Builder(args, pyu_args)
             b.make_spec()
             assert os.path.exists(spec_file_name)
-            args, pyi_args = parser.parse_known_args(build_cmd)
-            b = Builder(args, pyi_args)
+            args, pyu_args = parser.parse_known_args(build_cmd)
+            b = Builder(args, pyu_args)
             b.build()

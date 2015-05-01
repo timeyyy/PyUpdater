@@ -1,7 +1,8 @@
-[![Downloads](https://pypip.in/download/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
-[![Development Status](https://pypip.in/status/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
-[![Coverage Status](https://coveralls.io/repos/JohnyMoSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JohnyMoSwag/PyUpdater?branch=master)
 [![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JohnyMoSwag/PyUpdater)
+[![Coverage Status](https://coveralls.io/repos/JohnyMoSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JohnyMoSwag/PyUpdater?branch=master)
+[![Development Status](https://pypip.in/status/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
+[![Requirements Status](https://requires.io/github/JohnyMoSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JohnyMoSwag/PyUpdater/requirements/?branch=master)
+[![Downloads](https://pypip.in/download/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
 
 # PyUpdater
 ##### An update framework for managing, signing & uploading your app updates

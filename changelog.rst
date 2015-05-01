@@ -1,17 +1,23 @@
 Changelog
 =========
-v0.21.0 - Beta
+v0.21.1 - Beta
 ~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
 
-* Added
 
+v0.21.0 - 2015/04/30
+~~~~~~~~~~~~~~~~~~~~
 * Updated
 
   - PyUpdater
 
     - Debug logs are uploaded to a gist on github
-    -
+    - requests lib 2.6.2
+    - urllib3 lib 1.10.3
+    - stevedore lib 1.4.0
+    - S3 plugin 2.2
+    - SCP plugin 2.2
+    - Code refactoring
 
 * Fixed
 
@@ -19,10 +25,9 @@ v0.21.0 - Beta
 
     - Potential leak of sensitive information to log files
 
-* Removed
 
-
-v0.20.0 - Beta
+v0.20.0 - 2015/03/08
+~~~~~~~~~~~~~~~~~~~~
 *** Renamed to PyUpdater ***
 
 * Added

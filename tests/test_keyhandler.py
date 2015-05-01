@@ -17,9 +17,8 @@ import os
 
 import pytest
 
-from pyupdater.key_handler.keydb import KeyDB
-from pyupdater.storage import Storage
-
+from pyupdater.utils.storage import Storage
+from pyupdater.utils.keydb import KeyDB
 db = Storage()
 
 

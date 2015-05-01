@@ -18,9 +18,9 @@ import os
 import pytest
 
 from pyupdater import settings
-from pyupdater.config import PyiUpdaterConfig
-from pyupdater.exceptions import PackageHandlerError
 from pyupdater.package_handler import PackageHandler
+from pyupdater.utils.config import PyUpdaterConfig
+from pyupdater.utils.exceptions import PackageHandlerError
 from tconfig import TConfig
 
 s_dir = settings.USER_DATA_FOLDER
@@ -33,7 +33,7 @@ class TestPackageHanlder(object):
         data_dir = os.getcwd()
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
-        config = PyiUpdaterConfig(t_config)
+        config = PyUpdaterConfig(t_config)
         p = PackageHandler(config, db)
         assert p.files_dir == os.path.join(data_dir, s_dir, u'files')
         assert p.deploy_dir == os.path.join(data_dir, s_dir, u'deploy')
@@ -43,7 +43,7 @@ class TestPackageHanlder(object):
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         t_config.UPDATE_PATCHES = False
-        config = PyiUpdaterConfig(t_config)
+        config = PyUpdaterConfig(t_config)
         p = PackageHandler(config, db)
         p.process_packages()
 
@@ -52,7 +52,7 @@ class TestPackageHanlder(object):
         t_config = TConfig()
         t_config.DATA_DIR = data_dir
         t_config.UPDATE_PATCHES = False
-        config = PyiUpdaterConfig(t_config)
+        config = PyUpdaterConfig(t_config)
         p = PackageHandler(config, db)
         p.process_packages()
 

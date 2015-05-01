@@ -41,7 +41,7 @@ class Loader(object):
         return config_data
 
     def save_config(self, obj):
-        """Saves config file to pyiupdater database
+        """Saves config file to pyupdater database
 
         Args:
 
@@ -80,7 +80,7 @@ class Loader(object):
                 log.debug(u'Wrote PUBLIC_KEYS to client config')
 
 
-class PyiUpdaterConfig(dict):
+class PyUpdaterConfig(dict):
     u"""Works exactly like a dict but provides ways to fill it from files
     or special dictionaries.  There are two common patterns to populate the
     config.
@@ -97,7 +97,7 @@ class PyiUpdaterConfig(dict):
     """
 
     def __init__(self, obj=None):
-        super(PyiUpdaterConfig, self).__init__(dict())
+        super(PyUpdaterConfig, self).__init__(dict())
         if obj is not None:
             self.from_object(obj)
 

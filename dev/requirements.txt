@@ -11,5 +11,5 @@ sphinx
 sphinx-better-theme
 sphinx-bootstrap-theme
 twine
-versioneer == 0.13
+versioneer == 0.14
 wheel

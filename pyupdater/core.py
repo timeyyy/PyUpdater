@@ -15,11 +15,11 @@
 # --------------------------------------------------------------------------
 import os
 
-from pyupdater.config import PyiUpdaterConfig
 from pyupdater.key_handler import KeyHandler
 from pyupdater.package_handler import PackageHandler
-from pyupdater.storage import Storage
 from pyupdater.uploader import Uploader
+from pyupdater.utils.config import PyUpdaterConfig
+from pyupdater.utils.storage import Storage
 
 
 class Core(object):
@@ -30,7 +30,7 @@ class Core(object):
             config (obj): config object
     """
     def __init__(self, config=None, db=None):
-        self.config = PyiUpdaterConfig()
+        self.config = PyUpdaterConfig()
         # Important to keep this before updating config
         if config is not None:
             self.update_config(config, db)
@@ -60,7 +60,7 @@ class Core(object):
         self.up = Uploader(config)
 
     def setup(self):
-        u"""Sets up root dir with required PyiUpdater folders
+        u"""Sets up root dir with required PyUpdater folders
         """
         self.ph.setup()
 

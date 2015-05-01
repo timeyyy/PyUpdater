@@ -17,7 +17,6 @@ import os
 
 import pytest
 
-from pyupdater.exceptions import VersionError
 from pyupdater.utils import (check_repo,
                              convert_to_list,
                              EasyAccessDict,
@@ -26,6 +25,7 @@ from pyupdater.utils import (check_repo,
                              get_package_hashes,
                              Version
                              )
+from pyupdater.utils.exceptions import VersionError
 
 
 @pytest.mark.usefixtures('cleandir')

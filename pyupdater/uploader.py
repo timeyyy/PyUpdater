@@ -18,10 +18,10 @@ import os
 import sys
 import time
 
-from pyupdater.exceptions import UploaderError, UploaderPluginError
 from pyupdater import settings
 from pyupdater.utils import (lazy_import,
                              remove_dot_files)
+from pyupdater.utils.exceptions import UploaderError, UploaderPluginError
 
 log = logging.getLogger(__name__)
 
