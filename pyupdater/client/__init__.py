@@ -22,7 +22,7 @@ from pyupdater.utils import (convert_to_list,
                              gzip_decompress,
                              lazy_import,
                              Version)
-from pyupdater.utils.config import PyiUpdaterConfig
+from pyupdater.utils.config import PyUpdaterConfig
 
 
 @lazy_import
