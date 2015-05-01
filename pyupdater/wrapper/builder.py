@@ -117,7 +117,9 @@ class Builder(object):
             pyi_args.append(u'--specpath={}'.format(os.getcwd()))
         else:
             pyi_args.append(u'--specpath={}'.format(self.spec_dir))
-        pyi_args.append(u'--additional-hooks-dir={}'.format(get_hook_dir()))
+        hook_dir = get_hook_dir()
+        log.debug('Hook directory: {}'.format(hook_dir))
+        pyi_args.append(u'--additional-hooks-dir={}'.format(hook_dir))
         pyi_args.append(app_info[u'name'])
 
         cmd = ['pyi-makespec'] + pyi_args
