@@ -2,14 +2,11 @@ Changelog
 =========
 v0.21.1 - Beta
 ~~~~~~~~~~~~~~
-
-
 .. note:: This version is not yet released and is under active development.
+
+
 v0.21.0 - 2015/04/30
 ~~~~~~~~~~~~~~~~~~~~
-
-* Added
-
 * Updated
 
   - PyUpdater
@@ -20,14 +17,13 @@ v0.21.0 - 2015/04/30
     - stevedore lib 1.4.0
     - S3 plugin 2.2
     - SCP plugin 2.2
+    - Code refactoring
 
 * Fixed
 
   - PyUpdater
 
     - Potential leak of sensitive information to log files
-
-* Removed
 
 
 v0.20.0 - 2015/03/08
