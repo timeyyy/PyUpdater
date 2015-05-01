@@ -138,7 +138,7 @@ class Client(object):
         """
         # Used to add missing required information
         # i.e. APP_NAME
-        pyi_config = PyiUpdaterConfig(obj)
+        pyi_config = PyUpdaterConfig(obj)
         config = pyi_config.copy()
 
         self.FROZEN = jms_utils.app.FROZEN
@@ -148,7 +148,7 @@ class Client(object):
 
         # Here we combine all urls & add trailing / if one isn't present
         self.update_urls = self._sanatize_update_url(update_url, update_urls)
-        self.app_name = config.get(u'APP_NAME', u'PyiUpdater')
+        self.app_name = config.get(u'APP_NAME', u'PyUpdater')
         self.company_name = config.get(u'COMPANY_NAME', u'Digital Sapphire')
         if test:
             self.data_dir = obj.DATA_DIR
