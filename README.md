@@ -8,8 +8,6 @@
 ##### An update framework for managing, signing & uploading your app updates
 [Documentation](http://docs.pyupdater.com)
 
-[Dev Documentation](http://dev-docs.pyupdater.com)
-
 
 [Full changelog](https://github.com/JohnyMoSwag/PyUpdater/blob/master/changelog.txt)
 
@@ -18,9 +16,13 @@
 
 ## To Install
 
-######Stable:
+######Stable Lite:
 
     $ pip install -U PyUpdater
+
+######Stable Full:
+
+    $ pip install -U PyUpdater[all]
 
 ######Dev:
 
@@ -33,6 +35,10 @@
 or
 
     $ pip install -U PyUpdater[scp]
+
+######Patch support:
+
+    $ pip install -U PyUpdater[patch]
 
 
 ## Usage:
@@ -79,11 +85,11 @@ or
             #
             # The following items may be None
             #
-            # object_bucket (str): AWS/Dream Objects/Google Storage Bucket
+            # object_bucket (str): AWS S3/Dream Objects/Google Storage Bucket
             #
             # ssh_remote_dir (str): Full path on remote machine to place updates
             #
-            # ssh_username (str): user account of remote server uploads
+            # ssh_username (str): user account on remote server for uploads
             #
             # ssh_host (str): Remote host to connect to for server uploads
 
@@ -93,6 +99,7 @@ or
 
         def upload_file(self, filename):
             # Upload file here
+            # Will be call on every file that needs to be uploaded
 
 
 ######In your setup.py
@@ -105,7 +112,7 @@ Example from s3 upload plugin
         ]
 
 
-#### Examples available
+#### Examples plugins here available
 ###### [S3 Plugin](https://github.com/JohnyMoSwag/PyUpdater-S3-Plugin "S3 Plugin")
 ###### [SCP Plugin](https://github.com/JohnyMoSwag/PyUpdater-SCP-Plugin "SCP Plugin")
 
