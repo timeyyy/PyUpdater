@@ -3,6 +3,7 @@ coverage
 line_profiler == 1.0
 memory_profiler
 pytest
+pytest-circleci
 pytest-cov
 pytest-httpbin
 pytest-xdist
