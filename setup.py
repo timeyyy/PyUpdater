@@ -39,7 +39,7 @@ class PyTestCover(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
-                                 u'--cov', u'pyupdater', u'-n', u'1'])
+                                 u'--cov', u'pyupdater', u'-n', u'2'])
         raise SystemExit(errno)
 
 
