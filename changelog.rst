@@ -4,6 +4,17 @@ v0.21.1 - Beta
 ~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
 
+* Added
+
+  - More hooks from pyinstaller develop
+
+* Updated
+
+  - Test runs in parallel
+
+* Fixed
+
+* Removed
 
 v0.21.0 - 2015/04/30
 ~~~~~~~~~~~~~~~~~~~~
