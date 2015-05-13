@@ -18,7 +18,7 @@ import traceback
 
 
 class STDError(Exception):
-    """Extends exceptions to show added message if error isn't expected.
+    u"""Extends exceptions to show added message if error isn't expected.
 
     Args:
 
@@ -52,84 +52,84 @@ class STDError(Exception):
 
 
 class ArchiverError(STDError):
-    """Raised for Archiver exceptions"""
+    u"""Raised for Archiver exceptions"""
     def __init__(self, *args, **kwargs):
         super(ArchiverError, self).__init__(*args, **kwargs)
 
 
 class ClientError(STDError):
-    """Raised for Client exceptions"""
+    u"""Raised for Client exceptions"""
     def __init__(self, *args, **kwargs):
         super(ClientError, self).__init__(*args, **kwargs)
 
 
 class ConfigError(STDError):
-    """Raised for Config exceptions"""
+    u"""Raised for Config exceptions"""
     def __init__(self, *args, **kwargs):
         super(ConfigError, self).__init__(*args, **kwargs)
 
 
 class FileDownloaderError(STDError):
-    """Raised for FileDownloader exceptions"""
+    u"""Raised for FileDownloader exceptions"""
     def __init__(self, *args, **kwargs):
         super(FileDownloaderError, self).__init__(*args, **kwargs)
 
 
 class KeyHandlerError(STDError):
-    """Raised for KeyHandler exceptions"""
+    u"""Raised for KeyHandler exceptions"""
     def __init__(self, *args, **kwargs):
         super(KeyHandlerError, self).__init__(*args, **kwargs)
 
 
 class PackageError(STDError):
-    """Raised for Package exceptions"""
+    u"""Raised for Package exceptions"""
     def __init__(self, *args, **kwargs):
         super(PackageError, self).__init__(*args, **kwargs)
 
 
 class PackageHandlerError(STDError):
-    """Raised for PackageHandler exceptions"""
+    u"""Raised for PackageHandler exceptions"""
     def __init__(self, *args, **kwargs):
         super(PackageHandlerError, self).__init__(*args, **kwargs)
 
 
 class PatcherError(STDError):
-    """Raised for Patcher exceptions"""
+    u"""Raised for Patcher exceptions"""
     def __init__(self, *args, **kwargs):
         super(PatcherError, self).__init__(*args, **kwargs)
 
 
 class PyUpdaterError(STDError):
-    """Raised for Framework exceptions"""
+    u"""Raised for Framework exceptions"""
     def __init__(self, *args, **kwargs):
         super(PyUpdaterError, self).__init__(*args, **kwargs)
 
 
 class UpdaterError(STDError):
-    """Raised for Updater exceptions"""
+    u"""Raised for Updater exceptions"""
     def __init__(self, *args, **kwargs):
         super(UpdaterError, self).__init__(*args, **kwargs)
 
 
 class UploaderError(STDError):
-    """Raised for Uploader exceptions"""
+    u"""Raised for Uploader exceptions"""
     def __init__(self, *args, **kwargs):
         super(UploaderError, self).__init__(*args, **kwargs)
 
 
 class UploaderPluginError(STDError):
-    """Raised for Uploader exceptions"""
+    u"""Raised for Uploader exceptions"""
     def __init__(self, *args, **kwargs):
         super(UploaderPluginError, self).__init__(*args, **kwargs)
 
 
 class UtilsError(STDError):
-    """Raised for Utils exceptions"""
+    u"""Raised for Utils exceptions"""
     def __init__(self, *args, **kwargs):
         super(UtilsError, self).__init__(*args, **kwargs)
 
 
 class VersionError(STDError):
-    """Raised for Utils exceptions"""
+    u"""Raised for Utils exceptions"""
     def __init__(self, *args, **kwargs):
         super(VersionError, self).__init__(*args, **kwargs)

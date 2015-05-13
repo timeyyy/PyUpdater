@@ -110,6 +110,12 @@ class LibUpdate(object):
         self.current_app_dir = os.path.dirname(sys.argv[0])
 
     def is_downloaded(self):
+        """Returns (bool):
+
+            True: File is already downloaded.
+
+            False: File hasn't already been downloaded.
+        """
         if self.name is None:
             return False
         return self._is_downloaded(self.name)
@@ -157,19 +163,17 @@ class LibUpdate(object):
 
     def extract(self):
         """Will extract archived update and leave in update folder.
-            If updating a lib you can take over from there. If updating
-            an app this call should be followed by :meth:`restart` to
-            complete update.
+        If updating a lib you can take over from there. If updating
+        an app this call should be followed by :meth:`restart` to
+        complete update.
 
-            Proxy method for :meth:`_extract_update`.
+        Returns:
 
-            Returns:
+            (bool) Meanings:
 
-                (bool) Meanings:
+                True - Install successful
 
-                    True - Install successful
-
-                    False - Install failed
+                False - Install failed
         """
         if jms_utils.system.get_system() == u'win':  # Tested elsewhere
             log.warning('Only supported on Unix like systems')
@@ -244,20 +248,6 @@ class LibUpdate(object):
                 return False
 
     def _patch_update(self, name, version):  # pragma: no cover
-        # Updates the binary by patching
-        #
-        # Args:
-        #    name (str): Name of file to update
-        #
-        #     version (str): Current version number of file to update
-        #
-        # Returns:
-        #    (bool) Meanings::
-        #
-        #        True - Either already up to date or patched successful
-        #
-        #        False - Either failed to patch or no base binary to patch
-
         log.info(u'Starting patch update')
         filename = get_filename(name, version, self.platform, self.easy_data)
         log.debug('Archive filename: {}'.format(filename))
@@ -286,19 +276,6 @@ class LibUpdate(object):
         return p.start()
 
     def _full_update(self, name):
-        # Updates the binary by downloading full update
-        #
-        # Args:
-        #    name (str): Name of file to update
-        #
-        #    version (str): Current version number of file to update
-        #
-        # Returns:
-        #    (bool) Meanings::
-        #
-        #       True - Update Successful
-        #
-        #       False - Update Failed
         log.info(u'Starting full update')
         latest = get_highest_version(name, self.platform, self.easy_data)
 
@@ -322,12 +299,6 @@ class LibUpdate(object):
                 return False
 
     def _remove_old_updates(self):
-        # Removes old updates from cache. Patch updates
-        # start from currently installed version.
-
-        # ToDo: Better filename comparison
-        #       Please chime in if this is sufficient
-        #       Will remove todo if so...
         temp = os.listdir(self.update_folder)
         try:
             filename = get_filename(self.name, self.version,
@@ -372,14 +343,7 @@ class AppUpdate(LibUpdate):
 
     def extract_restart(self):
         """Will extract the update, overwrite the current app,
-        then restart the app using the updated binary.
-
-        On windows Proxy method for :meth:`_extract_update` &
-        :meth:`_win_overwrite_app_restart`
-
-        On unix Proxy method for :meth:`_extract_update`,
-        :meth:`_overwrite_app` & :meth:`_restart`
-        """
+        then restart the app using the updated binary."""
         try:
             self._extract_update()
 

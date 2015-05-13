@@ -23,7 +23,7 @@ from pyupdater.utils.storage import Storage
 
 
 class Core(object):
-    """Processes, signs & uploads updates
+    u"""Processes, signs & uploads updates
 
         Kwargs:
 
@@ -60,8 +60,7 @@ class Core(object):
         self.up = Uploader(config)
 
     def setup(self):
-        u"""Sets up root dir with required PyUpdater folders
-        """
+        u"Sets up root dir with required PyUpdater folders"
         self.ph.setup()
 
     def process_packages(self):
@@ -80,13 +79,11 @@ class Core(object):
         self.up.set_uploader(requested_uploader)
 
     def upload(self):
-        u"""Uploads files in deploy folder
-        """
+        u"Uploads files in deploy folder"
         self.up.upload()
 
     def make_keys(self, count=3):
-        u"""Creates signing keys
-        """
+        u"Creates signing keys"
         self.kh.make_keys(count)
 
     def revoke_key(self, count):

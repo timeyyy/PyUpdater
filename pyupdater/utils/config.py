@@ -94,6 +94,10 @@ class PyUpdaterConfig(dict):
     This makes it possible to use lowercase values in the config file for
     temporary values that are not added to the config or to define the config
     keys in the same file that implements the application.
+
+    Kwargs:
+
+        obj (object): Object with config values as attributes.
     """
 
     def __init__(self, obj=None):

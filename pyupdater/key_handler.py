@@ -66,7 +66,7 @@ log = logging.getLogger(__name__)
 
 
 class KeyHandler(object):
-    """KeyHanlder object is used to manage keys used for signing updates
+    u"""KeyHanlder object is used to manage keys used for signing updates
 
     Kwargs:
 
@@ -81,7 +81,7 @@ class KeyHandler(object):
             self.init_app(app, db)
 
     def init_app(self, obj, db):
-        """Sets up client with config values from obj
+        u"""Sets up client with config values from obj
 
         Args:
 
@@ -102,7 +102,7 @@ class KeyHandler(object):
                                          settings.VERSION_FILE)
 
     def make_keys(self, count=3):
-        """Makes public and private keys for signing and verification
+        u"""Makes public and private keys for signing and verification
 
         Kwargs:
 
@@ -124,7 +124,7 @@ class KeyHandler(object):
         self.keysdb.add_key(pub, pri)
 
     def sign_update(self):
-        """Signs version file with private key
+        u"""Signs version file with private key
 
         Proxy method for :meth:`_add_sig`
         """
@@ -135,8 +135,7 @@ class KeyHandler(object):
         self._add_sig()
 
     def get_public_keys(self):
-        """Returns (object): Public Key
-        """
+        u"Returns (object): Public Key"
         self.keysdb.load()
         return self.keysdb.get_public_keys()
 
@@ -145,7 +144,7 @@ class KeyHandler(object):
         return self.keysdb.get_revoked_key()
 
     def print_public_keys(self):
-        """Prints public key data to console"""
+        u"Prints public key data to console"
         keys = self.get_public_key()
         print(u'Public Key:\n{}\n\n'.format(keys))
 

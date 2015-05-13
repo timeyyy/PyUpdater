@@ -11,6 +11,7 @@ v0.21.1 - Beta
 * Updated
 
   - Test runs in parallel
+  - Documentation
 
 * Fixed
 

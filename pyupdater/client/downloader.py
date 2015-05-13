@@ -83,9 +83,9 @@ class FileDownloader(object):
 
             (bool) Meanings:
 
-                True - Hash verified
+                True - Hashes match or no hash was given during initialization.
 
-                False - Hash not verified
+                False - Hashes don't match
         """
         # Downloading data internally
         self._download_to_memory()
@@ -110,7 +110,8 @@ class FileDownloader(object):
 
             (data) Meanings:
 
-                Data - If everything verified
+                Binary data - If hashes match or no hash was given during
+                initialization.
 
                 None - If any verification didn't pass
         """

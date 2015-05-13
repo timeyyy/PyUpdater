@@ -44,7 +44,7 @@ def jms_utils():
 
 
 class PackageHandler(object):
-    """Handles finding, sorting, getting meta-data, moving packages.
+    u"""Handles finding, sorting, getting meta-data, moving packages.
 
     Kwargs:
 
@@ -61,7 +61,7 @@ class PackageHandler(object):
             self.init_app(app, db)
 
     def init_app(self, obj, db):
-        """Sets up client with config values from obj
+        u"""Sets up client with config values from obj
 
         Args:
 
@@ -89,10 +89,7 @@ class PackageHandler(object):
         self.setup()
 
     def setup(self):
-        """Creates working directories & loads json files.
-
-        Proxy method for :meth:`_setup_work_dirs` & :meth:`_load_version_file`
-        """
+        u"Creates working directories & loads json files."
         if self.data_dir is not None:
             self._setup()
 
@@ -104,15 +101,10 @@ class PackageHandler(object):
             self.config_loaded = True
 
     def process_packages(self):
-        """Gets a list of updates to process.  Adds the name of an
+        u"""Gets a list of updates to process.  Adds the name of an
         update to the version file if not already present.  Processes
         all packages.  Updates the version file meta-data. Then writes
         version file back to disk.
-
-        Proxy method for :meth:`_get_package_list`,
-        :meth:`_make_patches`, :meth:`_add_patches_to_packages`,
-        :meth:`_update_version_file`,
-        :meth:`_write_json_to_file` & :meth:`_move_packages`.
         """
         if self.data_dir is None:
             raise PackageHandlerError('Must init first.', expected=True)

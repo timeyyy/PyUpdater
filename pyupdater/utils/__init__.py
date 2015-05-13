@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 
 def lazy_import(func):
-    """Decorator for declaring a lazy import.
+    u"""Decorator for declaring a lazy import.
 
     This decorator turns a function into an object that will act as a lazy
     importer.  Whenever the object's attributes are accessed, the function
@@ -52,7 +52,7 @@ def lazy_import(func):
 
 
 class _LazyImport(object):
-    """Class representing a lazy import."""
+    u"""Class representing a lazy import."""
 
     def __init__(self, name, loader, namespace=None):
         self._pyiu_lazy_target = _LazyImport
@@ -173,6 +173,7 @@ def six():
 
 
 def check_repo():
+    u"Checks if current directory is a pyupdater repository"
     repo = True
     if not os.path.exists(settings.CONFIG_DATA_FOLDER):
         log.warning('PyiUpdater config data folder is missing')
@@ -183,6 +184,22 @@ def check_repo():
 
 
 def convert_to_list(data, default=None):
+    u"""Converts data to list. If data isn't a list, tuple or string
+    returns Default
+
+    Args:
+
+        data (object): list, tuple or string
+
+    Kwargs:
+
+        default (object): list
+
+
+    Returns:
+
+        list or default
+    """
     if isinstance(data, list):
         return data
     if isinstance(data, tuple):
@@ -195,36 +212,46 @@ def convert_to_list(data, default=None):
 
 
 def get_filename(name, version, platform, easy_data):
-        """Gets full filename for given name & version combo
+    u"""Gets full filename for given name & version combo
 
-        Args:
+    Args:
 
-           name (str): name of file to get full filename for
+        name (str): name of file to get full filename for
 
-           version (str): version of file to get full filename for
+       version (str): version of file to get full filename for
 
-           easy_data (dict): data file to search
+       easy_data (dict): data file to search
 
-        Returns:
+    Returns:
 
-           (str) Filename with extension
-        """
-        filename_key = u'{}*{}*{}*{}*{}'.format(u'updates', name, version,
-                                                platform, u'filename')
-        filename = easy_data.get(filename_key)
+       (str) Filename with extension
+    """
+    filename_key = u'{}*{}*{}*{}*{}'.format(u'updates', name, version,
+                                            platform, u'filename')
+    filename = easy_data.get(filename_key)
 
-        log.debug(u"Filename for {}-{}: {}".format(name, version, filename))
-        return filename
+    log.debug(u"Filename for {}-{}: {}".format(name, version, filename))
+    return filename
 
 
 def get_hash(data):
+    u"""Get hash of object
+
+    Args:
+
+        data (object): Object you want hash of.
+
+    Returns:
+
+        (str): sha256 hash
+    """
     hash_ = hashlib.sha256(data).hexdigest()
     log.debug(u'Hash for binary data: {}'.format(hash_))
     return hash_
 
 
 def get_highest_version(name, plat, easy_data):
-    """Parses version file and returns the highest version number.
+    u"""Parses version file and returns the highest version number.
 
     Args:
 
@@ -247,7 +274,7 @@ def get_highest_version(name, plat, easy_data):
 
 
 def get_mac_dot_app_dir(directory):
-    """Returns parent directory of mac .app
+    u"""Returns parent directory of mac .app
 
     Args:
 
@@ -261,6 +288,16 @@ def get_mac_dot_app_dir(directory):
 
 
 def get_package_hashes(filename):
+    u"""Provides hash of given filename.
+
+    Args:
+
+        filename (str): Name of file to hash
+
+    Returns:
+
+        (str): sha256 hash
+    """
     log.debug(u'Getting package hashes')
     filename = os.path.abspath(filename)
     with open(filename, u'rb') as f:
@@ -272,6 +309,17 @@ def get_package_hashes(filename):
 
 
 def gzip_decompress(data):
+    u"""Decompress gzip data
+
+    Args:
+
+        data (str): Gzip data
+
+
+    Returns:
+
+        (data): Decompressed data
+    """
     compressed_file = StringIO.StringIO()
     compressed_file.write(data)
     #
@@ -375,7 +423,7 @@ def initial_setup(config):
 
 
 def repo_update_attr_urls(config):
-    "Updates url to new attribute"
+    u"Updates url to new attribute"
     log.info('Checking for deprecated UPDATE_URL')
     if hasattr(config, u'UPDATE_URLS'):
         if config.UPDATE_URLS is None:
@@ -397,7 +445,7 @@ def repo_update_attr_urls(config):
 
 
 def repo_update_remove_attr(config):
-    "Removes unused attributes"
+    u"Removes unused attributes"
     log.info(u'Looking for unused attributes')
     upload_settings = False
     if hasattr(config, u'REMOTE_DIR'):
@@ -489,29 +537,68 @@ def make_archive(name, version, target):
 
 
 def parse_platform(name):
-        try:
-            platform_name = re.compile(u'[macnixwr64]{3,5}').findall(name)[0]
-            log.debug(u'Platform name is: {}'.format(platform_name))
-        except IndexError:
-            raise UtilsError('')
+    u"""Parses platfrom name from given string
 
-        return platform_name
+    Args:
+
+        name (str): Name to be parsed
+
+    Returns:
+
+        (str): Platform name
+    """
+    try:
+        platform_name = re.compile(u'[macnixwr64]{3,5}').findall(name)[0]
+        log.debug(u'Platform name is: {}'.format(platform_name))
+    except IndexError:
+        raise UtilsError('')
+
+    return platform_name
 
 
 def pretty_time(sec):
+    u"""Turns seconds into a human readable format. Example: 2020/07/31 12:22:83
+
+    Args:
+
+        sec (int): seconds since unix epoch
+
+    Returns:
+
+        (str): Human readable time
+    """
     return time.strftime("%Y/%m/%d, %H:%M:%S", time.localtime(sec))
 
 
 def remove_dot_files(files):
-        # Removes hidden files from file list
-        new_list = []
-        for l in files:
-            if not l.startswith(u'.'):
-                new_list.append(l)
-        return new_list
+    u"""Removes hidden dot files from file list
+
+    Args:
+
+        files (list): List of file names
+
+    Returns:
+
+        (list): List of filenames with dot files, .stuff, removed
+    """
+    new_list = []
+    for l in files:
+        if not l.startswith(u'.'):
+            new_list.append(l)
+    return new_list
 
 
 def run(cmd):
+    u"""Logs a command before running it in subprocess.
+
+    Args:
+
+        cmd (str): command to be ran in subprocess
+
+    Returns:
+
+        (int): Exit code
+    """
     log.debug(u'Command: {}'.format(cmd))
     exit_code = subprocess.call(cmd)
     return exit_code
@@ -581,6 +668,17 @@ class bsdiff4_py(object):
 
 
 class EasyAccessDict(object):
+    u"""Provides access to dict by pass a specially made key to
+    the get method. Default key sep is "*". Example key would be
+    updates*mac*1.7.0 would access {"updates":{"mac":{"1.7.0": "hi there"}}}
+    and return "hi there"
+
+    Kwargs:
+
+        dict_ (dict): Dict you would like easy asses to.
+
+        sep (str): Used as a delimiter between keys
+    """
 
     def __init__(self, dict_=None, sep=u'*'):
         self.sep = sep
@@ -592,6 +690,16 @@ class EasyAccessDict(object):
             self.dict = dict_
 
     def get(self, key):
+        u"""Retrive value from internal dict.
+
+        args:
+
+            key (str): Key to access value
+
+        Returns:
+
+            (object): Value of key if found or None
+        """
         try:
             layers = key.split(self.sep)
             value = self.dict
@@ -606,7 +714,7 @@ class EasyAccessDict(object):
             log.error(str(err), exc_info=True)
             return None
 
-    # Because I always for get call the get method
+    # Because I always forget call the get method
     def __call__(self, key):
         return self.get(key)
 
@@ -615,6 +723,13 @@ class EasyAccessDict(object):
 
 
 class Version(object):
+    u"""Normalizes version strings of different types. Examples
+    include 1.2, 1.2.1, 1.2b and 1.1.1b
+
+    Args:
+
+        version (str): Version number to normalizes
+    """
 
     re_2 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)(?P<re'
                       u'lease>[b])?(?P<releaseversion>\d+)?')
