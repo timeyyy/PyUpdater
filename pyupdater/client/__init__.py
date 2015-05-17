@@ -135,6 +135,14 @@ class Client(object):
 
             obj (instance): config object
 
+        Kwargs:
+
+            refresh (bool) Meaning:
+
+            True: Refresh update manifest on object initialization
+
+            False: Don't refresh update manifest on object initialization
+
         """
         # Used to add missing required information
         # i.e. APP_NAME
@@ -176,10 +184,7 @@ class Client(object):
             self.refresh()
 
     def refresh(self):
-        """Will download and verify your updates version file.
-
-        Proxy method from :meth:`_get_update_manifest`.
-        """
+        "Will download and verify your version file."
         try:
             self._get_update_manifest()
         except Exception as err:
@@ -187,14 +192,6 @@ class Client(object):
             log.error(str(err))
 
     def update_check(self, name, version):
-        try:
-            return self._update_check(name, version)
-        except Exception as err:
-            log.error('Update check failed: {}'.format(str(err)))
-            log.debug(str(err), exc_info=True)
-            return None
-
-    def _update_check(self, name, version):
         """
         Will try to patch binary if all check pass.  IE hash verified
         signature verified.  If any check doesn't pass then falls back to
@@ -214,6 +211,14 @@ class Client(object):
 
                 False - Update Failed
         """
+        try:
+            return self._update_check(name, version)
+        except Exception as err:
+            log.error('Update check failed: {}'.format(str(err)))
+            log.debug(str(err), exc_info=True)
+            return None
+
+    def _update_check(self, name, version):
         self.name = name
         version = Version(version)
         self.version = str(version)

@@ -37,7 +37,7 @@ ns = settings.UPLOAD_PLUGIN_NAMESPACE
 
 
 class Uploader(object):
-    """Uploads updates to configured servers.  SSH, SFTP, S3
+    u"""Uploads updates to configured servers.  SSH, SFTP, S3
     Will automatically pick the correct uploader depending on
     what is configured thorough the config object
 
@@ -52,7 +52,7 @@ class Uploader(object):
             self.init(app)
 
     def init(self, obj):
-        """Sets up client with config values from obj
+        u"""Sets up client with config values from obj
 
         Args:
 
@@ -72,8 +72,8 @@ class Uploader(object):
         self.mgr = stevedore.extension.ExtensionManager(namespace=ns)
 
     def upload(self):
-        """Proxy function that calls the upload method on the received uploader
-        Only calls the upload method if an uploader is set.
+        u"""Proxy function that calls the upload method on the received
+        uploader. Only calls the upload method if an uploader is set.
         """
         if self.uploader is not None:
             self.uploader.deploy_dir = self.deploy_dir
@@ -87,7 +87,7 @@ class Uploader(object):
             raise UploaderError(u'Must call set_uploader first', expected=True)
 
     def set_uploader(self, requested_uploader):
-        """Returns an uploader object. 1 of S3, SCP, SFTP.
+        u"""Returns an uploader object. 1 of S3, SCP, SFTP.
         SFTP uploaders not supported at this time.
 
         Args:
@@ -131,7 +131,7 @@ class Uploader(object):
 
 
 class BaseUploader(object):
-    """Base Uploader.  All uploaders should subclass
+    u"""Base Uploader.  All uploaders should subclass
     this base class
     """
     def __init__(self):
@@ -139,7 +139,7 @@ class BaseUploader(object):
         self.deploy_dir = None
 
     def init(self, **kwargs):
-        """Used to pass file list & any other config options set during
+        u"""Used to pass file list & any other config options set during
         repo setup.
 
         Kwargs:
@@ -158,7 +158,7 @@ class BaseUploader(object):
         raise NotImplementedError(u'Must be implemented in subclass.')
 
     def upload(self):
-        """Uploads all files in file_list"""
+        u"""Uploads all files in file_list"""
         self.files_completed = 1
         self.file_count = self._get_filelist_count()
         for f in self.file_list:
@@ -214,22 +214,22 @@ class BaseUploader(object):
             return True
 
     def connect(self):
-        # Connects to service
+        u"Connects to service"
         raise NotImplementedError(u'Must be implemented in subclass.')
 
     def upload_file(self, filename):
-        # """Uploads file to remote repository
+        u"""Uploads file to remote repository
 
-        # Args:
-        #     filename (str): file to upload
+        Args:
+            filename (str): file to upload
 
-        # Returns:
-        #     (bool) Meaning::
+        Returns:
+            (bool) Meaning::
 
-        #         True - Upload Successful
+                True - Upload Successful
 
-        #         False - Upload Failed
-        # """
+                False - Upload Failed
+        """
         raise NotImplementedError('Must be implemented in subclass.')
 
     def _get_filelist_count(self):

@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 class Storage(object):
 
     def __init__(self, data_dir=None):
-        u"""Loads & saves config file to file-system
+        u"""Loads & saves config file to file-system.
 
             Args:
 
@@ -45,6 +45,7 @@ class Storage(object):
         self.count = 0
 
     def load_db(self):
+        u"Loads database into memory."
         if not os.path.exists(self.config_dir):
             log.info(u'Creating config dir')
             os.makedirs(self.config_dir)
@@ -64,6 +65,7 @@ class Storage(object):
         self.sync_db()
 
     def sync_db(self):
+        u"Sync updates of in memory database back to database on disk."
         if self.count >= self.sync_threshold:
             self._sync_db()
             self.count = 0
