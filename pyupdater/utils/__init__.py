@@ -802,7 +802,7 @@ class Version(object):
     def _quick_sanatize(self, version):
         log.debug('Version str: {}'.format(version))
         ext = os.path.splitext(version)[1]
-        # Handle parsing versin from full filenames
+        # Handle parsing version from filenames
         if ext == u'.zip':
             log.debug('Removed ".zip"')
             version = version[:-4]
