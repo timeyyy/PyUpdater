@@ -125,7 +125,7 @@ class Package(object):
         log.info('Info extraction complete')
 
     def _parse_package_name(self, package):
-        # Returns string with version number removed
+        # Returns package name from update archive name
         log.debug('Package name: {}'.format(package))
         ext = os.path.splitext(package)[1]
         if ext == u'.zip':
