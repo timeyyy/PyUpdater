@@ -15,6 +15,8 @@ v0.21.1 - Beta
 
 * Fixed
 
+  - Parsing App Name from update archive filename when version number is in x.x format
+
 * Removed
 
 v0.21.0 - 2015/04/30
