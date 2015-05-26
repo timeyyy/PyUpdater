@@ -127,4 +127,6 @@ class Package(object):
             log.debug('Removed ".tar.gz"')
             package = package[:-7]
         # turns appname-platform-version
+        # ToDo: May need to update if support for app names with
+        #       hyphens in them are requested. Example "My-App"
         return package.split(u'-')[0]
