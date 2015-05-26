@@ -1,7 +1,7 @@
 Changelog
 =========
-v0.21.1 - Beta
-~~~~~~~~~~~~~~
+v0.21.1 - 2015/05/25
+~~~~~~~~~~~~~~~~~~~~
 .. note:: This version is not yet released and is under active development.
 
 * Added
@@ -12,6 +12,9 @@ v0.21.1 - Beta
 
   - Test runs in parallel
   - Documentation
+  - Libs
+    - requests 2.7.0
+    - urllib3 1.10.4
 
 * Fixed
 
