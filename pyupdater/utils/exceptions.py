@@ -39,7 +39,7 @@ class STDError(Exception):
     def __init__(self, msg, tb=None, expected=False):
         if not expected:
             msg = msg + (u'; please report this issue on https://github.com'
-                         '/DigitalSapphire/PyiUpdater/issues')
+                         '/JMSwag/PyUpdater/issues')
         super(Exception, self).__init__(msg)
 
         self.traceback = tb

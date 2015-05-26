@@ -40,11 +40,11 @@ def add_build_parser(subparsers):
     build_parser.add_argument(u'-o', help=argparse.SUPPRESS)
     build_parser.add_argument(u'--distpath', help=argparse.SUPPRESS)
 
-    # Will be set to .pyiupdater/spec/
+    # Will be set to .pyupdater/spec/
     # Trying to keep root dir clean
     build_parser.add_argument(u'--specpath', help=argparse.SUPPRESS)
 
-    # Will be set to .pyiupdater/build
+    # Will be set to .pyupdater/build
     # Trying to keep root dir clean
     build_parser.add_argument(u'--workpath', help=argparse.SUPPRESS)
 
@@ -55,7 +55,7 @@ def add_build_parser(subparsers):
     build_parser.add_argument(u'--name', help=argparse.SUPPRESS)
 
     # Just capturing these argument.
-    # PyiUpdater only supports onefile mode at the moment
+    # PyUpdater only supports onefile mode at the moment
     build_parser.add_argument(u'-D', action=u"store_true",
                               help=argparse.SUPPRESS)
     build_parser.add_argument(u'--onedir', action=u"store_true",
@@ -115,11 +115,11 @@ def add_make_spec_parser(subparsers):
     make_spec_parser.add_argument(u'-o', help=argparse.SUPPRESS)
     make_spec_parser.add_argument(u'--distpath', help=argparse.SUPPRESS)
 
-    # Will be set to .pyiupdater/spec/
+    # Will be set to .pyupdater/spec/
     # Trying to keep root dir clean
     make_spec_parser.add_argument(u'--specpath', help=argparse.SUPPRESS)
 
-    # Will be set to .pyiupdater/build
+    # Will be set to .pyupdater/build
     # Trying to keep root dir clean
     make_spec_parser.add_argument(u'--workpath', help=argparse.SUPPRESS)
 
@@ -130,7 +130,7 @@ def add_make_spec_parser(subparsers):
     make_spec_parser.add_argument(u'--name', help=argparse.SUPPRESS)
 
     # Just capturing these argument.
-    # PyiUpdater only supports onefile mode at the moment
+    # PyUpdater only supports onefile mode at the moment
     make_spec_parser.add_argument(u'-D', action=u"store_true",
                                   help=argparse.SUPPRESS)
     make_spec_parser.add_argument(u'--onedir', action=u"store_true",
@@ -177,9 +177,9 @@ def add_make_spec_parser(subparsers):
 def add_clean_parser(subparsers):
     clean_parser = subparsers.add_parser(u'clean',
                                          help=u'* WARNING * removes all '
-                                         u'traces of pyiupdater')
+                                         u'traces of pyupdater')
     clean_parser.add_argument(u'-y', '--yes', help=u'Confirms removal of '
-                              u'pyu-data & .pyiupdater folder',
+                              u'pyu-data & .pyupdater folder',
                               action='store_true')
 
 
@@ -246,7 +246,7 @@ def add_settings_parser(subparsers):
 def add_update_parser(subparsers):
     update_parser = subparsers.add_parser(u'update', help=u'Updates repo. '
                                           u'Should be ran after you update '
-                                          u'pyiupdater')
+                                          u'pyupdater')
     update_parser.add_argument(u'--dummy', help=argparse.SUPPRESS)
 
 

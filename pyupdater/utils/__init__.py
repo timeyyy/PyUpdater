@@ -176,10 +176,10 @@ def check_repo():
     u"Checks if current directory is a pyupdater repository"
     repo = True
     if not os.path.exists(settings.CONFIG_DATA_FOLDER):
-        log.warning('PyiUpdater config data folder is missing')
+        log.warning('PyUpdater config data folder is missing')
         repo = False
     if repo is False:
-        log.error('Not a PyiUpdater repo: must init first.')
+        log.error('Not a PyUpdater repo: must init first.')
         sys.exit(1)
 
 

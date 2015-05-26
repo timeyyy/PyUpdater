@@ -16,8 +16,11 @@ v0.21.1 - Beta
 * Fixed
 
   - Parsing App Name from update archive filename when version number is in x.x format
+  - Potential import error if pyinstaller version lower then 2.1
 
 * Removed
+
+  - Unused code
 
 v0.21.0 - 2015/04/30
 ~~~~~~~~~~~~~~~~~~~~

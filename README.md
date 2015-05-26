@@ -1,15 +1,14 @@
-[![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JohnyMoSwag/PyUpdater)
-[![Coverage Status](https://coveralls.io/repos/JohnyMoSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JohnyMoSwag/PyUpdater?branch=master)
-[![Development Status](https://pypip.in/status/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
-[![Requirements Status](https://requires.io/github/JohnyMoSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JohnyMoSwag/PyUpdater/requirements/?branch=master)
-[![Downloads](https://pypip.in/download/PyUpdater/badge.svg?style=flat)](https://pypi.python.org/pypi/PyUpdater/)
+[![PyPI version](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater)
+[![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JMSwag/PyUpdater)
+[![Requirements Status](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/JMSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JMSwag/PyUpdater?branch=master)
 
 # PyUpdater
 ##### An update framework for managing, signing & uploading your app updates
 [Documentation](http://docs.pyupdater.com)
 
 
-[Full changelog](https://github.com/JohnyMoSwag/PyUpdater/blob/master/changelog.txt)
+[Full changelog](https://github.com/JMSwag/PyUpdater/blob/master/changelog.txt)
 
 #### Made for [PyInstaller](http://www.pyinstaller.org) >= 2.1
 
@@ -26,7 +25,7 @@
 
 ######Dev:
 
-    $ pip install -U https://github.com/JohnyMoSwag/PyUpdater/tarball/master
+    $ pip install -U https://github.com/JMSwag/PyUpdater/tarball/master
 
 ######Extras: S3 & SCP upload plugins are available with
 
@@ -66,7 +65,7 @@ or
 
 
 ###### Using programmatically
-######[Click Here](https://github.com/JohnyMoSwag/PyUpdater/tree/master/demos "Example Usage") To See Example Work Flow
+######[Click Here](https://github.com/JMSwag/PyUpdater/tree/master/demos "Example Usage") To See Example Work Flow
 
 
 ## Write your own upload plugin
@@ -113,8 +112,8 @@ Example from s3 upload plugin
 
 
 #### Examples plugins here available
-###### [S3 Plugin](https://github.com/JohnyMoSwag/PyUpdater-S3-Plugin "S3 Plugin")
-###### [SCP Plugin](https://github.com/JohnyMoSwag/PyUpdater-SCP-Plugin "SCP Plugin")
+###### [S3 Plugin](https://github.com/JMSwag/PyUpdater-S3-Plugin "S3 Plugin")
+###### [SCP Plugin](https://github.com/JMSwag/PyUpdater-SCP-Plugin "SCP Plugin")
 
 ## Support Archive Formats
 ###### Zip for Windows and GZip for Mac & Linux.  Constraints being on patch size.

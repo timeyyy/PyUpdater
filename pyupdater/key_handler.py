@@ -94,7 +94,6 @@ class KeyHandler(object):
         self.public_key_name = self.app_name + u'.pub'
         data_dir = obj.get(u'DATA_DIR', os.getcwd())
         self.db = db
-        self.config_dir = os.path.join(data_dir, u'.pyiupdater')
         self.keysdb = KeyDB(db)
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
         self.deploy_dir = os.path.join(self.data_dir, u'deploy')

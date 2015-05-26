@@ -70,7 +70,7 @@ class Package(object):
         self.info = {'status': False, 'reason': ''}
         self.patch_info = {}
         # seems to produce the best diffs.
-        # Tests on homepage: https://github.com/JohnyMoSwag/PyiUpdater
+        # Tests on homepage: https://github.com/JMSwag/PyUpdater
         # Zip doesn't keep +x permissions. Only using gz for now.
         self.supported_extensions = [u'.zip', u'.gz']
         self.ignored_files = [u'.DS_Store', ]
