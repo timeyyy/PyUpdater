@@ -15,7 +15,6 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-import re
 
 from pyupdater.utils import (get_package_hashes,
                              parse_platform,
@@ -112,30 +111,22 @@ class Package(object):
             return
 
         # No need to get any more info if above failed
-        self.name = self._get_package_name(package)
+        self.name = self._parse_package_name(package)
         self.file_hash = get_package_hashes(package)
         self.info[u'status'] = True
         log.info('Info extraction complete')
 
-    def _get_package_name(self, package):
-        name = self._remove_version_number(package)
-        name = self._remove_ext(name)
-        name = self._remove_platform(name)
-        return name
-
-    def _remove_ext(self, filename):
-        # Removes file ext from filename.
-        data = os.path.splitext(filename)
-        while len(data[1]) > 0:
-            data = os.path.splitext(data[0])
-        return data[0]
-
-    def _remove_version_number(self, package_name):
-        # Returns string with version number removed
-        # What, thought it did something else? lol j/k
-        reg = u'-[0-9]+\.[0-9]+\.[0-9]+'
-        return re.sub(reg, '', package_name)
-
-    def _remove_platform(self, name):
-        name = re.sub(u'-[a-zA-Z0-9]{3,5}', '', name)
-        return name
+    def _parse_package_name(self, package):
+        # Returns package name from update archive name
+        log.debug('Package name: {}'.format(package))
+        ext = os.path.splitext(package)[1]
+        if ext == u'.zip':
+            log.debug('Removed ".zip"')
+            package = package[:-4]
+        elif ext == u'.gz':
+            log.debug('Removed ".tar.gz"')
+            package = package[:-7]
+        # turns appname-platform-version
+        # ToDo: May need to update if support for app names with
+        #       hyphens in them are requested. Example "My-App"
+        return package.split(u'-')[0]
