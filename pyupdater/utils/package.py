@@ -15,7 +15,6 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-import re
 
 from pyupdater.utils import (get_package_hashes,
                              parse_platform,
@@ -24,13 +23,6 @@ from pyupdater.utils import (get_package_hashes,
 from pyupdater.utils.exceptions import UtilsError, VersionError
 
 log = logging.getLogger(__name__)
-
-re_2 = (u'(?P<major>\d+)\.(?P<minor>\d+)(?P<release>[b])?'
-        u'(?P<releaseversion>\d+)?')
-re_3 = (u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)('
-        u'?P<release>[b])?(?P<releaseversion>\d+)?')
-re_4 = (u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)\.'
-        u'(?P<release>\d+)\.(?P<releaseversion>\d+)')
 
 
 class Patch(object):
