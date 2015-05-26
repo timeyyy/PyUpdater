@@ -1,8 +1,18 @@
 Changelog
 =========
+v0.21.2 - Beta
+~~~~~~~~~~~~~~
+.. note:: This version is not yet released and is under active development.
+* Added
+
+* Updated
+
+* Fixed
+
+* Removed
+
 v0.21.1 - 2015/05/25
 ~~~~~~~~~~~~~~~~~~~~
-.. note:: This version is not yet released and is under active development.
 
 * Added
 
