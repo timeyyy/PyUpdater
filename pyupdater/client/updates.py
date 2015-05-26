@@ -189,14 +189,17 @@ class LibUpdate(object):
     def _extract_update(self):
         with jms_utils.paths.ChDir(self.update_folder):
             platform_name = self.name
+            # Ensuring we only add .exe when applicable
             if sys.platform == u'win32' and self.name == self.app_name:
                 # We only add .exe to app executable.  Not libs or dll
                 log.debug(u'Adding .exe to filename for windows main '
                           'app udpate.')
                 platform_name += u'.exe'
 
+            # Ensuring we extract the latest version
             latest = get_highest_version(self.name, self.platform,
                                          self.easy_data)
+            # Get full filename of latest update archive
             filename = get_filename(self.name, latest, self.platform,
                                     self.easy_data)
             if not os.path.exists(filename):
@@ -205,6 +208,7 @@ class LibUpdate(object):
 
             log.info(u'Extracting Update')
             archive_ext = os.path.splitext(filename)[1].lower()
+            # Handles extracting gzip or zip archives
             if archive_ext == u'.gz':
                 try:
                     with tarfile.open(filename, u'r:gz') as tfile:
@@ -228,6 +232,7 @@ class LibUpdate(object):
             else:
                 raise ClientError(u'Unknown filetype')
 
+    # Checks if latest update is already downloaded
     def _is_downloaded(self, name):
         latest = get_highest_version(name, self.platform, self.easy_data)
 
@@ -237,6 +242,7 @@ class LibUpdate(object):
                                             latest, self.platform,
                                             u'file_hash')
         _hash = self.easy_data.get(hash_key)
+        # Comparing file hashes to ensure its the file we want
         with jms_utils.paths.ChDir(self.update_folder):
             if not os.path.exists(filename):
                 return False
@@ -247,6 +253,7 @@ class LibUpdate(object):
             else:
                 return False
 
+    # Handles patch updates
     def _patch_update(self, name, version):  # pragma: no cover
         log.info(u'Starting patch update')
         filename = get_filename(name, version, self.platform, self.easy_data)
@@ -264,6 +271,7 @@ class LibUpdate(object):
                         'form'.format(filename))
             return False
 
+        # Initilize Patch object with all required information
         p = Patcher(name=name, json_data=self.json_data,
                     current_version=version, highest_version=latest,
                     update_folder=self.update_folder,
@@ -275,6 +283,7 @@ class LibUpdate(object):
         # update.
         return p.start()
 
+    # Starting full update
     def _full_update(self, name):
         log.info(u'Starting full update')
         latest = get_highest_version(name, self.platform, self.easy_data)
@@ -298,12 +307,15 @@ class LibUpdate(object):
                 log.error(u'Failed To Download Latest Version')
                 return False
 
+    # Removed old update archives
     def _remove_old_updates(self):
         temp = os.listdir(self.update_folder)
         try:
             filename = get_filename(self.name, self.version,
                                     self.platform, self.easy_data)
         except KeyError:  # pragma: no cover
+            # We will not delete anything if we can't get
+            # a filename
             filename = u'0.0.0'
 
         if filename is None:

@@ -139,11 +139,16 @@ class FileDownloader(object):
         return int(rate)
 
     def _download_to_memory(self):
+        # Attempting to correct urls with spaces in them.
+        # Forgot when I ran into the error but have tests to
+        # ensure it doesn't happen again
         data = self._create_response()
         if data is None or data == '':
             return None
 
+        # Getting length of file to show progress
         self.content_length = self._get_content_length(data)
+        # Setting start point to show progress
         recieved_data = 0
 
         while 1:
@@ -155,9 +160,14 @@ class FileDownloader(object):
             if len(block) == 0:
                 # No more data, get out of this never ending loop!
                 break
+            # Calculating the best block size for the current connection
+            # speed
             self.b_size = self._best_block_size(end_block - start_block,
                                                 len(block))
             log.debug(u'Block size: %s' % self.b_size)
+            # Saving data to memory
+            # ToDo: Consider writing file to cache to enable resumable
+            #       downloads
             self.my_file.write(block)
             recieved_data += len(block)
             percent = self._calc_progress_percent(recieved_data,
@@ -168,6 +178,7 @@ class FileDownloader(object):
                       u'percent_complete': percent}
             self._call_progress_hooks(status)
 
+        # Flushing data to prepare to write to file
         self.my_file.flush()
         self.my_file.seek(0)
         self.file_binary_data = self.my_file.read()
@@ -177,13 +188,20 @@ class FileDownloader(object):
         self._call_progress_hooks(status)
         log.debug(u'Download Complete')
 
+    # Calling all progress hooks
     def _call_progress_hooks(self, data):
         log.debug(data)
         for ph in self.progress_hooks:
-            ph(data)
+            try:
+                ph(data)
+            except Exception as err:
+                log.debug(str(err), exc_info=True)
+                log.error(u'Exception in callback: '
+                          u'{}'.format(ph.__name__))
 
+    # Creating response object to start download
+    # Attempting to do some error correction for aws s3 urls
     def _create_response(self):
-        # Downloads file to memory.  Keeps internal reference
         data = None
         for url in self.urls:
             file_url = url + self.filename
