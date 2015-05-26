@@ -159,23 +159,31 @@ class Client(object):
         self.app_name = config.get(u'APP_NAME', u'PyUpdater')
         self.company_name = config.get(u'COMPANY_NAME', u'Digital Sapphire')
         if test:
+            # Making platform deterministic for tests.
+            # No need to test for other platforms at the moment
             self.data_dir = obj.DATA_DIR
             self.platform = 'mac'
         else:
+            # Getting platform specific application directory
             self.data_dir = appdirs.user_data_dir(self.app_name,
                                                   self.company_name,
                                                   roaming=True)
+            # Setting the platform to pass when requesting updates
             self.platform = jms_utils.system.get_system()
+        # Creating update folder. Using settings to ease change in future
         self.update_folder = os.path.join(self.data_dir,
                                           settings.UPDATE_FOLDER)
+        # Attempting to sanitize incorrect inputs types
         self.public_keys = convert_to_list(config.get(u'PUBLIC_KEYS'),
                                            default=list())
         if len(self.public_keys) == 0:
-            log.warning(u'May have passed an incorrect'
-                        u'data type to PUBLIC_KEYS')
+            log.warning(u'May have passed an incorrect data type to '
+                        u'PUBLIC_KEYS or an empty list was passed')
 
         # Ensuring only one occurrence of a public key is present
+        # Would be a waste to test a bad key twice
         self.public_keys = list(set(self.public_keys))
+        # Config option to disable tls cert verification
         self.verify = config.get(u'VERIFY_SERVER_CERT', True)
         self.version_file = settings.VERSION_FILE
 
@@ -223,10 +231,17 @@ class Client(object):
         version = Version(version)
         self.version = str(version)
 
+        # Will be set to true if we are updating an app and not a lib
         app = False
+
+        # No json data is loaded.
+        # User may need to call update_check
         if self.ready is False:
             log.warning('No update manifest found')
             return None
+
+        # If we are an app we will need restart functionality.
+        # AppUpdate instead of LibUpdate
         if self.FROZEN is True and self.name == self.app_name:
             app = True
         # Checking if version file is verified before
@@ -237,7 +252,7 @@ class Client(object):
             return None
         log.info(u'Checking for {} updates...'.format(name))
 
-        # If None is returned self._get_highest_version could
+        # If None is returned get_highest_version could
         # not find the supplied name in the version file
         latest = get_highest_version(name, self.platform,
                                      self.easy_data)
@@ -274,16 +289,19 @@ class Client(object):
         else:
             return LibUpdate(data)
 
+    # Adding callbacks to be passed to client.downloader.FileDownloader
     def add_call_back(self, cb):
         self.progress_hooks.append(cb)
 
     # Here we attempt to read the manifest from the filesystem
-    # in case of no Internet connection
+    # in case of no Internet connection. Useful for an update
+    # needs to be installed without an network connection
     def _get_manifest_filesystem(self):
+        data = None
         with jms_utils.paths.ChDir(self.data_dir):
             if not os.path.exists(self.version_file):
                 log.warning('No version file on file system')
-                return None
+                return data
             else:
                 log.info('Found version file on file system')
                 try:
@@ -291,12 +309,18 @@ class Client(object):
                         data = f.read()
                     log.info('Loaded version file from file system')
                 except Exception as err:
+                    # Whatever the error data is already set to None
                     log.error('Failed to load version file from file '
                               u'system')
                     log.debug(str(err), exc_info=True)
-                    data = None
+                # In case we don't have any data to pass
+                # Catch the error here and just return None
+                try:
+                    decompressed_data = gzip_decompress(data)
+                except Exception as err:
+                    decompressed_data = None
 
-                return gzip_decompress(data)
+                return decompressed_data
 
     # Downloading the manifest. If successful also writes it to file-system
     def _download_manifest(self):
@@ -309,8 +333,10 @@ class Client(object):
                 decompressed_data = gzip_decompress(data)
             except IOError:
                 log.error('Failed to decompress gzip file')
+                # Will be caught down below. Just logging the error
                 raise
             log.info('Version file download successful')
+            # Writing version file to application data directory
             self._write_manifest_2_filesystem(decompressed_data)
             return decompressed_data
         except Exception as err:
@@ -330,6 +356,9 @@ class Client(object):
 
         data = self._download_manifest()
         if data is None:
+            # Its ok if this is None. If any exceptions are raised
+            # that we can't handle we will just return an empty
+            # dictionary.
             data = self._get_manifest_filesystem()
 
         try:
@@ -340,6 +369,7 @@ class Client(object):
             # which will cause _update_check to exit early
             self.ready = True
         except ValueError as err:
+            # Malformed json???
             log.debug(str(err), exc_info=True)
             log.error(u'Json failed to load: ValueError')
         except Exception as err:
@@ -354,13 +384,15 @@ class Client(object):
         if self.json_data is None:
             self.json_data = {}
 
+        # If verified we set self.verified to True.
+        # We return the data either way
         self.json_data = self._verify_sig(self.json_data)
 
         self.easy_data = EasyAccessDict(self.json_data)
         log.debug('Version Data:\n{}'.format(str(self.easy_data)))
 
     def _verify_sig(self, data):
-        # Checking to see if there is a sig in the version file.
+        # Checking to see if there is a sigs key in the version file.
         if u'sigs' in data.keys():
             signatures = data[u'sigs']
             log.debug(u'Deleting sigs from update data')
@@ -394,6 +426,7 @@ class Client(object):
                     # No longer need to iterate through public keys
                     break
             else:
+                # Couldn't verify with any public keys
                 log.warning(u'Version file not verified')
 
         else:
@@ -412,6 +445,8 @@ class Client(object):
                 log.info(u'Creating directory: {}'.format(d))
                 os.makedirs(d)
 
+    # Legacy code used when migrating from single urls to
+    # A list of urls
     def _sanatize_update_url(self, url, urls):
         _urls = []
         # Making sure final output is a list
