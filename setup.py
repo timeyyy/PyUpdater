@@ -77,7 +77,7 @@ setup(
     author='Johny Mo Swag',
     author_email='johnymoswag@gmail.com',
     url='docs.pyupdater.org',
-    download_url=('https://github.com/JohnyMoSwag/Py'
+    download_url=('https://github.com/JMSwag/Py'
                   'Updater/archive/master.zip'),
     license='Apache License 2.0',
     extras_require={
