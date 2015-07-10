@@ -6,12 +6,6 @@ import sys
 
 import versioneer
 
-versioneer.VCS = 'git'
-versioneer.versionfile_source = 'pyupdater/_version.py'
-versioneer.versionfile_build = 'pyupdater/_version.py'
-versioneer.tag_prefix = ''  # tags are like 1.2.0
-versioneer.parentdir_prefix = 'PyUpdater-'  # dirname like 'myproject-1.2.0'
-
 
 class PyTest(Command):
     user_options = []

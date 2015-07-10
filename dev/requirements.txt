@@ -10,5 +10,5 @@ pytest-httpbin
 pytest-xdist
 pyupdater-s3-plugin
 twine
-versioneer == 0.14
+versioneer == 0.15
 wheel
