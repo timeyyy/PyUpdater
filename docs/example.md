@@ -1,3 +1,6 @@
+# Example Usage
+
+```
 from threading import Thread
 
 # Two important imports
@@ -72,3 +75,5 @@ if zip_update is not None:
     zip_update.extract()
     # Time passes
     zip_update.restart()
+
+```

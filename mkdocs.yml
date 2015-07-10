@@ -1,0 +1,20 @@
+site_name: PyUpdater
+pages:
+- Home: index.md
+- User Guide:
+    - Installation: installation.md
+    - Configuration: configuration.md
+    - Folder Layout: folder_structure.md
+    - Usage: usage.md
+    - Examples: example.md
+
+- More Info:
+    - Contributing: contributing.md
+    - Downloads: downloads.md
+    - License: license.md
+    - To Do: todo.md
+- Change Log: changelog.md
+
+theme: journal
+
+dev_addr: 0.0.0.0:80

@@ -7,6 +7,10 @@ deps-dev: deps-upgrade
 deps-upgrade:
 	pip install -r requirements.txt --upgrade
 
+deploy-docs:
+	mkdocs build --clean
+	python dev/move.py
+
 pypi:
 	python setup.py sdist bdist_wheel
 
