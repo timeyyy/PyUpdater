@@ -1,16 +1,25 @@
-- Framework
+# To Do
 
-  - PyUpdater
+PyUpdater
 
     - More logging
 
-  - Package Handler
+Client
+
+    - Update callbacks
+
+
+Package Handler
 
     - check make patch | better logging
 
-  - Test Suite
+Test Suite
 
     - Focus on client auto update tests
     - Cli needs coverage
     - Add more tests!
     - Coverage is lacking
+
+CLI
+
+  - Ability to update configuration

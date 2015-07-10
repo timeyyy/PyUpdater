@@ -12,11 +12,10 @@ debug.txt
 
 dist
 
-docs
-
 MANIFEST
 
 .DS_Store
 
 htmlcov
 
+site
