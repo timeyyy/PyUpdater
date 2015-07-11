@@ -60,7 +60,7 @@ class _LazyImport(object):
         self._pyu_lazy_loader = loader
         self._pyu_lazy_namespace = namespace
 
-    def _pyiu_lazy_load(self):
+    def _pyu_lazy_load(self):
         if self._pyu_lazy_target is _LazyImport:
             self._pyu_lazy_target = self._pyu_lazy_loader()
             ns = self._pyu_lazy_namespace
