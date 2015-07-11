@@ -7,6 +7,10 @@ deps-dev: deps-upgrade
 deps-upgrade:
 	pip install -r requirements.txt --upgrade
 
+deploy: pypi
+	twine upload dist/*
+	python dev/make.py remove-dist
+
 deploy-docs:
 	mkdocs build --clean
 	python dev/move.py
@@ -31,7 +35,3 @@ test-cover:
 
 test-script:
 	py.test --genscript=runtests.py
-
-upload: pypi
-	twine upload dist/*
-	python dev/make.py remove-dist

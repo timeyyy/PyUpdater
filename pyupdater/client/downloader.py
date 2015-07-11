@@ -213,7 +213,7 @@ class FileDownloader(object):
                 if data.status == 505:
                     raise urllib3.exceptions.HTTPError
             except urllib3.exceptions.HTTPError:
-                log.debug(u'Might have had spaces in an S3 url...')
+                log.debug(u'There may be spaces in an S3 url...')
                 file_url = file_url.replace(' ', '+')
                 log.debug(u'S3 updated url {}'.format(file_url))
                 data = None
