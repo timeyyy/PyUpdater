@@ -171,13 +171,14 @@ class KeyHandler(object):
             del update_data[u'sigs']
         update_data_str = json.dumps(update_data, sort_keys=True)
 
-        signatures = list()
+        signatures = []
         for p in private_keys:
             if six.PY2 is True and isinstance(p, unicode) is True:
                 log.debug('Got type: {}'.format(type(p)))
                 p = str(p)
             log.debug(u'Key type: {}'.format(type(p)))
             privkey = ed25519.SigningKey(p, encoding=self.key_encoding)
+            # Signs update data with private key
             sig = privkey.sign(six.b(update_data_str),
                                encoding=self.key_encoding)
             log.debug('Sig: {}'.format(sig))
@@ -185,15 +186,18 @@ class KeyHandler(object):
 
         og_data = json.loads(update_data_str)
         update_data = og_data.copy()
+        # Add signatures to update data
         update_data[u'sigs'] = signatures
         log.info(u'Adding sig to update data')
+        # Write updated version file to filesystem
         self._write_update_data(og_data, update_data)
 
     def _write_update_data(self, data, version):
-        # Write version file to disk
+        # Save update data to repo database
         self.db.save(settings.CONFIG_DB_KEY_VERSION_META, data)
         log.debug(u'Saved version meta data')
 
+        # Gzip update date
         with gzip.open(self.version_file, u'wb') as f:
             f.write(json.dumps(version, indent=2, sort_keys=True))
         log.info(u'Created gzipped version manifest in deploy dir')
@@ -201,6 +205,7 @@ class KeyHandler(object):
     def _load_update_data(self):
         log.debug(u"Loading version data")
         update_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
+        # If update_data is None, create a new one
         if update_data is None:
             update_data = {}
             log.error(u'Version meta data not found')
