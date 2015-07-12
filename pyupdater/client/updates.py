@@ -242,7 +242,7 @@ class LibUpdate(object):
                                             latest, self.platform,
                                             u'file_hash')
         _hash = self.easy_data.get(hash_key)
-        # Comparing file hashes to ensure its the file we want
+        # Comparing file hashes to ensure security
         with jms_utils.paths.ChDir(self.update_folder):
             if not os.path.exists(filename):
                 return False
@@ -293,12 +293,12 @@ class LibUpdate(object):
         hash_key = u'{}*{}*{}*{}*{}'.format(self.updates_key, name,
                                             latest, self.platform,
                                             u'file_hash')
-        _hash = self.easy_data.get(hash_key)
+        file_hash = self.easy_data.get(hash_key)
 
         with jms_utils.paths.ChDir(self.update_folder):
             log.info(u'Downloading update...')
             fd = FileDownloader(filename, self.update_urls,
-                                _hash, self.verify, self.progress_hooks)
+                                file_hash, self.verify, self.progress_hooks)
             result = fd.download_verify_write()
             if result:
                 log.info(u'Download Complete')
@@ -318,26 +318,27 @@ class LibUpdate(object):
             # a filename
             filename = u'0.0.0'
 
+        # In case we get None from get_filename()
         if filename is None:
             filename = u'0.0.0'
         try:
             current_version = Version(filename)
-            current_version_str = str(current_version)
         except (UtilsError, VersionError):  # pragma: no cover
             log.warning(u'Cannot parse version info')
             current_version = Version('0.0.0')
-            current_version_str = str(current_version)
-        log.debug('Current verion: {}'.format(current_version_str))
+        log.debug('Current verion: {}'.format(str(current_version)))
         with jms_utils.paths.ChDir(self.update_folder):
             for t in temp:
                 try:
-                    t_versoin_str = str(Version((t)))
+                    old_version = Version(t)
                 except UtilsError:  # pragma: no cover
                     log.warning(u'Cannot parse version info')
-                    t_versoin_str = u'0.0.0'
-                log.debug('Old version: {}'.format(t_versoin_str))
-                t_version = Version(t_versoin_str)
-                if self.name in t and t_version < current_version:
+                    # Skip file since we can't parse
+                    continue
+                log.debug('Old version: {}'.format(str(old_version)))
+                # Only attempt to remove old files of the one we
+                # are updating
+                if self.name in t and old_version < current_version:
                     log.info(u'Removing old update: {}'.format(t))
                     os.remove(t)
 
@@ -374,6 +375,8 @@ class AppUpdate(LibUpdate):
 
         Proxy method for :meth:`_overwrite_app` & :meth:`_restart`.
         """
+        # On windows we write a batch file to move the update
+        # binary to the correct location and restart app.
         if jms_utils.system.get_system() == u'win':
             log.warning(u'Only supported on Unix like systems')
             return
@@ -395,6 +398,7 @@ class AppUpdate(LibUpdate):
                 self.current_app_dir = temp_dir
 
         app_update = os.path.join(self.update_folder, self.name)
+        # Must be dealing with Mac .app application
         if not os.path.exists(app_update):
             app_update += u'.app'
         log.debug(u'Update Location'
@@ -402,9 +406,12 @@ class AppUpdate(LibUpdate):
         log.debug(u'Update Name: {}'.format(os.path.basename(app_update)))
 
         current_app = os.path.join(self.current_app_dir, self.name)
+        # Must be dealing with Mac .app application
         if not os.path.exists(current_app):
             current_app += u'.app'
         log.debug(u'Current App location:\n\n{}'.format(current_app))
+        # Remove current app to prevent errors when moving
+        # update to new location
         if os.path.exists(current_app):
             if os.path.isfile(current_app):
                 os.remove(current_app)
@@ -421,6 +428,7 @@ class AppUpdate(LibUpdate):
         log.info(u'Restarting')
         current_app = os.path.join(self.current_app_dir, self.name)
         if jms_utils.system.get_system() == u'mac':
+            # Must be dealing with Mac .app application
             if not os.path.exists(current_app):
                 current_app += u'.app'
                 mac_app_binary_dir = os.path.join(current_app, u'Contents',
@@ -437,8 +445,6 @@ class AppUpdate(LibUpdate):
         # Windows: Moves update to current directory of running
         #          application then restarts application using
         #          new update.
-        # Pretty much went through this work to show love to
-        # all platforms.  But sheeeeesh!
         exe_name = self.name + u'.exe'
         current_app = os.path.join(self.current_app_dir, exe_name)
         log.debug('Current app location: {}'.format(current_app))

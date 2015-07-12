@@ -70,6 +70,7 @@ loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
 
 
+# Get permission before deleting PyUpdater repo
 def clean(args):  # pragma: no cover
     if args.yes is True:
         _clean()
@@ -83,6 +84,7 @@ def clean(args):  # pragma: no cover
             log.info(u'Clean canceled.')
 
 
+# Remove all traces of PyUpdater
 def _clean():
     cleaned = False
     if os.path.exists(settings.CONFIG_DATA_FOLDER):
@@ -99,6 +101,7 @@ def _clean():
         log.info(u'Nothing to clean...')
 
 
+# Initialize PyUpdater repo
 def init(args):  # pragma: no cover
     count = args.count
     if count > 10:
@@ -118,6 +121,7 @@ def init(args):  # pragma: no cover
         sys.exit(u'Not an empty PyUpdater repository')
 
 
+# Revokes keys
 def keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
@@ -140,7 +144,7 @@ def keys(args):  # pragma: no cover
     loader.save_config(config)
 
 
-def _upload_debug_info(args):  # pragma: no cover
+def upload_debug_info(args):  # pragma: no cover
     log.info(u'Starting log export')
 
     def _add_file(payload, filename):
@@ -272,10 +276,10 @@ def _real_main(args):  # pragma: no cover
     elif cmd == u'log':
         warnings.simplefilter('always', DeprecationWarning)
         warnings.warn(u'Use "collect-debug-info" ', DeprecationWarning)
-        _upload_debug_info(args)
+        upload_debug_info(args)
     # End to do
     elif cmd == u'collect-debug-info':
-        _upload_debug_info(args)
+        upload_debug_info(args)
     elif cmd == u'make-spec':
         check_repo()
         builder = Builder(args, pyi_args)

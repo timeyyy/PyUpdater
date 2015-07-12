@@ -55,34 +55,34 @@ class _LazyImport(object):
     u"""Class representing a lazy import."""
 
     def __init__(self, name, loader, namespace=None):
-        self._pyiu_lazy_target = _LazyImport
-        self._pyiu_lazy_name = name
-        self._pyiu_lazy_loader = loader
-        self._pyiu_lazy_namespace = namespace
+        self._pyu_lazy_target = _LazyImport
+        self._pyu_lazy_name = name
+        self._pyu_lazy_loader = loader
+        self._pyu_lazy_namespace = namespace
 
-    def _pyiu_lazy_load(self):
-        if self._pyiu_lazy_target is _LazyImport:
-            self._pyiu_lazy_target = self._pyiu_lazy_loader()
-            ns = self._pyiu_lazy_namespace
+    def _pyu_lazy_load(self):
+        if self._pyu_lazy_target is _LazyImport:
+            self._pyu_lazy_target = self._pyu_lazy_loader()
+            ns = self._pyu_lazy_namespace
             if ns is not None:
                 try:
-                    if ns[self._pyiu_lazy_name] is self:
-                        ns[self._pyiu_lazy_name] = self._pyiu_lazy_target
+                    if ns[self._pyu_lazy_name] is self:
+                        ns[self._pyu_lazy_name] = self._pyu_lazy_target
                 except KeyError:  # pragma: no cover
                     pass
 
-    def __getattribute__(self, attr):
+    def __getattribute__(self, attr):  # pragma: no cover
         try:
             return object.__getattribute__(self, attr)
         except AttributeError:
-            if self._pyiu_lazy_target is _LazyImport:
-                self._pyiu_lazy_load()
-            return getattr(self._pyiu_lazy_target, attr)
+            if self._pyu_lazy_target is _LazyImport:
+                self._pyu_lazy_load()
+            return getattr(self._pyu_lazy_target, attr)
 
     def __nonzero__(self):  # pragma: no cover
-        if self._pyiu_lazy_target is _LazyImport:
-            self._pyiu_lazy_load()
-        return bool(self._pyiu_lazy_target)
+        if self._pyu_lazy_target is _LazyImport:
+            self._pyu_lazy_load()
+        return bool(self._pyu_lazy_target)
 
 
 @lazy_import
@@ -747,8 +747,10 @@ class Version(object):
     def _parse_version_str(self, version):
         count = self._quick_sanatize(version)
         try:
+            # version in the form of 1.1
             if count == 1:
                 version_data = self._major_minor_re(version)
+            # version in the form of 1.1.1
             elif count == 2:
                 version_data = self._major_minor_patch_re(version)
             else:
@@ -765,6 +767,7 @@ class Version(object):
         release = version_data.get('release')
         if release is None:
             self.release = 2
+        # Convert to number for easy comparison and sorting
         elif release == u'b':
             self.release = 1
         elif release == u'a':
@@ -774,6 +777,7 @@ class Version(object):
                 self.release = int(release)
             except ValueError:
                 log.debug('Cannot parse release. Setting as stable')
+                # Marking release as stable
                 self.release = 2
 
         release_version = version_data.get('releaseversion')
@@ -802,7 +806,8 @@ class Version(object):
     def _quick_sanatize(self, version):
         log.debug('Version str: {}'.format(version))
         ext = os.path.splitext(version)[1]
-        # Handle parsing version from filenames
+        # Removing file extensions, to ensure count isn't
+        # contaminated
         if ext == u'.zip':
             log.debug('Removed ".zip"')
             version = version[:-4]

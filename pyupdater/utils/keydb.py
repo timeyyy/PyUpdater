@@ -78,6 +78,7 @@ class KeyDB(object):
         return self._get_keys(u'private')
 
     def _get_keys(self, key):
+        # Returns a list of non revoked keys
         if self.data is None:
             self.load()
         order = []
@@ -120,9 +121,9 @@ class KeyDB(object):
 
             count (int): The number of keys to revoke. Oldest first
         """
+        log.debug(u'Collecting keys')
         keys = map(str, self.data.keys())
         keys = sorted(keys)
-        log.debug(u'Collecting keys'.format(keys))
         c = 0
         for k in keys:
             if c >= count:
