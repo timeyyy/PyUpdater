@@ -147,6 +147,8 @@ class PackageHandler(object):
         return json_data
 
     def _load_config(self):
+        # Loads config from db if exists.
+        # If config doesn't exists create new one
         config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
         if config is None:  # pragma: no cover
             log.info(u'Creating new config file')
@@ -246,6 +248,8 @@ class PackageHandler(object):
         return data
 
     def _cleanup(self, patch_manifest):
+        # Remove old archives
+        # were previously used to create patches
         if len(patch_manifest) < 1:
             return
         log.info(u'Cleaning up files directory')

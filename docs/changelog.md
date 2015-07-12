@@ -4,13 +4,28 @@
 ## v0.21.2 - Master
 
 ##### This version is not yet released and is under active development.
-* Added
+Added
 
-* Updated
+Updated
 
-* Fixed
+  - Some code Refactoring
 
-* Removed
+  - Download url
+
+  - Converted docs to markdown
+
+  - Error handling for callbacks
+
+  - Libs
+
+    - ed15519 1.4
+    - stevedore 1.6.0
+
+Fixed
+
+Removed
+
+  - Duplicate code
 
 ## v0.21.1 - 2015/05/25
 
