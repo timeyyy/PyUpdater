@@ -217,8 +217,8 @@ class PackageHandler(object):
                     else:
                         log.warning(u'No source file to patch from')
 
-        # ToDo: Expose this
-        if ignore_errors is False:
+        # ToDo: Expose this & remove "pragma: no cover" once done
+        if ignore_errors is False:  # pragma: no cover
             log.warning(u'Bad package & reason for being naughty:')
             for b in bad_packages:
                 log.warning(b.name, b.info['reason'])

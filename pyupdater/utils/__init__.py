@@ -92,12 +92,6 @@ def bz2():
 
 
 @lazy_import
-def getpass():
-    import getpass
-    return getpass
-
-
-@lazy_import
 def gzip():
     import gzip
     return gzip
@@ -830,31 +824,19 @@ class Version(object):
                                self.version_str)
 
     def __eq__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple == obj.version_tuple
 
     def __ne__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple != obj.version_tuple
 
     def __lt__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple < obj.version_tuple
 
     def __gt__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple > obj.version_tuple
 
     def __le__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple <= obj.version_tuple
 
     def __ge__(self, obj):
-        if hasattr(obj, 'version_tuple') is False:
-            return False
         return self.version_tuple >= obj.version_tuple

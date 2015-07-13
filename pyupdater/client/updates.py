@@ -68,12 +68,6 @@ def zipfile():
 
 
 @lazy_import
-def certifi():
-    import certifi
-    return certifi
-
-
-@lazy_import
 def jms_utils():
     import jms_utils
     import jms_utils.paths
@@ -153,7 +147,7 @@ class LibUpdate(object):
                     if update_success:
                         status = True
                         log.info(u'Full download successful')
-                    else:  # Tested elsewhere
+                    else:  # pragma: no cover
                         log.error(u'Full download failed')
         # Removes old versions, of update being checked, from
         # updates folder.  Since we only start patching from

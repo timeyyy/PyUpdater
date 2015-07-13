@@ -50,21 +50,9 @@ def os():
 
 
 @lazy_import
-def shutil():
-    import shutil
-    return shutil
-
-
-@lazy_import
 def appdirs():
     import appdirs
     return appdirs
-
-
-@lazy_import
-def certifi():
-    import certifi
-    return certifi
 
 
 @lazy_import
@@ -91,7 +79,8 @@ def six():
 
 log = logging.getLogger(__name__)
 
-if os.path.exists(os.path.join(jms_utils.paths.app_cwd, u'pyu.log')):
+log_path = os.path.join(jms_utils.paths.app_cwd, u'pyu.log')
+if os.path.exists(log_path):  # pragma: no cover
     ch = logging.FileHandler(os.path.join(jms_utils.paths.app_cwd,
                              u'pyu.log'))
     ch.setLevel(logging.DEBUG)
