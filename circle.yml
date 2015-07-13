@@ -3,4 +3,4 @@ dependencies:
     pre:
         - pip install -U pip
         - make deps-dev
-        - pip install python-coveralls codecov
+        - pip install codecov

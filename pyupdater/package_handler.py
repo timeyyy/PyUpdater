@@ -184,6 +184,8 @@ class PackageHandler(object):
                     bad_packages.append(package)
                     continue
 
+                # Add package hash
+                package.file_hash = gph(package.filename)
                 self.json_data = self._update_file_list(self.json_data,
                                                         package)
 

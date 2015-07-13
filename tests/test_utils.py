@@ -15,6 +15,7 @@
 # --------------------------------------------------------------------------
 import os
 
+from jms_utils.paths import ChDir
 import pytest
 
 from pyupdater.utils import (check_repo,
@@ -26,6 +27,11 @@ from pyupdater.utils import (check_repo,
                              Version
                              )
 from pyupdater.utils.exceptions import VersionError
+from pyupdater.utils.package import Patch, Package
+
+
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), u'test data',
+                             u'patcher-test-data')
 
 
 @pytest.mark.usefixtures('cleandir')
@@ -81,3 +87,36 @@ class TestUtils(object):
         assert v3 < v4
         with pytest.raises(VersionError):
             Version('1')
+
+    def test_package_1(self):
+        test_file_1 = u'jms-mac-0.0.1.zip'
+        with ChDir(TEST_DATA_DIR):
+            p1 = Package(test_file_1)
+
+        assert p1.name == u'jms'
+        assert p1.version == u'0.0.1.2.0'
+        assert p1.filename == test_file_1
+        assert p1.platform == u'mac'
+        assert p1.info[u'status'] is True
+
+    def test_package_bad_extension(self):
+        test_file_2 = u'pyu-win-0.0.2.bzip2'
+        with ChDir(TEST_DATA_DIR):
+            p2 = Package(test_file_2)
+
+        assert p2.filename == test_file_2
+        assert p2.name is None
+        assert p2.version is None
+        assert p2.info[u'status'] is False
+        assert p2.info[u'reason'] == (u'Not a supported archive format: '
+                                      u'{}'.format(test_file_2))
+
+    def test_package_ignored_file(self):
+        test_file_3 = u'.DS_Store'
+        with ChDir(TEST_DATA_DIR):
+            p3 = Package(test_file_3)
+
+    def test_package_missing(self):
+        test_file_4 = 'jms-nix-0.0.3.tar.gz'
+        with ChDir(TEST_DATA_DIR):
+            p4 = Package(test_file_4)

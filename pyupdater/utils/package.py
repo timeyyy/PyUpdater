@@ -16,8 +16,7 @@
 import logging
 import os
 
-from pyupdater.utils import (get_package_hashes,
-                             parse_platform,
+from pyupdater.utils import (parse_platform,
                              Version,
                              )
 from pyupdater.utils.exceptions import UtilsError, VersionError
@@ -68,7 +67,6 @@ class Package(object):
         self.name = None
         self.version = None
         self.filename = filename
-        self.version_path = None
         self.file_hash = None
         self.platform = None
         self.info = dict(status=False, reason='')
@@ -88,13 +86,20 @@ class Package(object):
 
             package (str): filename
         """
+        if not os.path.exists(package):
+            msg = u'Package does not exists'
+            log.debug(msg)
+            self.info[u'reason'] = msg
+            return
         if package in self.ignored_files:
-            log.debug('Ignored file: {}'.format(package))
+            msg = u'Ignored file: {}'.format(package)
+            log.debug(msg)
+            self.info[u'reason'] = msg
             return
         if os.path.splitext(package)[1].lower() not in \
                 self.supported_extensions:
             msg = u'Not a supported archive format: {}'.format(package)
-            self.info['reason'] = msg
+            self.info[u'reason'] = msg
             log.warning(msg)
             return
 
@@ -115,9 +120,7 @@ class Package(object):
             log.error(msg)
             return
 
-        # No need to get any more info if above failed
         self.name = self._parse_package_name(package)
-        self.file_hash = get_package_hashes(package)
         self.info[u'status'] = True
         log.info('Info extraction complete')
 

@@ -1,7 +1,7 @@
-[![PyPI version](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater)
-[![CircleCI](https://img.shields.io/circleci/project/BrightFlair/PHP.Gt.svg)](https://github.com/JMSwag/PyUpdater)
-[![Requirements Status](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/JMSwag/PyUpdater/badge.svg?branch=master)](https://coveralls.io/r/JMSwag/PyUpdater?branch=master)
+[![](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater)
+[![](https://img.shields.io/circleci/project/JMSwag/PyUpdater.svg)](https://circleci.com/gh/JMSwag/PyUpdater)
+[![](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master)
+[![codecov.io](http://codecov.io/github/JMSwag/PyUpdater/coverage.svg?branch=master)](http://codecov.io/github/JMSwag/PyUpdater?branch=master)
 
 # PyUpdater
 ##### An update framework for managing, signing & uploading your app updates

@@ -354,7 +354,7 @@ class AppUpdate(LibUpdate):
     def __init__(self, data):
         super(AppUpdate, self).__init__(data)
 
-    def extract_restart(self):
+    def extract_restart(self):  # pragma: no cover
         """Will extract the update, overwrite the current app,
         then restart the app using the updated binary."""
         try:
@@ -369,7 +369,7 @@ class AppUpdate(LibUpdate):
             log.error(str(err))
             log.debug(str(err), exc_info=True)
 
-    def restart(self):
+    def restart(self):  # pragma: no cover
         """Will overwrite old binary with updated binary and
         restart using the updated binary. Not supported on windows.
 
@@ -421,7 +421,7 @@ class AppUpdate(LibUpdate):
         log.debug(u'Moving app to new location')
         shutil.move(app_update, os.path.dirname(current_app))
 
-    def _restart(self):
+    def _restart(self):  # pragma: no cover
         # Oh yes i did just pull that new binary into
         # the currently running process and kept it pushing
         # like nobody's business. Windows what???
@@ -441,7 +441,7 @@ class AppUpdate(LibUpdate):
 
         os.execv(current_app, [self.name])
 
-    def _win_overwrite_app_restart(self):
+    def _win_overwrite_app_restart(self):  # pragma: no cover
         # Windows: Moves update to current directory of running
         #          application then restarts application using
         #          new update.

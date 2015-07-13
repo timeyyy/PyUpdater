@@ -7,6 +7,7 @@ pytest
 pytest-circleci
 pytest-cov
 pytest-httpbin
+pytest-remove-stale-bytecode
 pytest-xdist
 pyupdater-s3-plugin
 twine
