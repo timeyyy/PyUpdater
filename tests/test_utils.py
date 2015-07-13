@@ -89,10 +89,6 @@ class TestUtils(object):
         with pytest.raises(UtilsError):
             parse_platform(u'app-nex-1.0.0.tar.gz')
 
-    def test_pretty_time(self):
-        assert pretty_time(1436817908.909637) == u'2015/07/13, 13:05:08'
-        assert pretty_time(1436817975.86029) == u'2015/07/13, 13:06:15'
-
     def test_remove_dot_files(self):
         bad_list = ['.DS_Store', 'test', 'stuff', '.trash']
         good_list = ['test', 'stuff']
