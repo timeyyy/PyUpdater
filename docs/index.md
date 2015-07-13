@@ -23,4 +23,4 @@ When it all comes together you get this
 
 ## Status
 
-[![](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater) [![](https://img.shields.io/circleci/project/JMSwag/PyUpdater.svg)](https://circleci.com/gh/JMSwag/PyUpdater) [![](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master) [![](https://coveralls.io/repos/JMSwag/PyUpdater/badge.svg)](https://coveralls.io/r/JMSwag/PyUpdater)
+[![](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater) [![](https://img.shields.io/circleci/project/JMSwag/PyUpdater.svg)](https://circleci.com/gh/JMSwag/PyUpdater) [![](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master) [![codecov.io](http://codecov.io/github/JMSwag/PyUpdater/coverage.svg?branch=master)](http://codecov.io/github/JMSwag/PyUpdater?branch=master)

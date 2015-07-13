@@ -8,7 +8,7 @@ Added
 
 Updated
 
-  - Some code Refactoring
+  - Code refactoring & optimizations
 
   - Download url
 
