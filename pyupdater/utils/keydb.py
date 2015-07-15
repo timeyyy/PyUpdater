@@ -103,6 +103,8 @@ class KeyDB(object):
 
     def get_revoked_key(self):
         u"Returns most recent revoked key pair"
+        if self.data is None:
+            self.load()
         keys = []
         for k, v in self.data.items():
             if v[u'revoked'] is True:
@@ -121,6 +123,8 @@ class KeyDB(object):
 
             count (int): The number of keys to revoke. Oldest first
         """
+        if self.data is None:
+            self.load()
         log.debug(u'Collecting keys')
         keys = map(str, self.data.keys())
         keys = sorted(keys)

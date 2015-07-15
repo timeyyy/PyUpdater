@@ -26,6 +26,7 @@ Fixed
 Removed
 
   - Duplicate code
+  - Deprecated log command
 
 ## v0.21.1 - 2015/05/25
 
