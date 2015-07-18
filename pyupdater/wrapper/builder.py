@@ -210,12 +210,6 @@ class Builder(object):
         log.debug('Build cmd: {}'.format(''.join([b for b in build_args])))
         pyi_build(build_args)
 
-        exit_code = run(build_args)
-        if exit_code != 0:
-            log.error('Build failed with code: {}'.format(exit_code))
-            sys.exit(1)
-        else:
-            log.info('Build successful')
 
     # Updates name of binary from mac to applications name
     def _mac_binary_rename(self, temp_name, app_name):

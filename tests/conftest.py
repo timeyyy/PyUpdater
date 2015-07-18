@@ -7,11 +7,6 @@ from pyupdater.utils.storage import Storage
 import pytest
 
 
-collect_ignore = [u"pyupdater/_version.py",
-                  u"pyupdater/hooks/hook-cryptography",
-                  u"pyupdater/hooks/hook-markdown"]
-
-
 @pytest.fixture
 def cleandir(request):
     newpath = tempfile.mkdtemp()
