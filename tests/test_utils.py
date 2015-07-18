@@ -25,7 +25,6 @@ from pyupdater.utils import (check_repo,
                              get_mac_dot_app_dir,
                              get_package_hashes,
                              parse_platform,
-                             pretty_time,
                              remove_dot_files,
                              Version
                              )
@@ -84,6 +83,7 @@ class TestUtils(object):
     def test_parse_platform(self):
         assert parse_platform(u'app-mac-0.1.0.tar.gz') == u'mac'
         assert parse_platform(u'app-win-1.0.0.zip') == u'win'
+        assert parse_platform(u'Email Parser-mac-0.2.0.tar.gz') == u'mac'
 
     def test_parse_platform_fail(self):
         with pytest.raises(UtilsError):
