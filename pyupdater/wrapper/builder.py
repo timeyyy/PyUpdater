@@ -28,11 +28,12 @@ from pyupdater.utils import (check_repo,
                              run,
                              Version)
 
-from pyupdater.vendor.Pyinstaller import main as pyi_build
-from pyupdater.vendor.PyInstaller import makespec as _pyi_makespec
-from pyupdater.vendor.PyInstaller import build as _pyi_build
-from pyupdater.vendor.PyInstaller import compat as _pyi_compat
-from pyupdater.vendor.PyInstaller import log as _pyi_log
+from PyInstaller.main import run as pyi_build
+from PyInstaller import makespec as _pyi_makespec
+from PyInstaller import build as _pyi_build
+from PyInstaller import compat as _pyi_compat
+from PyInstaller import log as _pyi_log
+
 
 log = logging.getLogger(__name__)
 

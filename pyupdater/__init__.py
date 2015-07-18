@@ -15,6 +15,8 @@
 # --------------------------------------------------------------------------
 from pyupdater.utils import lazy_import
 
+__all__ = ['PyUpdater']
+
 
 @lazy_import
 def pyupdater():
@@ -38,6 +40,12 @@ def os():
 
 
 @lazy_import
+def sys():
+    import sys
+    return sys
+
+
+@lazy_import
 def appdirs():
     import appdirs
     return appdirs
@@ -50,15 +58,12 @@ def jms_utils():
     return jms_utils
 
 
-try:
-    from PyInstaller import VERSION as temp_version
-    pyi_version = (temp_version[0], temp_version[1], temp_version[2])
-except ImportError:  # pragma: no cover
-    pyi_version = (0, 0, 0)
-
+parent_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+vendor_dir = os.path.join(parent_dir, 'pyupdater', 'vendor')
+sys.path.append(vendor_dir)
 
 PyUpdater = pyupdater.core.Core
-__all__ = ['PyUpdater']
+
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)

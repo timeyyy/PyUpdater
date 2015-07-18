@@ -15,6 +15,9 @@ deploy-docs:
 	mkdocs build --clean
 	python dev/move.py
 
+fix:
+	python dev/fix_vendor.py
+
 pypi:
 	python setup.py sdist bdist_wheel
 
