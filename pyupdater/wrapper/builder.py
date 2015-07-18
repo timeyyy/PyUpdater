@@ -14,6 +14,7 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 import logging
+import optparse
 import os
 import shutil
 import sys
@@ -27,6 +28,12 @@ from pyupdater.utils import (check_repo,
                              run,
                              Version)
 
+from pyupdater.vendor.Pyinstaller import main as pyi_build
+from pyupdater.vendor.PyInstaller import makespec as _pyi_makespec
+from pyupdater.vendor.PyInstaller import build as _pyi_build
+from pyupdater.vendor.PyInstaller import compat as _pyi_compat
+from pyupdater.vendor.PyInstaller import log as _pyi_log
+
 log = logging.getLogger(__name__)
 
 
@@ -36,6 +43,33 @@ def jms_utils():
     import jms_utils.paths
     import jms_utils.system
     return jms_utils
+
+
+def pyi_makespec(pyi_args):
+
+    def run_makespec(opts, args):
+        # Split pathex by using the path separator
+        temppaths = opts.pathex[:]
+        opts.pathex = []
+        for p in temppaths:
+            opts.pathex.extend(p.split(os.pathsep))
+
+        spec_file = _pyi_makespec.main(args, **opts.__dict__)
+        log.info('wrote %s' % spec_file)
+
+    parser = optparse.OptionParser(
+                                   usage=('%prog [opts] <scriptname> '
+                                          '[ <scriptname> ...] | <specfile>'))
+
+    _pyi_makespec.__add_options(parser)
+    _pyi_build.__add_options(parser)
+    _pyi_log.__add_options(parser)
+    _pyi_compat.__add_obsolete_options(parser)
+
+    opts, args = parser.parse_args(pyi_args)
+    _pyi_log.__process_options(parser, opts)
+
+    run_makespec(opts, args)
 
 
 class Builder(object):
@@ -118,43 +152,37 @@ class Builder(object):
 
     # Take args from PyUpdater then sanatize & combine to be
     # passed to pyinstaller
-    def _make_spec(self, args, pyi_args, temp_name, app_info, spec_only=False):
+    def _make_spec(self, args, spec_args, temp_name,
+                   app_info, spec_only=False):
         log.debug('App Info: {}'.format(app_info))
 
         if args.console is True or args.nowindowed is True \
                 or args._console is True:
-            if u'-c' not in pyi_args:
+            if u'-c' not in spec_args:
                 log.debug('Adding -c to pyi args')
-                pyi_args.append(u'-c')
+                spec_args.append(u'-c')
         if args.windowed is True or args.noconsole is True \
                 or args._windowed is True:
-            if u'-w' not in pyi_args:
+            if u'-w' not in spec_args:
                 log.debug('Adding -w to pyi args')
-                pyi_args.append(u'-w')
+                spec_args.append(u'-w')
         # Ensure that onefile mode is passed
-        pyi_args.append(u'-F')
-        pyi_args.append(u'--name={}'.format(temp_name))
+        spec_args.append(u'-F')
+        spec_args.append(u'--name={}'.format(temp_name))
         if spec_only is True:
             log.debug('User generated spec file')
-            pyi_args.append(u'--specpath={}'.format(os.getcwd()))
+            spec_args.append(u'--specpath={}'.format(os.getcwd()))
         else:
             # Place spec file in .pyupdater/spec
-            pyi_args.append(u'--specpath={}'.format(self.spec_dir))
+            spec_args.append(u'--specpath={}'.format(self.spec_dir))
         # Use hooks included in PyUpdater package
         hook_dir = get_hook_dir()
         log.debug('Hook directory: {}'.format(hook_dir))
-        pyi_args.append(u'--additional-hooks-dir={}'.format(hook_dir))
-        pyi_args.append(app_info[u'name'])
+        spec_args.append(u'--additional-hooks-dir={}'.format(hook_dir))
+        spec_args.append(app_info[u'name'])
 
-        cmd = ['pyi-makespec'] + pyi_args
-        log.debug('Make spec cmd: {}'.format(' '.join([c for c in cmd])))
-        exit_code = run(cmd)
-        if exit_code != 0:
-            log.error(u'Spec file creation failed with '
-                      u'code: {}'.format(exit_code))
-            sys.exit(1)
-        else:
-            log.info(u'Spec file created.')
+        log.debug('Make spec cmd: {}'.format(' '.join([c for c in spec_args])))
+        pyi_makespec(spec_args)
 
     # Actually creates executable from spec file
     def _build(self, args, spec_file_path):
@@ -170,7 +198,7 @@ class Builder(object):
             http://semver.org/
                       """)
             sys.exit(1)
-        build_args = [u'pyinstaller']
+        build_args = []
         if args.clean is True:
             build_args.append(u'--clean')
         build_args.append(u'--distpath={}'.format(self.new_dir))
@@ -179,6 +207,8 @@ class Builder(object):
         build_args.append(spec_file_path)
 
         log.debug('Build cmd: {}'.format(''.join([b for b in build_args])))
+        pyi_build(build_args)
+
         exit_code = run(build_args)
         if exit_code != 0:
             log.error('Build failed with code: {}'.format(exit_code))
