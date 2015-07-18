@@ -141,7 +141,7 @@ class PackageHandler(object):
         # If no version file is found then one is created.
         json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
         if json_data is None:  # pragma: no cover
-            log.error(u'Version file not found')
+            log.warning(u'Version file not found')
             json_data = {'updates': {}}
             log.info(u'Created new version file')
         return json_data

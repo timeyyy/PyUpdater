@@ -17,7 +17,7 @@ import argparse
 
 
 def make_parser():
-    parser = argparse.ArgumentParser(usage=u'%(prog)s')
+    parser = argparse.ArgumentParser(usage=u'%(prog)s <command> [opts]')
     return parser
 
 
@@ -27,7 +27,8 @@ def make_subparser(parser):
 
 
 def add_build_parser(subparsers):
-    build_parser = subparsers.add_parser(u'build', help=u'compiles script',
+    build_parser = subparsers.add_parser(u'build', help=u'compiles script '
+                                         'or spec file',
                                          usage=u'%(prog)s <script> [opts]')
 
     # Start of args override
@@ -199,7 +200,7 @@ def add_keys_parser(subparsers):
                              u'adds the same amount of new good key pairs to '
                              u'keys db. Verson file will no longer be signed '
                              u'by revoked keys. Default 1',
-                             type=int)
+                             type=int, default=1)
 
 
 def add_debug_parser(subparsers):
@@ -207,10 +208,6 @@ def add_debug_parser(subparsers):
                                        help=u'Upload debug logs to github '
                                        u'gist and return url.')
     log_parser.add_argument(u'--dummy', help=argparse.SUPPRESS)
-    old_log_parser = subparsers.add_parser(u'log',
-                                           help=u'Upload debug logs to github '
-                                           u'gist and return url.')
-    old_log_parser.add_argument(u'--dummy', help=argparse.SUPPRESS)
 
 
 def add_package_parser(subparsers):

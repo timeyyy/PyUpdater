@@ -1,10 +1,20 @@
 # Changelog
 
 
-## v0.21.2 - Master
-
+## v0.22.2 - Master
 ##### This version is not yet released and is under active development.
 Added
+
+
+## v0.22.1 - 2015/07/18
+
+Updated
+
+  - Versioneer settings
+
+
+
+## v0.22 - 2015/07/18
 
 Updated
 
@@ -20,12 +30,12 @@ Updated
 
     - ed15519 1.4
     - stevedore 1.6.0
-
-Fixed
+    - PyUpdater-S3-Plugin 2.3
 
 Removed
 
   - Duplicate code
+  - Deprecated log command
 
 ## v0.21.1 - 2015/05/25
 
@@ -49,6 +59,7 @@ Fixed
 Removed
 
   - Unused code
+
 
 ## v0.21.0 - 2015/04/30
 
