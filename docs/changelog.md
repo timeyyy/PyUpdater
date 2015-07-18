@@ -1,9 +1,14 @@
 # Changelog
 
 
-## v0.22.3 - Master
+## v0.22.4 - Master
 ##### This version is not yet released and is under active development.
-Added
+
+
+## v0.22.3 - 2015/07/18
+Fixed
+
+  - Parsing platform names
 
 
 ## v0.22.2 - 2015/07/18
