@@ -542,7 +542,7 @@ def parse_platform(name):
         (str): Platform name
     """
     try:
-        re_str = u'[mnw]{1}[ai]{1}[cnx]{1}([46]{2})?'
+        re_str = u'[mnw]{1}[ai]{1}[cnx]{1}[6]?[4]?'
         platform_name = re.compile(re_str).findall(name)[0]
         log.debug(u'Platform name is: {}'.format(platform_name))
     except IndexError:
