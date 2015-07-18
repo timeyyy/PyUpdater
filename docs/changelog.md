@@ -1,9 +1,16 @@
 # Changelog
 
 
-## v0.22.2 - Master
+## v0.22.3 - Master
 ##### This version is not yet released and is under active development.
 Added
+
+
+## v0.22.2 - 2015/07/18
+
+Fixed
+
+  - Versioneer settings
 
 
 ## v0.22.1 - 2015/07/18
