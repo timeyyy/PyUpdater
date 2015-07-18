@@ -56,11 +56,6 @@ try:
 except ImportError:  # pragma: no cover
     pyi_version = (0, 0, 0)
 
-if pyi_version < (2, 1, 0):  # pragma: no cover
-    raise pyupdater.utils.exceptions.PyUpdaterError(u'Must have at least '
-                                                    u'PyInstaller v2.1',
-                                                    expected=True)
-
 
 PyUpdater = pyupdater.core.Core
 __all__ = ['PyUpdater']
