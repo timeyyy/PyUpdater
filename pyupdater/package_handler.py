@@ -322,7 +322,7 @@ class PackageHandler(object):
             version_key = '{}*{}*{}'.format(settings.UPDATES_KEY,
                                             p.name, p.version)
             version = easy_dict.get(version_key)
-            log.debug(u'Package info {}'.format(version))
+            log.debug(u'Package Info: {}'.format(version))
 
             if version is None:
                 log.debug(u'Adding new version to file')
