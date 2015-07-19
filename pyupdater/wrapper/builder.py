@@ -208,6 +208,7 @@ class Builder(object):
         build_args.append(spec_file_path)
 
         log.debug('Build cmd: {}'.format(''.join([b for b in build_args])))
+        build_args = [str(x) for x in build_args]
         pyi_build(build_args)
 
 
