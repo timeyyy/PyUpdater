@@ -13,15 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import pytest
 
 from pyupdater.client.downloader import FileDownloader
 
 
-FILENAME = u'dont+delete+pyu+test.txt'
+FILENAME = 'dont+delete+pyu+test.txt'
 FILENAME_WITH_SPACES = 'dont delete pyu test.txt'
-FILE_HASH = u'9da856b0b8b77c838d6945e0bfbc62fff978a9dd5256eed231fc499b5d4b183c'
-URL = u'https://s3-us-west-1.amazonaws.com/pyupdater-test/'
+FILE_HASH = '9da856b0b8b77c838d6945e0bfbc62fff978a9dd5256eed231fc499b5d4b183c'
+URL = 'https://s3-us-west-1.amazonaws.com/pyupdater-test/'
 
 
 @pytest.mark.usefixtue("cleandir")
@@ -32,7 +34,7 @@ class TestDownload(object):
         assert binary_data is not None
 
     def test_download_return_fail(self):
-        fd = FileDownloader(FILENAME, URL, u'JKFEIFJILEFJ983NKFNKL')
+        fd = FileDownloader(FILENAME, URL, 'JKFEIFJILEFJ983NKFNKL')
         binary_data = fd.download_verify_return()
         assert binary_data is None
 
@@ -42,7 +44,7 @@ class TestDownload(object):
         assert binary_data is not None
 
     def test_bad_url(self):
-        fd = FileDownloader(FILENAME, u'bad url', u'bad hash')
+        fd = FileDownloader(FILENAME, 'bad url', 'bad hash')
         binary_data = fd.download_verify_return()
         assert binary_data is None
 

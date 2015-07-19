@@ -13,55 +13,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 from pyupdater.utils.config import PyUpdaterConfig
 
 
 class DevConfig(object):
     TESTING = True
     TEST_LOVE = True
-    MORE_INFO = u'No Thanks'
+    MORE_INFO = 'No Thanks'
     Bad_Attr = True
 
 
 class ProdConfig(object):
     TESTING = False
     DEBUG = False
-    MORE_INFO = u'Yes Please'
+    MORE_INFO = 'Yes Please'
 
 
 class BasicCofig(object):
-    APP_NAME = u'Tester'
+    APP_NAME = 'Tester'
 
 
 def test_dev_config():
     config = PyUpdaterConfig()
     test_config = DevConfig()
     config.from_object(test_config)
-    assert config[u'TESTING'] is True
+    assert config['TESTING'] is True
 
 
 def test_dev_config_bad_attr():
     config = PyUpdaterConfig()
     test_config = DevConfig()
     config.from_object(test_config)
-    assert config.get(u'BAD_ATTR', None) is None
+    assert config.get('BAD_ATTR', None) is None
 
 
 def test_prod_config():
     config = PyUpdaterConfig()
     prod_config = ProdConfig()
     config.from_object(prod_config)
-    assert config[u'MORE_INFO'] == u'Yes Please'
+    assert config['MORE_INFO'] == 'Yes Please'
 
 
 def test_prod_bad_atter():
     config = PyUpdaterConfig()
     prod_config = ProdConfig()
     config.from_object(prod_config)
-    assert config.get(u'DEBUG', None) is not None
-
-
-def test_config_str():
-    config = PyUpdaterConfig()
-    config.from_object(BasicCofig())
-    assert repr(config) == u"<PyUpdaterConfig {'APP_NAME': u'Tester'}>"
+    assert config.get('DEBUG', None) is not None

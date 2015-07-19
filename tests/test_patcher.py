@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import json
 import os
 import shutil
@@ -30,13 +32,13 @@ version_file_url = ('https://s3-us-west-1.amazonaws.com/pyupdater-test'
 json_data = json.loads(urllib2.urlopen(version_file_url).read())
 
 update_data = {
-    u'name': u'jms',
-    u'json_data': json_data,
-    u'current_version': u'0.0.1',
-    u'highest_version': u'0.0.3',
-    u'update_folder': None,
-    u'update_urls': [u'https://s3-us-west-1.amazonaws.com/pyupdater-test/'],
-    u'platform': u'mac',
+    'name': 'jms',
+    'json_data': json_data,
+    'current_version': '0.0.1',
+    'highest_version': '0.0.3',
+    'update_folder': None,
+    'update_urls': ['https://s3-us-west-1.amazonaws.com/pyupdater-test/'],
+    'platform': 'mac',
     }
 
 
@@ -46,33 +48,33 @@ class TestPatcher(object):
     @pytest.fixture
     def setup(self):
         directory = os.getcwd()
-        base_binary = os.path.join(TEST_DATA_DIR, u'jms-mac-0.0.1.zip')
+        base_binary = os.path.join(TEST_DATA_DIR, 'jms-mac-0.0.1.zip')
         shutil.copy(base_binary, directory)
         return directory
 
     def test_no_base_binary(self):
         assert os.listdir(os.getcwd()) == []
         data = update_data.copy()
-        data[u'update_folder'] = os.getcwd()
+        data['update_folder'] = os.getcwd()
         p = Patcher(**data)
         assert p.start() is False
 
     def test_bad_hash_current_version(self, setup):
         data = update_data.copy()
-        data[u'update_folder'] = setup
-        data['current_file_hash'] = u'Thisisabadhash'
+        data['update_folder'] = setup
+        data['current_file_hash'] = 'Thisisabadhash'
         p = Patcher(**data)
         assert p.start() is False
 
     def test_missing_version(self, setup):
         data = update_data.copy()
-        data[u'update_folder'] = setup
-        data[u'highest_version'] = u'0.0.4'
+        data['update_folder'] = setup
+        data['highest_version'] = '0.0.4'
         p = Patcher(**data)
         assert p.start() is False
 
     # def test_execution(self, setup):
     #     data = update_data.copy()
-    #     data[u'update_folder'] = setup
+    #     data['update_folder'] = setup
     #     p = Patcher(**data)
     #     assert p.start() is True

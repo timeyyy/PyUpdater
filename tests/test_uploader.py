@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import pytest
 import requests
 
@@ -39,7 +41,7 @@ class TestUploader(object):
 
         with pytest.raises(NotImplementedError):
             b = BaseUploader()
-            b.upload_file(u'test')
+            b.upload_file('test')
 
     def test_plugin_baseclass(self, httpbin):
         class MyUploader(BaseUploader):
@@ -48,13 +50,13 @@ class TestUploader(object):
                 self.file_list = ['test']
 
             def upload_file(self, filename):
-                with open(u'testfile.txt', u'wb') as f:
+                with open('testfile.txt', 'wb') as f:
                     f.write('this is some text')
-                with open(u'testfile.txt', u'rb') as f:
+                with open('testfile.txt', 'rb') as f:
                     data = f.read()
-                files = {u'file': data}
-                r = requests.post(httpbin.url + u'/post', files=files)
-                assert r.json()[u'files'][u'file'] == data
+                files = {'file': data}
+                r = requests.post(httpbin.url + '/post', files=files)
+                assert r.json()['files']['file'] == data
 
         mu = MyUploader()
         mu.init()
@@ -73,22 +75,22 @@ class TestUploader(object):
                 self.file_list = ['test']
 
             def upload_file(self, filename):
-                with open(u'testfile.txt', u'wb') as f:
+                with open('testfile.txt', 'wb') as f:
                     f.write('this is some text')
-                with open(u'testfile.txt', u'rb') as f:
+                with open('testfile.txt', 'rb') as f:
                     data = f.read()
-                files = {u'file': data}
-                r = requests.post(httpbin.url + u'/post', files=files)
-                assert r.json()[u'files'][u'file'] == data
+                files = {'file': data}
+                r = requests.post(httpbin.url + '/post', files=files)
+                assert r.json()['files']['file'] == data
         u = Uploader()
-        u.init({u'test': u'test'})
+        u.init({'test': 'test'})
         u.uploader = MyUploader()
-        u.uploader.init(test=u'test')
+        u.uploader.init(test='test')
         u.upload()
 
     def test_set_uploader_fail(self):
         u = Uploader()
-        u.init({u'test': u'test'})
+        u.init({'test': 'test'})
         with pytest.raises(UploaderError):
             u.set_uploader([])
 
@@ -97,6 +99,6 @@ class TestUploader(object):
 
     def test_set_uploader(self):
         u = Uploader()
-        u.init({u'OBJECT_BUCKET': u'vdpro'})
+        u.init({'OBJECT_BUCKET': 'vdpro'})
         u.set_uploader('s3')
         assert u.uploader is not None

@@ -20,6 +20,8 @@ import os
 import sys
 import time
 
+import six
+
 from pyupdater import settings
 from pyupdater.utils import lazy_import, remove_dot_files
 from pyupdater.utils.exceptions import UploaderError, UploaderPluginError
@@ -99,7 +101,7 @@ class Uploader(object):
 
             object (instance): Uploader object
         """
-        if isinstance(requested_uploader, str) is False:
+        if isinstance(requested_uploader, six.string_types) is False:
             raise UploaderError('Must pass str to set_uploader',
                                 expected=True)
 
@@ -165,7 +167,7 @@ class BaseUploader(object):
         for f in self.file_list:
             msg = '\n\nUploading: {}' .format(f)
             msg2 = ' - File {} of {}\n'.format(self.files_completed,
-                                                self.file_count)
+                                               self.file_count)
             print(msg + msg2)
             complete = self.upload_file(f)
             if complete:
@@ -194,9 +196,8 @@ class BaseUploader(object):
         failed_count = len(retry)
         count = 1
         for f in retry:
-            msg = '\n\nRetyring: {} - File {} of {}\n'.format(f,
-                                                               count,
-                                                               failed_count)
+            msg = '\n\nRetyring: {} - File {} of {}\n'.format(f, count,
+                                                              failed_count)
             print(msg)
             complete = self.upload_file(f)
             if complete:

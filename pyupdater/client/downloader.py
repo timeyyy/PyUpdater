@@ -72,7 +72,8 @@ class FileDownloader(object):
         self.content_length = None
         self.progress_hooks = progress_hooks
         if self.verify is True:
-            self.http_pool = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',
+            self.http_pool = urllib3.PoolManager(cert_reqs=str('CERT_'
+                                                 'REQUIRED'),
                                                  ca_certs=certifi.where())
         else:
             self.http_pool = urllib3.PoolManager()

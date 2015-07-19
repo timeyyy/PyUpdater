@@ -13,34 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 
 class TConfig(object):
-    bad_attr = u'bad attr'
+    bad_attr = 'bad attr'
     # If left None "Not_So_TUF" will be used
-    APP_NAME = u'jms'
+    APP_NAME = 'jms'
 
     # Directory for updater to place verified updates.
     # If left blank will be place in the users home
     # directory Unix ".Not_So_TUF"
     # windows "Not_So_Tuf"
-    APP_DATA_DIR = os.path.join(u'app_data')
+    APP_DATA_DIR = os.path.join('app_data')
 
-    COMPANY_NAME = u'JMS LLC'
+    COMPANY_NAME = 'JMS LLC'
 
     DATA_DIR = None
 
     # Public Key used by your app to verify update data
     # REQUIRED
     PUBLIC_KEYS = ['iBFNlFxQZ17n3SakBmF2fI6dZhrbkdf5GtP9m/wVrTQ',
-                   'zj1LPcRgx5I3GcxUHlLtltMAdo8v0P1rCMMZEqZeB9U',
+                   'zj1LPcRgx5I3GcxUHlLtltMAdo8v0P1rCMMZEqZeB9',
                    'QIRqZkFmavnQz4U55kOMIEJQqEx3cWCek0zCTSATb14']
 
     # Online repository where you host your packages
     # and version file
     # REQUIRED
-    UPDATE_URLS = [u'https://s3-us-west-1.amazonaws.com/pyupdater-test/']
+    UPDATE_URLS = ['https://s3-us-west-1.amazonaws.com/pyupdater-test/']
     UPDATE_PATCHES = True
 
     # Upload Setup
@@ -50,6 +52,6 @@ class TConfig(object):
     # server user name/access key id
     USERNAME = None
     # Path to ssh key of server / password / secret access key
-    PASSWORD = u'/path/to/ssh/key file'
+    PASSWORD = '/path/to/ssh/key file'
 
     VERIFY_SERVER_CERT = True

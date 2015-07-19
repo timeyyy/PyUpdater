@@ -4,3 +4,6 @@ dependencies:
         - pip install -U pip
         - make deps-dev
         - pip install codecov
+
+    post:
+        - rm -r ~/.virtualenv
