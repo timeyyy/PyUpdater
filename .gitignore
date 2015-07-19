@@ -20,8 +20,4 @@ htmlcov
 
 site
 
-*.gw*
-
-.coverage.gw2
-
-.coverage.gw1
+.coverage.gw*
