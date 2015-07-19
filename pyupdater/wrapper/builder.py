@@ -193,7 +193,7 @@ class Builder(object):
         except Exception as err:  # pragma: no cover
             log.debug(str(err), exc_info=True)
             log.error('Version format incorrect')
-            log.error(u"""Valid version numbers: 0.10.0, 1.1b, 1.2.1a3
+            log.error("""Valid version numbers: 0.10.0, 1.1b, 1.2.1a3
 
         Visit url for more info:
 
@@ -211,7 +211,6 @@ class Builder(object):
         log.debug('Build cmd: {}'.format(''.join([b for b in build_args])))
         build_args = [str(x) for x in build_args]
         pyi_build(build_args)
-
 
     # Updates name of binary from mac to applications name
     def _mac_binary_rename(self, temp_name, app_name):

@@ -14,6 +14,7 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 from __future__ import print_function
+from __future__ import unicode_literals
 
 from pyupdater import settings
 from pyupdater.utils import lazy_import
@@ -66,7 +67,7 @@ log = logging.getLogger(__name__)
 
 
 class KeyHandler(object):
-    u"""KeyHanlder object is used to manage keys used for signing updates
+    """KeyHanlder object is used to manage keys used for signing updates
 
     Kwargs:
 
@@ -81,7 +82,7 @@ class KeyHandler(object):
             self.init_app(app, db)
 
     def init_app(self, obj, db):
-        u"""Sets up client with config values from obj
+        """Sets up client with config values from obj
 
         Args:
 
@@ -89,25 +90,25 @@ class KeyHandler(object):
         """
         # Copies and sets all needed config attributes
         # for this object
-        self.app_name = obj.get(u'APP_NAME')
-        self.private_key_name = self.app_name + u'.pem'
-        self.public_key_name = self.app_name + u'.pub'
-        data_dir = obj.get(u'DATA_DIR', os.getcwd())
+        self.app_name = obj.get('APP_NAME')
+        self.private_key_name = self.app_name + '.pem'
+        self.public_key_name = self.app_name + '.pub'
+        data_dir = obj.get('DATA_DIR', os.getcwd())
         self.db = db
         self.keysdb = KeyDB(db)
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
-        self.deploy_dir = os.path.join(self.data_dir, u'deploy')
+        self.deploy_dir = os.path.join(self.data_dir, 'deploy')
         self.version_file = os.path.join(self.deploy_dir,
                                          settings.VERSION_FILE)
 
     def make_keys(self, count=3):
-        u"""Makes public and private keys for signing and verification
+        """Makes public and private keys for signing and verification
 
         Kwargs:
 
             count (bool): The number of keys to create.
         """
-        log.info(u'Creating {} keys'.format(count))
+        log.info('Creating {} keys'.format(count))
         c = 0
         while c < count:
             self._make_keys()
@@ -123,7 +124,7 @@ class KeyHandler(object):
         self.keysdb.add_key(pub, pri)
 
     def sign_update(self):
-        u"""Signs version file with private key
+        """Signs version file with private key
 
         Proxy method for :meth:`_add_sig`
         """
@@ -134,7 +135,7 @@ class KeyHandler(object):
         self._add_sig()
 
     def get_public_keys(self):
-        u"Returns (object): Public Key"
+        "Returns (object): Public Key"
         self.keysdb.load()
         return self.keysdb.get_public_keys()
 
@@ -143,9 +144,9 @@ class KeyHandler(object):
         return self.keysdb.get_revoked_key()
 
     def print_public_keys(self):
-        u"Prints public key data to console"
+        "Prints public key data to console"
         keys = self.get_public_key()
-        print(u'Public Key:\n{}\n\n'.format(keys))
+        print('Public Key:\n{}\n\n'.format(keys))
 
     def revoke_key(self, count):
         self.keysdb.revoke_key(count)
@@ -153,7 +154,7 @@ class KeyHandler(object):
 
     def _load_private_keys(self):
         # Loads private key
-        log.debug(u'Loading private key')
+        log.debug('Loading private key')
         return self.keysdb.get_private_keys()
 
     def _add_sig(self):
@@ -166,9 +167,9 @@ class KeyHandler(object):
         private_keys = self._load_private_keys()
 
         update_data = self._load_update_data()
-        if u'sigs' in update_data:
-            log.debug(u'Removing signatures from version file')
-            del update_data[u'sigs']
+        if 'sigs' in update_data:
+            log.debug('Removing signatures from version file')
+            del update_data['sigs']
         update_data_str = json.dumps(update_data, sort_keys=True)
 
         signatures = []
@@ -176,7 +177,7 @@ class KeyHandler(object):
             if six.PY2 is True and isinstance(p, unicode) is True:
                 log.debug('Got type: {}'.format(type(p)))
                 p = str(p)
-            log.debug(u'Key type: {}'.format(type(p)))
+            log.debug('Key type: {}'.format(type(p)))
             privkey = ed25519.SigningKey(p, encoding=self.key_encoding)
             # Signs update data with private key
             sig = privkey.sign(six.b(update_data_str),
@@ -187,29 +188,29 @@ class KeyHandler(object):
         og_data = json.loads(update_data_str)
         update_data = og_data.copy()
         # Add signatures to update data
-        update_data[u'sigs'] = signatures
-        log.info(u'Adding sig to update data')
+        update_data['sigs'] = signatures
+        log.info('Adding sig to update data')
         # Write updated version file to filesystem
         self._write_update_data(og_data, update_data)
 
     def _write_update_data(self, data, version):
         # Save update data to repo database
         self.db.save(settings.CONFIG_DB_KEY_VERSION_META, data)
-        log.debug(u'Saved version meta data')
+        log.debug('Saved version meta data')
 
         # Gzip update date
-        with gzip.open(self.version_file, u'wb') as f:
+        with gzip.open(self.version_file, 'wb') as f:
             f.write(json.dumps(version, indent=2, sort_keys=True))
-        log.info(u'Created gzipped version manifest in deploy dir')
+        log.info('Created gzipped version manifest in deploy dir')
 
     def _load_update_data(self):
-        log.debug(u"Loading version data")
+        log.debug("Loading version data")
         update_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
         # If update_data is None, create a new one
         if update_data is None:
             update_data = {}
-            log.error(u'Version meta data not found')
+            log.error('Version meta data not found')
             self.db.save(settings.CONFIG_DB_KEY_VERSION_META, update_data)
-            log.info(u'Created new version meta data')
-        log.debug(u'Version file loaded')
+            log.info('Created new version meta data')
+        log.debug('Version file loaded')
         return update_data

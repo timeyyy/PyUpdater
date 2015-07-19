@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import logging
 import sys
 
@@ -23,7 +25,7 @@ log = logging.getLogger(__name__)
 
 
 def lazy_import(func):
-    u"""Decorator for declaring a lazy import.
+    """Decorator for declaring a lazy import.
 
     This decorator turns a function into an object that will act as a lazy
     importer.  Whenever the object's attributes are accessed, the function
@@ -52,7 +54,7 @@ def lazy_import(func):
 
 
 class _LazyImport(object):
-    u"""Class representing a lazy import."""
+    """Class representing a lazy import."""
 
     def __init__(self, name, loader, namespace=None):
         self._pyu_lazy_target = _LazyImport
@@ -167,7 +169,7 @@ def six():
 
 
 def check_repo():
-    u"Checks if current directory is a pyupdater repository"
+    "Checks if current directory is a pyupdater repository"
     repo = True
     if not os.path.exists(settings.CONFIG_DATA_FOLDER):
         log.warning('PyUpdater config data folder is missing')
@@ -178,7 +180,7 @@ def check_repo():
 
 
 def convert_to_list(data, default=None):
-    u"""Converts data to list. If data isn't a list, tuple or string
+    """Converts data to list. If data isn't a list, tuple or string
     returns Default
 
     Args:
@@ -201,12 +203,12 @@ def convert_to_list(data, default=None):
     if isinstance(data, six.string_types):
         return [data]
     log.debug('Got type: {}'.format(type(data)))
-    log.warning(u'Using default value of {}'.format(type(default)))
+    log.warning('Using default value of {}'.format(type(default)))
     return default
 
 
 def get_filename(name, version, platform, easy_data):
-    u"""Gets full filename for given name & version combo
+    """Gets full filename for given name & version combo
 
     Args:
 
@@ -220,16 +222,16 @@ def get_filename(name, version, platform, easy_data):
 
        (str) Filename with extension
     """
-    filename_key = u'{}*{}*{}*{}*{}'.format(u'updates', name, version,
-                                            platform, u'filename')
+    filename_key = '{}*{}*{}*{}*{}'.format('updates', name, version,
+                                           platform, 'filename')
     filename = easy_data.get(filename_key)
 
-    log.debug(u"Filename for {}-{}: {}".format(name, version, filename))
+    log.debug("Filename for {}-{}: {}".format(name, version, filename))
     return filename
 
 
 def get_hash(data):
-    u"""Get hash of object
+    """Get hash of object
 
     Args:
 
@@ -240,12 +242,12 @@ def get_hash(data):
         (str): sha256 hash
     """
     hash_ = hashlib.sha256(data).hexdigest()
-    log.debug(u'Hash for binary data: {}'.format(hash_))
+    log.debug('Hash for binary data: {}'.format(hash_))
     return hash_
 
 
 def get_highest_version(name, plat, easy_data):
-    u"""Parses version file and returns the highest version number.
+    """Parses version file and returns the highest version number.
 
     Args:
 
@@ -257,18 +259,18 @@ def get_highest_version(name, plat, easy_data):
 
        (str) Highest version number
     """
-    version_key = u'{}*{}*{}'.format(u'latest', name, plat)
+    version_key = '{}*{}*{}'.format('latest', name, plat)
     version = easy_data.get(version_key)
 
     if version is not None:
-        log.debug(u'Highest version: {}'.format(version))
+        log.debug('Highest version: {}'.format(version))
     else:
-        log.error(u'No updates for "{}" on {} exists'.format(name, plat))
+        log.error('No updates for "{}" on {} exists'.format(name, plat))
     return version
 
 
 def get_mac_dot_app_dir(directory):
-    u"""Returns parent directory of mac .app
+    """Returns parent directory of mac .app
 
     Args:
 
@@ -282,7 +284,7 @@ def get_mac_dot_app_dir(directory):
 
 
 def get_package_hashes(filename):
-    u"""Provides hash of given filename.
+    """Provides hash of given filename.
 
     Args:
 
@@ -292,18 +294,18 @@ def get_package_hashes(filename):
 
         (str): sha256 hash
     """
-    log.debug(u'Getting package hashes')
+    log.debug('Getting package hashes')
     filename = os.path.abspath(filename)
-    with open(filename, u'rb') as f:
+    with open(filename, 'rb') as f:
         data = f.read()
 
     _hash = hashlib.sha256(data).hexdigest()
-    log.debug(u'Hash for file {}: {}'.format(filename, _hash))
+    log.debug('Hash for file {}: {}'.format(filename, _hash))
     return _hash
 
 
 def gzip_decompress(data):
-    u"""Decompress gzip data
+    """Decompress gzip data
 
     Args:
 
@@ -322,7 +324,7 @@ def gzip_decompress(data):
     # its contents from the top.
     #
     compressed_file.seek(0)
-    decompressed_file = gzip.GzipFile(fileobj=compressed_file, mode=u'rb')
+    decompressed_file = gzip.GzipFile(fileobj=compressed_file, mode='rb')
     data = decompressed_file.read()
     compressed_file.close()
     decompressed_file.close()
@@ -334,8 +336,8 @@ def setup_appname(config):
         default = config.APP_NAME
     else:
         default = None
-    config.APP_NAME = jms_utils.terminal.get_correct_answer(u'Please enter '
-                                                            u'app name',
+    config.APP_NAME = jms_utils.terminal.get_correct_answer('Please enter '
+                                                            'app name',
                                                             required=True,
                                                             default=default)
 
@@ -345,23 +347,23 @@ def setup_company(config):
         default = config.COMPANY_NAME
     else:
         default = None
-    temp = jms_utils.terminal.get_correct_answer(u'Please enter your comp'
-                                                 u'any or name',
+    temp = jms_utils.terminal.get_correct_answer('Please enter your comp'
+                                                 'any or name',
                                                  required=True,
                                                  default=default)
     config.COMPANY_NAME = temp
 
 
 def setup_urls(config):
-    url = jms_utils.terminal.get_correct_answer(u'Enter a url to ping for '
-                                                u'updates.', required=True)
+    url = jms_utils.terminal.get_correct_answer('Enter a url to ping for '
+                                                'updates.', required=True)
     config.UPDATE_URLS = [url]
     while 1:
-        answer = jms_utils.terminal.ask_yes_no(u'Would you like to add '
-                                               u'another url for backup?',
+        answer = jms_utils.terminal.ask_yes_no('Would you like to add '
+                                               'another url for backup?',
                                                default='no')
         if answer is True:
-            url = jms_utils.terminal.get_correct_answer(u'Enter another url.',
+            url = jms_utils.terminal.get_correct_answer('Enter another url.',
                                                         required=True)
             config.UPDATE_URLS.append(url)
         else:
@@ -369,35 +371,35 @@ def setup_urls(config):
 
 
 def setup_patches(config):
-    config.UPDATE_PATCHES = jms_utils.terminal.ask_yes_no(u'Would you like to '
-                                                          u'enable patch upda'
-                                                          u'tes?',
-                                                          default=u'yes')
+    config.UPDATE_PATCHES = jms_utils.terminal.ask_yes_no('Would you like to '
+                                                          'enable patch upda'
+                                                          'tes?',
+                                                          default='yes')
 
 
 def setup_scp(config):
-    _temp = jms_utils.terminal.get_correct_answer(u'Enter remote dir',
+    _temp = jms_utils.terminal.get_correct_answer('Enter remote dir',
                                                   required=True)
     config.SSH_REMOTE_DIR = _temp
-    config.SSH_HOST = jms_utils.terminal.get_correct_answer(u'Enter host',
+    config.SSH_HOST = jms_utils.terminal.get_correct_answer('Enter host',
                                                             required=True)
 
-    config.SSH_USERNAME = jms_utils.terminal.get_correct_answer(u'Enter '
-                                                                u'usernmae',
+    config.SSH_USERNAME = jms_utils.terminal.get_correct_answer('Enter '
+                                                                'usernmae',
                                                                 required=True)
 
 
 def setup_object_bucket(config):
-    _temp = jms_utils.terminal.get_correct_answer(u'Enter bucket name',
+    _temp = jms_utils.terminal.get_correct_answer('Enter bucket name',
                                                   required=True)
     config.OBJECT_BUCKET = _temp
 
 
 def setup_uploader(config):
-    answer1 = jms_utils.terminal.ask_yes_no(u'Would you like to add scp '
-                                            u'settings?', default='no')
+    answer1 = jms_utils.terminal.ask_yes_no('Would you like to add scp '
+                                            'settings?', default='no')
 
-    answer2 = jms_utils.terminal.ask_yes_no(u'Would you like to add a '
+    answer2 = jms_utils.terminal.ask_yes_no('Would you like to add a '
                                             'bucket?', default='no')
 
     if answer1:
@@ -417,9 +419,9 @@ def initial_setup(config):
 
 
 def repo_update_attr_urls(config):
-    u"Updates url to new attribute"
+    "Updates url to new attribute"
     log.info('Checking for deprecated UPDATE_URL')
-    if hasattr(config, u'UPDATE_URLS'):
+    if hasattr(config, 'UPDATE_URLS'):
         if config.UPDATE_URLS is None:
             config.UPDATE_URL = []
         if isinstance(config.UPDATE_URLS, tuple):
@@ -427,8 +429,8 @@ def repo_update_attr_urls(config):
         if isinstance(config.UPDATE_URLS, six.string_types):
             config.UPDATE_URLS = [config.UPDATE_URLS]
 
-    if hasattr(config, u'UPDATE_URL'):
-        log.info(u'Updating to UPDATE_URLS')
+    if hasattr(config, 'UPDATE_URL'):
+        log.info('Updating to UPDATE_URLS')
         if isinstance(config.UPDATE_URL, six.string_types):
             config.UPDATE_URLS.append(config.UPDATE_URL)
         if isinstance(config.UPDATE_URL, list):
@@ -439,30 +441,30 @@ def repo_update_attr_urls(config):
 
 
 def repo_update_remove_attr(config):
-    u"Removes unused attributes"
-    log.info(u'Looking for unused attributes')
+    "Removes unused attributes"
+    log.info('Looking for unused attributes')
     upload_settings = False
-    if hasattr(config, u'REMOTE_DIR'):
-        log.info(u'Deleting REMOTE_DIR')
+    if hasattr(config, 'REMOTE_DIR'):
+        log.info('Deleting REMOTE_DIR')
         del config.REMOTE_DIR
         upload_settings = True
-    if hasattr(config, u'HOST'):
-        log.info(u'Deleting HOST')
+    if hasattr(config, 'HOST'):
+        log.info('Deleting HOST')
         del config.HOST
         upload_settings = True
-    if hasattr(config, u'USERNAME'):
-        log.info(u'Deleting USERNAME')
+    if hasattr(config, 'USERNAME'):
+        log.info('Deleting USERNAME')
         del config.USERNAME
         upload_settings = True
-    if hasattr(config, u'PASSWORD'):
-        log.info(u'Deleting PASSWORD')
+    if hasattr(config, 'PASSWORD'):
+        log.info('Deleting PASSWORD')
         del config.PASSWORD
         upload_settings = True
-    if hasattr(config, u'DEBUG'):
-        log.info(u'Deleting DEBUG')
+    if hasattr(config, 'DEBUG'):
+        log.info('Deleting DEBUG')
         del config.DEBUG
     if upload_settings is True:
-        log.info(u'Need uploader settings update')
+        log.info('Need uploader settings update')
         setup_uploader(config)
 
 
@@ -472,7 +474,7 @@ def repo_update(config):
 
 
 def make_archive(name, version, target):
-    u"""Used to make archives of file or dir. Zip on windows and tar.gz
+    """Used to make archives of file or dir. Zip on windows and tar.gz
     on all other platforms
 
     Args:
@@ -486,10 +488,10 @@ def make_archive(name, version, target):
          (str) - name of archive
     """
     file_dir = os.path.dirname(os.path.abspath(target))
-    filename = u'{}-{}-{}'.format(name, jms_utils.system.get_system(), version)
+    filename = '{}-{}-{}'.format(name, jms_utils.system.get_system(), version)
     filename_path = os.path.join(file_dir, filename)
 
-    log.debug(u'starting archive')
+    log.debug('starting archive')
 
     ext = os.path.splitext(target)[1]
     temp_file = name + ext
@@ -507,17 +509,17 @@ def make_archive(name, version, target):
         shutil.copytree(target, temp_file)
     # Only use zip on windows. Zip doens't preserve file
     # permissions on nix & mac
-    if jms_utils.system.get_system() == u'win':
-        ext = u'.zip'
-        with zipfile.ZipFile(filename_path + u'.zip', u'w') as zf:
+    if jms_utils.system.get_system() == 'win':
+        ext = '.zip'
+        with zipfile.ZipFile(filename_path + '.zip', 'w') as zf:
             zf.write(target, temp_file)
     else:
-        ext = u'.tar.gz'
+        ext = '.tar.gz'
         if os.path.isfile(target):
-            with tarfile.open(filename_path + u'.tar.gz', u'w:gz') as tar:
+            with tarfile.open(filename_path + '.tar.gz', 'w:gz') as tar:
                 tar.add(target, temp_file)
         else:
-            shutil.make_archive(filename, u'gztar', file_dir, temp_file)
+            shutil.make_archive(filename, 'gztar', file_dir, temp_file)
 
     if os.path.exists(temp_file):
         log.debug('Removing: {}'.format(temp_file))
@@ -526,12 +528,12 @@ def make_archive(name, version, target):
         else:
             shutil.rmtree(temp_file, ignore_errors=True)
     output_filename = filename + ext
-    log.debug(u'Archive output filename: {}'.format(output_filename))
+    log.debug('Archive output filename: {}'.format(output_filename))
     return output_filename
 
 
 def parse_platform(name):
-    u"""Parses platfrom name from given string
+    """Parses platfrom name from given string
 
     Args:
 
@@ -542,9 +544,9 @@ def parse_platform(name):
         (str): Platform name
     """
     try:
-        re_str = u'[mnw]{1}[ai]{1}[cnx]{1}[6]?[4]?'
+        re_str = '[mnw]{1}[ai]{1}[cnx]{1}[6]?[4]?'
         platform_name = re.compile(re_str).findall(name)[0]
-        log.debug(u'Platform name is: {}'.format(platform_name))
+        log.debug('Platform name is: {}'.format(platform_name))
     except IndexError:
         raise UtilsError('')
 
@@ -552,7 +554,7 @@ def parse_platform(name):
 
 
 def pretty_time(sec):
-    u"""Turns seconds into a human readable format. Example: 2020/07/31 12:22:83
+    """Turns seconds into a human readable format. Example: 2020/07/31 12:22:83
 
     Args:
 
@@ -566,7 +568,7 @@ def pretty_time(sec):
 
 
 def remove_dot_files(files):
-    u"""Removes hidden dot files from file list
+    """Removes hidden dot files from file list
 
     Args:
 
@@ -578,13 +580,13 @@ def remove_dot_files(files):
     """
     new_list = []
     for l in files:
-        if not l.startswith(u'.'):
+        if not l.startswith('.'):
             new_list.append(l)
     return new_list
 
 
 def run(cmd):
-    u"""Logs a command before running it in subprocess.
+    """Logs a command before running it in subprocess.
 
     Args:
 
@@ -594,13 +596,13 @@ def run(cmd):
 
         (int): Exit code
     """
-    log.debug(u'Command: {}'.format(cmd))
+    log.debug('Command: {}'.format(cmd))
     exit_code = subprocess.call(cmd)
     return exit_code
 
 
 def _decode_offt(bytes):
-    u"""Decode an off_t value from a string.
+    """Decode an off_t value from a string.
 
     This decodes a signed integer into 8 bytes.  I'd prefer some sort of
     signed vint representation, but this is the format used by bsdiff4.
@@ -616,7 +618,7 @@ def _decode_offt(bytes):
 
 
 class bsdiff4_py(object):
-    u"""Pure-python version of bsdiff4 module that can only patch, not diff.
+    """Pure-python version of bsdiff4 module that can only patch, not diff.
 
     By providing a pure-python fallback, we don't force frozen apps to
     bundle the bsdiff module in order to make use of patches.  Besides,
@@ -663,7 +665,7 @@ class bsdiff4_py(object):
 
 
 class EasyAccessDict(object):
-    u"""Provides access to dict by pass a specially made key to
+    """Provides access to dict by pass a specially made key to
     the get method. Default key sep is "*". Example key would be
     updates*mac*1.7.0 would access {"updates":{"mac":{"1.7.0": "hi there"}}}
     and return "hi there"
@@ -675,17 +677,17 @@ class EasyAccessDict(object):
         sep (str): Used as a delimiter between keys
     """
 
-    def __init__(self, dict_=None, sep=u'*'):
+    def __init__(self, dict_=None, sep='*'):
         self.sep = sep
         if not isinstance(dict_, dict):
-            log.debug(u'Did not pass dict')
+            log.debug('Did not pass dict')
             self.dict = dict()
-            log.debug(u'Loading empty dict')
+            log.debug('Loading empty dict')
         else:
             self.dict = dict_
 
     def get(self, key):
-        u"""Retrive value from internal dict.
+        """Retrive value from internal dict.
 
         args:
 
@@ -700,10 +702,10 @@ class EasyAccessDict(object):
             value = self.dict
             for key in layers:
                 value = value[key]
-            log.debug(u'Found Key')
+            log.debug('Found Key')
             return value
         except KeyError:
-            log.debug(u'Key Not Found')
+            log.debug('Key Not Found')
             return None
         except Exception as err:  # pragma: no cover
             log.error(str(err), exc_info=True)
@@ -718,7 +720,7 @@ class EasyAccessDict(object):
 
 
 class Version(object):
-    u"""Normalizes version strings of different types. Examples
+    """Normalizes version strings of different types. Examples
     include 1.2, 1.2.1, 1.2b and 1.1.1b
 
     Args:
@@ -726,14 +728,14 @@ class Version(object):
         version (str): Version number to normalizes
     """
 
-    re_2 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)(?P<re'
-                      u'lease>[b])?(?P<releaseversion>\d+)?')
-    re_3 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
-                      u'patch>\d+)(?P<release>[b])?(?P<rele'
-                      u'aseversion>\d+)?')
-    re_4 = re.compile(u'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
-                      u'patch>\d+)\.(?P<release>\d+)\.(?P<re'
-                      u'leaseversion>\d+)')
+    re_2 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)(?P<re'
+                      'lease>[b])?(?P<releaseversion>\d+)?')
+    re_3 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
+                      'patch>\d+)(?P<release>[b])?(?P<rele'
+                      'aseversion>\d+)?')
+    re_4 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
+                      'patch>\d+)\.(?P<release>\d+)\.(?P<re'
+                      'leaseversion>\d+)')
 
     def __init__(self, version):
         self.version_str = version
@@ -753,19 +755,19 @@ class Version(object):
         except AssertionError:
             raise VersionError('Cannot parse version')
 
-        self.major = int(version_data.get(u'major', 0))
-        self.minor = int(version_data.get(u'minor', 0))
-        if u'patch' in version_data.keys():
-            self.patch = int(version_data.get(u'patch', 0))
+        self.major = int(version_data.get('major', 0))
+        self.minor = int(version_data.get('minor', 0))
+        if 'patch' in version_data.keys():
+            self.patch = int(version_data.get('patch', 0))
         else:
             self.patch = 0
         release = version_data.get('release')
         if release is None:
             self.release = 2
         # Convert to number for easy comparison and sorting
-        elif release == u'b':
+        elif release == 'b':
             self.release = 1
-        elif release == u'a':
+        elif release == 'a':
             self.release = 0
         else:
             try:
@@ -803,16 +805,16 @@ class Version(object):
         ext = os.path.splitext(version)[1]
         # Removing file extensions, to ensure count isn't
         # contaminated
-        if ext == u'.zip':
+        if ext == '.zip':
             log.debug('Removed ".zip"')
             version = version[:-4]
-        elif ext == u'.gz':
+        elif ext == '.gz':
             log.debug('Removed ".tar.gz"')
             version = version[:-7]
         count = version.count('.')
         if count not in [1, 2, 4]:
-            msg = (u'Incorrect version format. 1, 2 or 4 dots '
-                   u'You have {} dots'.format(count))
+            msg = ('Incorrect version format. 1, 2 or 4 dots '
+                   'You have {} dots'.format(count))
             log.error(msg)
             raise VersionError(msg)
         return count

@@ -7,4 +7,5 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 # -----------------------------------------------------------------------------
 from PyInstaller.hooks.hookutils import collect_data_files  # pragma: no cover
+
 datas = collect_data_files('certifi')  # pragma: no cover

@@ -13,45 +13,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-APP_NAME = u'PyUpdater'
-APP_AUTHOR = u'Digital Sapphire'
+from __future__ import unicode_literals
+
+APP_NAME = 'PyUpdater'
+APP_AUTHOR = 'Digital Sapphire'
 
 # Used to hold PyUpdater config info for repo
-CONFIG_DATA_FOLDER = u'.pyupdater'
+CONFIG_DATA_FOLDER = '.pyupdater'
 
 # User config file
-CONFIG_FILE_USER = u'pyuconfig.db'
+CONFIG_FILE_USER = 'pyuconfig.db'
 
-CONFIG_DB_KEY_APP_CONFIG = u'app_config'
-CONFIG_DB_KEY_KEYS = u'signing_keys'
-CONFIG_DB_KEY_VERSION_META = u'version_meta'
-CONFIG_DB_KEY_PY_REPO_CONFIG = u'py_repo_config'
+CONFIG_DB_KEY_APP_CONFIG = 'app_config'
+CONFIG_DB_KEY_KEYS = 'signing_keys'
+CONFIG_DB_KEY_VERSION_META = 'version_meta'
+CONFIG_DB_KEY_PY_REPO_CONFIG = 'py_repo_config'
 
-GENERIC_APP_NAME = u'PyUpdater App'
-GENERIC_COMPANY_NAME = u'PyUpdater'
+GENERIC_APP_NAME = 'PyUpdater App'
+GENERIC_COMPANY_NAME = 'PyUpdater'
 
 # Log filename
-LOG_FILENAME = u'pyu.log'
-LOG_FILENAME_DEBUG = u'pyu-debug.log'
+LOG_FILENAME = 'pyu.log'
+LOG_FILENAME_DEBUG = 'pyu-debug.log'
 
 # Used for plugins
 UPLOAD_PLUGIN_NAMESPACE = 'pyupdater.plugins.uploaders'
 
 # Name of client config file
-USER_CLIENT_CONFIG_FILENAME = u'client_config.py'
+USER_CLIENT_CONFIG_FILENAME = 'client_config.py'
 
 # Main user visible data folder
-USER_DATA_FOLDER = u'pyu-data'
+USER_DATA_FOLDER = 'pyu-data'
 
 # Name of env var to get users passwrod from
-USER_PASS_ENV = u'PYUPDATER_PASS'
+USER_PASS_ENV = 'PYUPDATER_PASS'
 
 # Key in version file where value are update meta data
-UPDATES_KEY = u'updates'
+UPDATES_KEY = 'updates'
 
 # Folder on client system where updates are stored
-UPDATE_FOLDER = u'update'
+UPDATE_FOLDER = 'update'
 
 # Name of version file place in online repo
-VERSION_FILE = u'versions.gz'
-VERSION_FILE_OLD = u'version.json'
+VERSION_FILE = 'versions.gz'
+VERSION_FILE_OLD = 'version.json'

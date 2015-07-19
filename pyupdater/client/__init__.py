@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 from pyupdater import settings, __version__
 from pyupdater.client.downloader import FileDownloader
 from pyupdater.client.updates import AppUpdate, LibUpdate
@@ -79,10 +81,10 @@ def six():
 
 log = logging.getLogger(__name__)
 
-log_path = os.path.join(jms_utils.paths.app_cwd, u'pyu.log')
+log_path = os.path.join(jms_utils.paths.app_cwd, 'pyu.log')
 if os.path.exists(log_path):  # pragma: no cover
     ch = logging.FileHandler(os.path.join(jms_utils.paths.app_cwd,
-                             u'pyu.log'))
+                             'pyu.log'))
     ch.setLevel(logging.DEBUG)
     ch.setFormatter(jms_utils.logger.log_format_string())
     log.addHandler(ch)
@@ -140,13 +142,13 @@ class Client(object):
 
         self.FROZEN = jms_utils.app.FROZEN
         # Grabbing config information
-        update_url = config.get(u'UPDATE_URL')
-        update_urls = config.get(u'UPDATE_URLS')
+        update_url = config.get('UPDATE_URL')
+        update_urls = config.get('UPDATE_URLS')
 
         # Here we combine all urls & add trailing / if one isn't present
         self.update_urls = self._sanatize_update_url(update_url, update_urls)
-        self.app_name = config.get(u'APP_NAME', u'PyUpdater')
-        self.company_name = config.get(u'COMPANY_NAME', u'Digital Sapphire')
+        self.app_name = config.get('APP_NAME', 'PyUpdater')
+        self.company_name = config.get('COMPANY_NAME', 'Digital Sapphire')
         if test:
             # Making platform deterministic for tests.
             # No need to test for other platforms at the moment
@@ -163,17 +165,17 @@ class Client(object):
         self.update_folder = os.path.join(self.data_dir,
                                           settings.UPDATE_FOLDER)
         # Attempting to sanitize incorrect inputs types
-        self.public_keys = convert_to_list(config.get(u'PUBLIC_KEYS'),
+        self.public_keys = convert_to_list(config.get('PUBLIC_KEYS'),
                                            default=list())
         if len(self.public_keys) == 0:
-            log.warning(u'May have passed an incorrect data type to '
-                        u'PUBLIC_KEYS or an empty list was passed')
+            log.warning('May have passed an incorrect data type to '
+                        'PUBLIC_KEYS or an empty list was passed')
 
         # Ensuring only one occurrence of a public key is present
         # Would be a waste to test a bad key twice
         self.public_keys = list(set(self.public_keys))
         # Config option to disable tls cert verification
-        self.verify = config.get(u'VERIFY_SERVER_CERT', True)
+        self.verify = config.get('VERIFY_SERVER_CERT', True)
         self.version_file = settings.VERSION_FILE
 
         self._setup()
@@ -239,7 +241,7 @@ class Client(object):
         if self.verified is False:
             log.error('Failed version file verification')
             return None
-        log.info(u'Checking for {} updates...'.format(name))
+        log.info('Checking for {} updates...'.format(name))
 
         # If None is returned get_highest_version could
         # not find the supplied name in the version file
@@ -252,22 +254,22 @@ class Client(object):
         log.debug('Latest version: {}'.format(str(latest)))
         log.debug('Update Truth: {}'.format(latest >= version))
         if latest <= version:
-            log.info(u'{} already updated to the latest version'.format(name))
+            log.info('{} already updated to the latest version'.format(name))
             return None
         # Hey, finally made it to the bottom!
         # Looks like its time to do some updating
-        log.info(u'Update available')
+        log.info('Update available')
         data = {
-            u'update_urls': self.update_urls,
-            u'name': self.name,
-            u'version': self.version,
-            u'easy_data': self.easy_data,
-            u'json_data': self.json_data,
-            u'data_dir': self.data_dir,
-            u'platform': self.platform,
-            u'app_name': self.app_name,
-            u'verify': self.verify,
-            u'progress_hooks': self.progress_hooks,
+            'update_urls': self.update_urls,
+            'name': self.name,
+            'version': self.version,
+            'easy_data': self.easy_data,
+            'json_data': self.json_data,
+            'data_dir': self.data_dir,
+            'platform': self.platform,
+            'app_name': self.app_name,
+            'verify': self.verify,
+            'progress_hooks': self.progress_hooks,
             }
         # Return update object with which handles downloading,
         # extracting updates
@@ -294,13 +296,13 @@ class Client(object):
             else:
                 log.info('Found version file on file system')
                 try:
-                    with open(self.version_file, u'rb') as f:
+                    with open(self.version_file, 'rb') as f:
                         data = f.read()
                     log.info('Loaded version file from file system')
                 except Exception as err:
                     # Whatever the error data is already set to None
                     log.error('Failed to load version file from file '
-                              u'system')
+                              'system')
                     log.debug(str(err), exc_info=True)
                 # In case we don't have any data to pass
                 # Catch the error here and just return None
@@ -336,12 +338,12 @@ class Client(object):
     def _write_manifest_2_filesystem(self, data):
         with jms_utils.paths.ChDir(self.data_dir):
             log.debug('Writing version file to disk')
-            with gzip.open(self.version_file, u'wb') as f:
+            with gzip.open(self.version_file, 'wb') as f:
                 f.write(data)
 
     def _get_update_manifest(self):
         #  Downloads & Verifies version file signature.
-        log.info(u'Loading version file...')
+        log.info('Loading version file...')
 
         data = self._download_manifest()
         if data is None:
@@ -360,7 +362,7 @@ class Client(object):
         except ValueError as err:
             # Malformed json???
             log.debug(str(err), exc_info=True)
-            log.error(u'Json failed to load: ValueError')
+            log.error('Json failed to load: ValueError')
         except Exception as err:
             # Catch all for debugging purposes.
             # If seeing this line come up a lot in debug logs
@@ -382,10 +384,10 @@ class Client(object):
 
     def _verify_sig(self, data):
         # Checking to see if there is a sigs key in the version file.
-        if u'sigs' in data.keys():
-            signatures = data[u'sigs']
-            log.debug(u'Deleting sigs from update data')
-            del data[u'sigs']
+        if 'sigs' in data.keys():
+            signatures = data['sigs']
+            log.debug('Deleting sigs from update data')
+            del data['sigs']
 
             # After removing the signatures we turn the json data back
             # into a string to use as data to verify the sig.
@@ -395,9 +397,9 @@ class Client(object):
             # looping through public keys and testing. If found
             # will break out of the loop
             for pk in self.public_keys:
-                log.debug(u'Public Key: {}'.format(pk))
+                log.debug('Public Key: {}'.format(pk))
                 for s in signatures:
-                    log.debug(u'Signature: {}'.format(s))
+                    log.debug('Signature: {}'.format(s))
                     # I added this try/except block because sometimes a
                     # None value in json_data would find its way down here.
                     # Hopefully i fixed it by return right under the Exception
@@ -408,7 +410,7 @@ class Client(object):
                     except Exception as err:
                         log.error(str(err))
                     else:
-                        log.info(u'Version file verified')
+                        log.info('Version file verified')
                         self.verified = True
                         break
                 if self.verified is True:
@@ -416,10 +418,10 @@ class Client(object):
                     break
             else:
                 # Couldn't verify with any public keys
-                log.warning(u'Version file not verified')
+                log.warning('Version file not verified')
 
         else:
-            log.warning(u'Version file not verified, no signature found')
+            log.warning('Version file not verified, no signature found')
 
         return data
 
@@ -427,11 +429,11 @@ class Client(object):
         # Sets up required directories on end-users computer
         # to place verified update data
         # Very safe director maker :)
-        log.info(u'Setting up directories...')
+        log.info('Setting up directories...')
         dirs = [self.data_dir, self.update_folder]
         for d in dirs:
             if not os.path.exists(d):
-                log.info(u'Creating directory: {}'.format(d))
+                log.info('Creating directory: {}'.format(d))
                 os.makedirs(d)
 
     # Legacy code used when migrating from single urls to
@@ -444,19 +446,19 @@ class Client(object):
         elif isinstance(url, tuple):
             _urls += list(url)
         elif isinstance(urls, six.string_types):
-            log.warning(u'UPDATE_URLS value should only be a list.')
+            log.warning('UPDATE_URLS value should only be a list.')
             _urls.append(urls)
         else:
-            log.warning(u'UPDATE_URLS should be type "{}" got '
-                        u'"{}"'.format(type([]), type('')))
+            log.warning('UPDATE_URLS should be type "{}" got '
+                        '"{}"'.format(type([]), type('')))
 
         sanatized_urls = []
         # Adds trailing slash to end of url if not already provided.
         # Doing this so when requesting online resources we only
         # need to add the resouce name to the end of the request.
         for u in _urls:
-            if not u.endswith(u'/'):
-                sanatized_urls.append(u + u'/')
+            if not u.endswith('/'):
+                sanatized_urls.append(u + '/')
             else:
                 sanatized_urls.append(u)
         # Removing duplicates

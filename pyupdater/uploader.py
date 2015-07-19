@@ -13,14 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import logging
 import os
 import sys
 import time
 
 from pyupdater import settings
-from pyupdater.utils import (lazy_import,
-                             remove_dot_files)
+from pyupdater.utils import lazy_import, remove_dot_files
 from pyupdater.utils.exceptions import UploaderError, UploaderPluginError
 
 log = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ ns = settings.UPLOAD_PLUGIN_NAMESPACE
 
 
 class Uploader(object):
-    u"""Uploads updates to configured servers.  SSH, SFTP, S3
+    """Uploads updates to configured servers.  SSH, SFTP, S3
     Will automatically pick the correct uploader depending on
     what is configured thorough the config object
 
@@ -52,19 +53,19 @@ class Uploader(object):
             self.init(app)
 
     def init(self, obj):
-        u"""Sets up client with config values from obj
+        """Sets up client with config values from obj
 
         Args:
 
             obj (instance): config object
         """
-        data_dir = obj.get(u'DATA_DIR', os.getcwd())
+        data_dir = obj.get('DATA_DIR', os.getcwd())
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
-        self.deploy_dir = os.path.join(self.data_dir, u'deploy')
-        self.ssh_remote_dir = obj.get(u'SSH_REMOTE_DIR')
-        self.ssh_host = obj.get(u'SSH_HOST')
-        self.ssh_username = obj.get(u'SSH_USERNAME')
-        self.object_bucket = obj.get(u'OBJECT_BUCKET')
+        self.deploy_dir = os.path.join(self.data_dir, 'deploy')
+        self.ssh_remote_dir = obj.get('SSH_REMOTE_DIR')
+        self.ssh_host = obj.get('SSH_HOST')
+        self.ssh_username = obj.get('SSH_USERNAME')
+        self.object_bucket = obj.get('OBJECT_BUCKET')
         self.uploader = None
         self.test = False
 
@@ -72,7 +73,7 @@ class Uploader(object):
         self.mgr = stevedore.extension.ExtensionManager(namespace=ns)
 
     def upload(self):
-        u"""Proxy function that calls the upload method on the received
+        """Proxy function that calls the upload method on the received
         uploader. Only calls the upload method if an uploader is set.
         """
         if self.uploader is not None:
@@ -84,10 +85,10 @@ class Uploader(object):
                 log.debug(str(err), exc_info=True)
                 sys.exit(str(err))
         else:
-            raise UploaderError(u'Must call set_uploader first', expected=True)
+            raise UploaderError('Must call set_uploader first', expected=True)
 
     def set_uploader(self, requested_uploader):
-        u"""Returns an uploader object. 1 of S3, SCP, SFTP.
+        """Returns an uploader object. 1 of S3, SCP, SFTP.
         SFTP uploaders not supported at this time.
 
         Args:
@@ -99,24 +100,24 @@ class Uploader(object):
             object (instance): Uploader object
         """
         if isinstance(requested_uploader, str) is False:
-            raise UploaderError(u'Must pass str to set_uploader',
+            raise UploaderError('Must pass str to set_uploader',
                                 expected=True)
 
         try:
             plugin = self.mgr[requested_uploader]
         except KeyError:
-            log.debug(u'EP CACHE: {}'.format(self.mgr.ENTRY_POINT_CACHE))
-            raise UploaderPluginError(u'Requested uploader is not installed',
+            log.debug('EP CACHE: {}'.format(self.mgr.ENTRY_POINT_CACHE))
+            raise UploaderPluginError('Requested uploader is not installed',
                                       expected=True)
         except Exception as err:  # pragma: no cover
-            log.debug(u'EP CACHE: {}'.format(self.mgr.ENTRY_POINT_CACHE))
+            log.debug('EP CACHE: {}'.format(self.mgr.ENTRY_POINT_CACHE))
             log.error(str(err))
             log.debug(str(err), exc_info=True)
-            raise UploaderError(u'Requested uploader is not installed',
+            raise UploaderError('Requested uploader is not installed',
                                 expected=True)
 
         self.uploader = plugin.plugin()
-        msg = u'Requested uploader: {}'.format(requested_uploader)
+        msg = 'Requested uploader: {}'.format(requested_uploader)
         log.debug(msg)
         try:
             files = os.listdir(self.deploy_dir)
@@ -131,7 +132,7 @@ class Uploader(object):
 
 
 class BaseUploader(object):
-    u"""Base Uploader.  All uploaders should subclass
+    """Base Uploader.  All uploaders should subclass
     this base class
     """
     def __init__(self):
@@ -139,7 +140,7 @@ class BaseUploader(object):
         self.deploy_dir = None
 
     def init(self, **kwargs):
-        u"""Used to pass file list & any other config options set during
+        """Used to pass file list & any other config options set during
         repo setup.
 
         Kwargs:
@@ -155,15 +156,15 @@ class BaseUploader(object):
 
             ssh_host (str): Remote host to connect to for server uploads
         """
-        raise NotImplementedError(u'Must be implemented in subclass.')
+        raise NotImplementedError('Must be implemented in subclass.')
 
     def upload(self):
-        u"""Uploads all files in file_list"""
+        """Uploads all files in file_list"""
         self.files_completed = 1
         self.file_count = self._get_filelist_count()
         for f in self.file_list:
-            msg = u'\n\nUploading: {}' .format(f)
-            msg2 = u' - File {} of {}\n'.format(self.files_completed,
+            msg = '\n\nUploading: {}' .format(f)
+            msg2 = ' - File {} of {}\n'.format(self.files_completed,
                                                 self.file_count)
             print(msg + msg2)
             complete = self.upload_file(f)
@@ -171,18 +172,18 @@ class BaseUploader(object):
                 log.debug('{} uploaded successfully'.format(f))
                 self.files_completed += 1
             else:
-                log.debug(u'{} failed to upload.  will retry'.format(f))
+                log.debug('{} failed to upload.  will retry'.format(f))
                 self.failed_uploads.append(f)
         if len(self.failed_uploads) > 0:
             self._retry_upload()
         if len(self.failed_uploads) < 1:
-            print(u"\nUpload Complete")
+            print("\nUpload Complete")
             time.sleep(3)
             return True
         else:
-            print(u'The following files were not uploaded')
+            print('The following files were not uploaded')
             for i in self.failed_uploads:
-                log.error(u'{} failed to upload'.format(i))
+                log.error('{} failed to upload'.format(i))
                 print(i)
             return False
 
@@ -193,18 +194,18 @@ class BaseUploader(object):
         failed_count = len(retry)
         count = 1
         for f in retry:
-            msg = u'\n\nRetyring: {} - File {} of {}\n'.format(f,
+            msg = '\n\nRetyring: {} - File {} of {}\n'.format(f,
                                                                count,
                                                                failed_count)
             print(msg)
             complete = self.upload_file(f)
             if complete:
-                log.debug(u'{} uploaded on retry'.format(f))
+                log.debug('{} uploaded on retry'.format(f))
                 count += 1
             else:
                 self.failed_uploads.append(f)
         if len(self.failed_uploads) >= 1:
-            print(u'\nThe following files failed to upload...')
+            print('\nThe following files failed to upload...')
             for f in self.failed_uploads:
                 print(f)
             time.sleep(3)
@@ -214,11 +215,11 @@ class BaseUploader(object):
             return True
 
     def connect(self):
-        u"Connects to service"
-        raise NotImplementedError(u'Must be implemented in subclass.')
+        "Connects to service"
+        raise NotImplementedError('Must be implemented in subclass.')
 
     def upload_file(self, filename):
-        u"""Uploads file to remote repository
+        """Uploads file to remote repository
 
         Args:
             filename (str): file to upload
