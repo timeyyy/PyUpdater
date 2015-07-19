@@ -17,8 +17,9 @@ class PyTest(Command):
         pass
 
     def run(self):
-        errno = subprocess.call([sys.executable, u'runtests.py', u'-v', u'-x',
-                                 u'--cov', u'pyupdater', u'-n', u'4'])
+        errno = subprocess.call([sys.executable, u'runtests.py', u'-x',
+                                 u'--cov', u'pyupdater', u'-n', u'8',
+                                 u'--cov-config', u'.coveragerc'])
         raise SystemExit(errno)
 
 
@@ -33,7 +34,8 @@ class PyTestCover(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
-                                 u'--cov', u'pyupdater', u'-n', u'1'])
+                                 u'--cov', u'pyupdater', u'-n', u'1',
+                                 u'--cov-config', u'.coveragerc'])
         raise SystemExit(errno)
 
 
@@ -49,7 +51,8 @@ class PyTestMyCover(Command):
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
                                  u'--cov-report', u'html', u'--cov',
-                                 u'pyupdater', u'-n', u'4'])
+                                 u'pyupdater', u'-n', u'4',
+                                 u'--cov-config', u'.coveragerc'])
         raise SystemExit(errno)
 
 with open(u'requirements.txt', u'r') as f:
