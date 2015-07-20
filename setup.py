@@ -83,6 +83,14 @@ setup(
         'patch': extra_patch,
         'all': [extra_s3, extra_scp, extra_patch]
         },
+    zip_safe=False,
+    package_data={
+        # This includes precompiled bootloaders.
+        'pyupdater.vendor.PyInstaller': ['bootloader/*/*'],
+        # This file is necessary for rthooks (runtime hooks).
+        'pyupdater.vendor.PyInstaller.loader': ['rthooks.dat'],
+        },
+    include_package_data=True,
     tests_require=['pytest', ],
     cmdclass=cmd_class,
     install_requires=required,

@@ -1,7 +1,14 @@
 # Changelog
 
-## v0.23.1 - Master
+## v0.23.2 - Master
 ##### This version is not yet released and is under active development.
+
+
+## v0.23.1 - 2015/07/19
+
+Fixed
+
+  - Missing bootloaders
 
 
 ## v0.23.0 - 2015/07/19
