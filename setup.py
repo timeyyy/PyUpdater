@@ -86,9 +86,9 @@ setup(
     zip_safe=False,
     package_data={
         # This includes precompiled bootloaders.
-        'PyInstaller': ['bootloader/*/*'],
+        'pyupdater.vendor.PyInstaller': ['bootloader/*/*'],
         # This file is necessary for rthooks (runtime hooks).
-        'PyInstaller.loader': ['rthooks.dat'],
+        'pyupdater.vendor.PyInstaller.loader': ['rthooks.dat'],
         },
     include_package_data=True,
     tests_require=['pytest', ],
