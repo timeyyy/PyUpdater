@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import logging
 import os
 
@@ -71,23 +73,23 @@ class Patcher(object):
     """
 
     def __init__(self, **kwargs):
-        self.name = kwargs.get(u'name')
-        self.json_data = kwargs.get(u'json_data')
+        self.name = kwargs.get('name')
+        self.json_data = kwargs.get('json_data')
         self.star_access_update_data = EasyAccessDict(self.json_data)
-        self.current_version = Version(kwargs.get(u'current_version'))
-        self.highest_version = kwargs.get(u'highest_version')
-        self.update_folder = kwargs.get(u'update_folder')
-        self.update_urls = kwargs.get(u'update_urls', [])
-        self.verify = kwargs.get(u'verify', True)
-        self.progress_hooks = kwargs.get(u'progress_hooks', [])
+        self.current_version = Version(kwargs.get('current_version'))
+        self.highest_version = kwargs.get('highest_version')
+        self.update_folder = kwargs.get('update_folder')
+        self.update_urls = kwargs.get('update_urls', [])
+        self.verify = kwargs.get('verify', True)
+        self.progress_hooks = kwargs.get('progress_hooks', [])
         self.patch_data = []
         self.patch_binary_data = []
         self.og_binary = None
         # ToDo: Update tests with linux archives.
         # Used for testing.
-        self.platform = kwargs.get(u'platform', _platform)
-        self.current_filename = kwargs.get(u'current_filename')
-        self.current_file_hash = kwargs.get(u'current_file_hash')
+        self.platform = kwargs.get('platform', _platform)
+        self.current_filename = kwargs.get('current_filename')
+        self.current_file_hash = kwargs.get('current_file_hash')
 
         file_info = self._current_file_info(self.name,
                                             self.current_version)
@@ -99,22 +101,22 @@ class Patcher(object):
     def start(self):
         "Starts patching process"
 
-        log.debug(u'Starting patch updater...')
+        log.debug('Starting patch updater...')
         # Check hash on installed binary to begin patching
         binary_check = self._verify_installed_binary()
         if not binary_check:
-            log.debug(u'Binary check failed...')
+            log.debug('Binary check failed...')
             return False
         # Getting all required patch meta-data
         all_patches = self._get_patch_info(self.name)
         if all_patches is False:
-            log.debug(u'Cannot find all patches...')
+            log.debug('Cannot find all patches...')
             return False
 
         # Download and verify patches in 1 go
         download_check = self._download_verify_patches()
         if download_check is False:
-            log.debug(u'Patch check failed...')
+            log.debug('Patch check failed...')
             return False
 
         try:
@@ -131,21 +133,21 @@ class Patcher(object):
 
     def _verify_installed_binary(self):
         # Verifies latest downloaded archive against known hash
-        log.debug(u'Checking for current installed binary to patch')
+        log.debug('Checking for current installed binary to patch')
 
         with jms_utils.paths.ChDir(self.update_folder):
             if not os.path.exists(self.current_filename):
-                log.debug(u'Cannot find archive to patch')
+                log.debug('Cannot find archive to patch')
                 return False
 
             installed_file_hash = get_package_hashes(self.current_filename)
             if self.current_file_hash != installed_file_hash:
-                log.debug(u'Binary hash mismatch')
+                log.debug('Binary hash mismatch')
                 return False
             # Read binary into memory to begin patching
-            with open(self.current_filename, u'rb') as f:
+            with open(self.current_filename, 'rb') as f:
                 self.og_binary = f.read()
-        log.debug(u'Binary found and verified')
+        log.debug('Binary found and verified')
         return True
 
     # We will take all versions.  Then append any version
@@ -155,7 +157,7 @@ class Patcher(object):
         # Taking the list of needed patches and extracting the
         # patch data from it. If any loop fails, will return False
         # and start full binary update.
-        log.debug(u'Getting patch meta-data')
+        log.debug('Getting patch meta-data')
         required_patches = self._get_required_patches(name)
 
         for p in required_patches:
@@ -165,12 +167,12 @@ class Patcher(object):
             platform_info = self.star_access_update_data.get(platform_key)
 
             try:
-                info[u'patch_name'] = platform_info[u'patch_name']
-                info[u'patch_urls'] = self.update_urls
-                info[u'patch_hash'] = platform_info[u'patch_hash']
+                info['patch_name'] = platform_info['patch_name']
+                info['patch_urls'] = self.update_urls
+                info['patch_hash'] = platform_info['patch_hash']
                 self.patch_data.append(info)
             except KeyError:
-                log.error(u'Missing required patch meta-data')
+                log.error('Missing required patch meta-data')
                 return False
         return True
 
@@ -184,11 +186,11 @@ class Patcher(object):
             version_info = self.star_access_update_data(version_key)
             versions = map(Version, version_info.keys())
         except KeyError:
-            log.debug(u'No updates found in updates dict')
+            log.debug('No updates found in updates dict')
 
         # Ensuring we apply patches in correct order
         versions = sorted(versions)
-        log.debug(u'getting required patches')
+        log.debug('getting required patches')
         for i in versions:
             if i > self.current_version:
                 needed_patches.append(i)
@@ -202,29 +204,29 @@ class Patcher(object):
         total = len(self.patch_data)
         for p in self.patch_data:
             # Initialize downloader
-            fd = FileDownloader(p[u'patch_name'], p[u'patch_urls'],
-                                p[u'patch_hash'], self.verify)
+            fd = FileDownloader(p['patch_name'], p['patch_urls'],
+                                p['patch_hash'], self.verify)
 
             # Attempt to download resource
             data = fd.download_verify_return()
             if data is not None:
                 self.patch_binary_data.append(data)
                 downloaded += 1
-                status = {u'total': total,
-                          u'downloaed': downloaded,
-                          u'status': u'downloading'}
+                status = {'total': total,
+                          'downloaed': downloaded,
+                          'status': 'downloading'}
                 self._call_progress_hooks(status)
             else:
                 # Since patches are applied sequentially
                 # we cannot continue successfully
-                status = {u'total': total,
-                          u'downloaded': downloaded,
-                          u'status': u'failed to download all patches'}
+                status = {'total': total,
+                          'downloaded': downloaded,
+                          'status': 'failed to download all patches'}
                 self._call_progress_hooks(status)
                 return False
-        status = {u'total': total,
-                  u'downloaed': downloaded,
-                  u'status': u'finished'}
+        status = {'total': total,
+                  'downloaed': downloaded,
+                  'status': 'finished'}
         self._call_progress_hooks(status)
         return True
 
@@ -234,21 +236,21 @@ class Patcher(object):
                 ph(data)
             except Exception as err:
                 log.debug(str(err), exc_info=True)
-                log.error(u'Exception in callback: '
-                          u'{}'.format(ph.__name__))
+                log.error('Exception in callback: '
+                          '{}'.format(ph.__name__))
 
     def _apply_patches_in_memory(self):
         # Applies a sequence of patches in memory
-        log.debug(u'Applying patches')
+        log.debug('Applying patches')
         self.new_binary = self.og_binary
         for i in self.patch_binary_data:
             try:
                 self.new_binary = bsdiff4.patch(self.new_binary, i)
-                log.debug(u'Applied patch successfully')
+                log.debug('Applied patch successfully')
             except Exception as err:
                 log.debug(err, exc_info=True)
                 log.error(err)
-                raise PatcherError(u'Patch failed to apply')
+                raise PatcherError('Patch failed to apply')
 
     def _write_update_to_disk(self):
         # Writes updated binary to disk
@@ -256,7 +258,7 @@ class Patcher(object):
         filename_key = '{}*{}*{}*{}*{}'.format(settings.UPDATES_KEY, self.name,
                                                self.highest_version,
                                                self.platform,
-                                               u'filename')
+                                               'filename')
 
         filename = self.star_access_update_data.get(filename_key)
         if filename is None:
@@ -264,40 +266,40 @@ class Patcher(object):
 
         with jms_utils.paths.ChDir(self.update_folder):
             try:
-                with open(filename, u'wb') as f:
+                with open(filename, 'wb') as f:
                     f.write(self.new_binary)
                 log.debug('Wrote update file')
             except IOError:
                 # Removes file if it got created
                 if os.path.exists(filename):
                     os.remove(filename)
-                log.error(u'Failed to open file for writing')
-                raise PatcherError(u'Failed to open file for writing')
+                log.error('Failed to open file for writing')
+                raise PatcherError('Failed to open file for writing')
             else:
                 file_info = self._current_file_info(self.name,
                                                     self.highest_version)
 
                 new_file_hash = file_info['file_hash']
-                log.debug(u'checking file hash match')
+                log.debug('checking file hash match')
                 if new_file_hash != get_package_hashes(filename):
-                    log.error(u'File hash does not match')
+                    log.error('File hash does not match')
                     os.remove(filename)
-                    raise PatcherError(u'Bad hash on patched file')
+                    raise PatcherError('Bad hash on patched file')
 
     def _current_file_info(self, name, version):
         # Returns filename and hash for given name and version
-        platform_key = u'{}*{}*{}*{}'.format(settings.UPDATES_KEY, name,
+        platform_key = '{}*{}*{}*{}'.format(settings.UPDATES_KEY, name,
                                              version, self.platform)
         platform_info = self.star_access_update_data.get(platform_key)
 
-        filename = platform_info.get(u'filename')
+        filename = platform_info.get('filename')
         if filename is None:
-            filename = u''
-        log.debug(u'Current filename: {}'.format(filename))
+            filename = ''
+        log.debug('Current filename: {}'.format(filename))
 
-        file_hash = platform_info.get(u'file_hash')
+        file_hash = platform_info.get('file_hash')
         if file_hash is None:
-            file_hash = u''
+            file_hash = ''
         info = dict(filename=filename, file_hash=file_hash)
         log.debug('Current file_hash {}'.format(file_hash))
         return info

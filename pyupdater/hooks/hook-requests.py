@@ -9,4 +9,5 @@
 
 # this is needed to bundle cacert.pem that comes with requests module
 from PyInstaller.hooks.hookutils import collect_data_files  # pragma: no cover
+
 datas = collect_data_files('requests')  # pragma: no cover

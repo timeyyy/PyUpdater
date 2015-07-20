@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 from io import BytesIO
 import logging
 import time
@@ -70,7 +72,8 @@ class FileDownloader(object):
         self.content_length = None
         self.progress_hooks = progress_hooks
         if self.verify is True:
-            self.http_pool = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',
+            self.http_pool = urllib3.PoolManager(cert_reqs=str('CERT_'
+                                                 'REQUIRED'),
                                                  ca_certs=certifi.where())
         else:
             self.http_pool = urllib3.PoolManager()
@@ -164,7 +167,7 @@ class FileDownloader(object):
             # speed
             self.b_size = self._best_block_size(end_block - start_block,
                                                 len(block))
-            log.debug(u'Block size: %s' % self.b_size)
+            log.debug('Block size: %s' % self.b_size)
             # Saving data to memory
             # ToDo: Consider writing file to cache to enable resumable
             #       downloads
@@ -172,21 +175,21 @@ class FileDownloader(object):
             recieved_data += len(block)
             percent = self._calc_progress_percent(recieved_data,
                                                   self.content_length)
-            status = {u'total': self.content_length,
-                      u'downloaed': recieved_data,
-                      u'status': u'downloading',
-                      u'percent_complete': percent}
+            status = {'total': self.content_length,
+                      'downloaed': recieved_data,
+                      'status': 'downloading',
+                      'percent_complete': percent}
             self._call_progress_hooks(status)
 
         # Flushing data to prepare to write to file
         self.my_file.flush()
         self.my_file.seek(0)
         self.file_binary_data = self.my_file.read()
-        status = {u'total': self.content_length,
-                  u'downloaed': recieved_data,
-                  u'status': u'finished'}
+        status = {'total': self.content_length,
+                  'downloaed': recieved_data,
+                  'status': 'finished'}
         self._call_progress_hooks(status)
-        log.debug(u'Download Complete')
+        log.debug('Download Complete')
 
     # Calling all progress hooks
     def _call_progress_hooks(self, data):
@@ -196,8 +199,8 @@ class FileDownloader(object):
                 ph(data)
             except Exception as err:
                 log.debug(str(err), exc_info=True)
-                log.error(u'Exception in callback: '
-                          u'{}'.format(ph.__name__))
+                log.error('Exception in callback: '
+                          '{}'.format(ph.__name__))
 
     # Creating response object to start download
     # Attempting to do some error correction for aws s3 urls
@@ -213,12 +216,12 @@ class FileDownloader(object):
                 if data.status == 505:
                     raise urllib3.exceptions.HTTPError
             except urllib3.exceptions.HTTPError:
-                log.debug(u'There may be spaces in an S3 url...')
+                log.debug('There may be spaces in an S3 url...')
                 file_url = file_url.replace(' ', '+')
-                log.debug(u'S3 updated url {}'.format(file_url))
+                log.debug('S3 updated url {}'.format(file_url))
                 data = None
             except urllib3.exceptions.SSLError:
-                log.error(u'SSL cert not verified')
+                log.error('SSL cert not verified')
                 data = ''
             except Exception as e:
                 # Catch whatever else comes up and log it
@@ -235,19 +238,19 @@ class FileDownloader(object):
                     data = self.http_pool.urlopen('GET', file_url,
                                                   preload_content=False)
                 except urllib3.exceptions.SSLError:
-                    log.error(u'SSL cert not verified')
+                    log.error('SSL cert not verified')
                 except Exception as e:
                     log.error(str(e), exc_info=True)
                     self.file_binary_data = None
                 else:
                     break
 
-        log.debug(u'Downloading {} from:\n{}'.format(self.filename, file_url))
+        log.debug('Downloading {} from:\n{}'.format(self.filename, file_url))
         return data
 
     def _write_to_file(self):
         # Writes download data in memory to disk
-        with open(self.filename, u'wb') as f:
+        with open(self.filename, 'wb') as f:
             f.write(self.file_binary_data)
 
     def _check_hash(self):
@@ -255,27 +258,27 @@ class FileDownloader(object):
         if self.hexdigest is None:
             # No hash provided to check.
             # So just return any data recieved
-            log.debug(u'No hash to verify')
+            log.debug('No hash to verify')
             return None
         if self.file_binary_data is None:
             # Exit quickly if we got nohting to compare
             # Also I'm sure we'll get an exception trying to
             # pass None to get hash :)
-            log.debug(u'Cannot verify file hash - No Data')
+            log.debug('Cannot verify file hash - No Data')
             return False
-        log.debug(u'Checking file hash')
-        log.debug(u'Update hash: {}'.format(self.hexdigest))
+        log.debug('Checking file hash')
+        log.debug('Update hash: {}'.format(self.hexdigest))
 
         file_hash = get_hash(self.file_binary_data)
         if file_hash == self.hexdigest:
-            log.debug(u'File hash verified')
+            log.debug('File hash verified')
             return True
-        log.debug(u'Cannot verify file hash')
+        log.debug('Cannot verify file hash')
         return False
 
     def _get_content_length(self, data):
-        content_length = int(data.headers.get(u"Content-Length", 100000))
-        log.debug(u'Got content length of: %s', content_length)
+        content_length = int(data.headers.get("Content-Length", 100000))
+        log.debug('Got content length of: %s', content_length)
         return content_length
 
     @staticmethod
@@ -283,18 +286,18 @@ class FileDownloader(object):
         # Not currently implemented
         # Calculates remaining time of download
         if total is None:
-            return u'--:--'
+            return '--:--'
         dif = now - start
         if current == 0 or dif < 0.001:  # One millisecond
-            return u'--:--'
+            return '--:--'
         rate = float(current) / dif
         eta = int((float(total) - float(current)) / rate)
         (eta_mins, eta_secs) = divmod(eta, 60)
         if eta_mins > 99:
-            return u'--:--'
-        return u'%02d:%02d' % (eta_mins, eta_secs)
+            return '--:--'
+        return '%02d:%02d' % (eta_mins, eta_secs)
 
     def _calc_progress_percent(self, x, y):
         percent = float(x) / y * 100
-        percent = u'%.1f' % percent
+        percent = '%.1f' % percent
         return percent

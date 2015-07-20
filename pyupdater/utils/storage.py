@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import json
 import logging
 import os
@@ -27,7 +29,7 @@ log = logging.getLogger(__name__)
 class Storage(object):
 
     def __init__(self, data_dir=None):
-        u"""Loads & saves config file to file-system.
+        """Loads & saves config file to file-system.
 
             Args:
 
@@ -36,36 +38,36 @@ class Storage(object):
         if data_dir is None:
             data_dir = os.getcwd()
         self.config_dir = os.path.join(data_dir, settings.CONFIG_DATA_FOLDER)
-        log.debug(u'Config Dir: {}'.format(self.config_dir))
+        log.debug('Config Dir: {}'.format(self.config_dir))
         self.filename = os.path.join(self.config_dir,
                                      settings.CONFIG_FILE_USER)
-        log.debug(u'Config DB: {}'.format(self.filename))
+        log.debug('Config DB: {}'.format(self.filename))
         self.db = None
         self.sync_threshold = 3
         self.count = 0
 
     def load_db(self):
-        u"Loads database into memory."
+        "Loads database into memory."
         if not os.path.exists(self.config_dir):
-            log.info(u'Creating config dir')
+            log.info('Creating config dir')
             os.makedirs(self.config_dir)
 
         if not os.path.exists(self.filename):
             self.db = {}
-            log.debug(u'Created new config data file')
+            log.debug('Created new config data file')
         else:
             try:
-                with open(self.filename, u'r') as f:
+                with open(self.filename, 'r') as f:
                     self.db = json.loads(f.read())
             except ValueError:
-                log.error(u'Invalid config data file. Saving as '
-                          u'{}.old'.format(self.filename))
+                log.error('Invalid config data file. Saving as '
+                          '{}.old'.format(self.filename))
                 self.db = {}
-                log.debug(u'Created new config data file')
+                log.debug('Created new config data file')
         self.sync_db()
 
     def sync_db(self):
-        u"Sync updates of in memory database back to database on disk."
+        "Sync updates of in memory database back to database on disk."
         if self.count >= self.sync_threshold:
             self._sync_db()
             self.count = 0
@@ -76,11 +78,11 @@ class Storage(object):
             self.load_db()
         if os.path.exists(self.config_dir):
             log.debug('Syncing db to filesystem')
-            with open(self.filename, u'w') as f:
+            with open(self.filename, 'w') as f:
                 f.write(json.dumps(self.db, indent=2, sort_keys=True))
 
     def save(self, key, value):
-        u"""Saves key & value to database
+        """Saves key & value to database
 
         Args:
 
@@ -93,14 +95,14 @@ class Storage(object):
             self.load_db()
 
         if isinstance(key, unicode) is True:
-            log.debug(u'Key Name: {}'.format(key))
-            log.debug(u'Key type: {}'.format(type(key)))
+            log.debug('Key Name: {}'.format(key))
+            log.debug('Key type: {}'.format(type(key)))
             key = str(key)
 
         self.db[key] = pickle.dumps(value)
 
     def load(self, key):
-        u"""Loads value for given key
+        """Loads value for given key
 
             Args:
 
@@ -115,8 +117,8 @@ class Storage(object):
             self.load_db()
 
         if isinstance(key, unicode) is True:
-            log.debug(u'Key Name: {}'.format(key))
-            log.debug(u'Key type: {}'.format(type(key)))
+            log.debug('Key Name: {}'.format(key))
+            log.debug('Key type: {}'.format(type(key)))
             key = str(key)
 
         value = self.db.get(key)

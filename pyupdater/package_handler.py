@@ -14,6 +14,8 @@
 # limitations under the License.
 # --------------------------------------------------------------------------
 from __future__ import print_function
+from __future__ import unicode_literals
+
 import logging
 import multiprocessing
 import os
@@ -44,7 +46,7 @@ def jms_utils():
 
 
 class PackageHandler(object):
-    u"""Handles finding, sorting, getting meta-data, moving packages.
+    """Handles finding, sorting, getting meta-data, moving packages.
 
     Kwargs:
 
@@ -61,26 +63,26 @@ class PackageHandler(object):
             self.init_app(app, db)
 
     def init_app(self, obj, db):
-        u"""Sets up client with config values from obj
+        """Sets up client with config values from obj
 
         Args:
 
             obj (instance): config object
 
         """
-        self.patches = obj.get(u'UPDATE_PATCHES', True)
+        self.patches = obj.get('UPDATE_PATCHES', True)
         if self.patches:
-            log.debug(u'Patch support enabled')
+            log.debug('Patch support enabled')
             self.patch_support = True
         else:
-            log.info(u'Patch support disabled')
+            log.info('Patch support disabled')
             self.patch_support = False
-        data_dir = obj.get(u'DATA_DIR', os.getcwd())
+        data_dir = obj.get('DATA_DIR', os.getcwd())
         self.db = db
         self.data_dir = os.path.join(data_dir, settings.USER_DATA_FOLDER)
-        self.files_dir = os.path.join(self.data_dir, u'files')
-        self.deploy_dir = os.path.join(self.data_dir, u'deploy')
-        self.new_dir = os.path.join(self.data_dir, u'new')
+        self.files_dir = os.path.join(self.data_dir, 'files')
+        self.deploy_dir = os.path.join(self.data_dir, 'deploy')
+        self.new_dir = os.path.join(self.data_dir, 'new')
         self.config_dir = os.path.join(os.path.dirname(self.data_dir),
                                        settings.CONFIG_DATA_FOLDER)
         self.config = None
@@ -89,7 +91,7 @@ class PackageHandler(object):
         self.setup()
 
     def setup(self):
-        u"Creates working directories & loads json files."
+        "Creates working directories & loads json files."
         if self.data_dir is not None:
             self._setup()
 
@@ -101,7 +103,7 @@ class PackageHandler(object):
             self.config_loaded = True
 
     def process_packages(self):
-        u"""Gets a list of updates to process.  Adds the name of an
+        """Gets a list of updates to process.  Adds the name of an
         update to the version file if not already present.  Processes
         all packages.  Updates the version file meta-data. Then writes
         version file back to disk.
@@ -141,9 +143,9 @@ class PackageHandler(object):
         # If no version file is found then one is created.
         json_data = self.db.load(settings.CONFIG_DB_KEY_VERSION_META)
         if json_data is None:  # pragma: no cover
-            log.warning(u'Version file not found')
+            log.warning('Version file not found')
             json_data = {'updates': {}}
-            log.info(u'Created new version file')
+            log.info('Created new version file')
         return json_data
 
     def _load_config(self):
@@ -151,9 +153,9 @@ class PackageHandler(object):
         # If config doesn't exists create new one
         config = self.db.load(settings.CONFIG_DB_KEY_PY_REPO_CONFIG)
         if config is None:  # pragma: no cover
-            log.info(u'Creating new config file')
+            log.info('Creating new config file')
             config = {
-                u'patches': {}
+                'patches': {}
                 }
         return config
 
@@ -162,7 +164,7 @@ class PackageHandler(object):
         # for futher processing
         # Process all packages in new folder and gets
         # url, hash and some outer info.
-        log.info(u'Getting package list')
+        log.info('Getting package list')
         # Clears manifest if sign updates runs more the once without
         # app being restarted
         package_manifest = list()
@@ -202,8 +204,8 @@ class PackageHandler(object):
                                                   package.platform,
                                                   )
                     if path is not None:
-                        log.info(u'Found source file to create patch')
-                        patch_name = package.name + u'-' + package.platform
+                        log.info('Found source file to create patch')
+                        patch_name = package.name + '-' + package.platform
                         src_path = path[0]
                         patch_number = path[1]
                         patch_info = dict(src=src_path,
@@ -215,11 +217,11 @@ class PackageHandler(object):
                         # ready for patching
                         patch_manifest.append(patch_info)
                     else:
-                        log.warning(u'No source file to patch from')
+                        log.warning('No source file to patch from')
 
         # ToDo: Expose this & remove "pragma: no cover" once done
         if ignore_errors is False:  # pragma: no cover
-            log.warning(u'Bad package & reason for being naughty:')
+            log.warning('Bad package & reason for being naughty:')
             for b in bad_packages:
                 log.warning(b.name, b.info['reason'])
         # End ToDo
@@ -227,26 +229,26 @@ class PackageHandler(object):
         return package_manifest, patch_manifest
 
     def _add_package_to_config(self, p, data):
-        if u'package' not in data.keys():
-            data[u'package'] = {}
-            log.info(u'Initilizing config for packages')
+        if 'package' not in data.keys():
+            data['package'] = {}
+            log.info('Initilizing config for packages')
         # First package with current name so add platform and version
-        if p.name not in data[u'package'].keys():
-            data[u'package'][p.name] = {p.platform: p.version}
-            log.info(u'Adding new package to config')
+        if p.name not in data['package'].keys():
+            data['package'][p.name] = {p.platform: p.version}
+            log.info('Adding new package to config')
         else:
             # Adding platform and version
-            if p.platform not in data[u'package'][p.name].keys():
-                data[u'package'][p.name][p.platform] = p.version
-                log.info(u'Adding new arch to package-config: '
-                         u'{}'.format(p.platform))
+            if p.platform not in data['package'][p.name].keys():
+                data['package'][p.name][p.platform] = p.version
+                log.info('Adding new arch to package-config: '
+                         '{}'.format(p.platform))
             else:
                 # Getting current version for platform
-                value = data[u'package'][p.name][p.platform]
+                value = data['package'][p.name][p.platform]
                 # Updating version if applicable
                 if p.version > value:
-                    log.info(u'Adding new version to package-config')
-                    data[u'package'][p.name][p.platform] = p.version
+                    log.info('Adding new version to package-config')
+                    data['package'][p.name][p.platform] = p.version
         return data
 
     def _cleanup(self, patch_manifest):
@@ -254,18 +256,18 @@ class PackageHandler(object):
         # were previously used to create patches
         if len(patch_manifest) < 1:
             return
-        log.info(u'Cleaning up files directory')
+        log.info('Cleaning up files directory')
         for p in patch_manifest:
-            if os.path.exists(p[u'src']):
-                basename = os.path.basename(p[u'src'])
-                log.info(u'Removing {}'.format(basename))
-                os.remove(p[u'src'])
+            if os.path.exists(p['src']):
+                basename = os.path.basename(p['src'])
+                log.info('Removing {}'.format(basename))
+                os.remove(p['src'])
 
     def _make_patches(self, patch_manifest):
         pool_output = list()
         if len(patch_manifest) < 1:
             return pool_output
-        log.info(u'Starting patch creation')
+        log.info('Starting patch creation')
         cpu_count = multiprocessing.cpu_count() * 2
         pool = multiprocessing.Pool(processes=cpu_count)
         pool_output = pool.map(_make_patch, patch_manifest)
@@ -275,25 +277,25 @@ class PackageHandler(object):
         # ToDo: Increase the efficiency of this double for
         #       loop. Not sure if it can be done though
         if patches is not None and len(patches) >= 1:
-            log.info(u'Adding patches to package list')
+            log.info('Adding patches to package list')
             for p in patches:
                 # Not adding patch that are not complete
-                if hasattr(p, u'ready') is False:
+                if hasattr(p, 'ready') is False:
                     continue
                 # Not adding patch that are not complete
-                if hasattr(p, u'ready') and p.ready is False:
+                if hasattr(p, 'ready') and p.ready is False:
                     continue
                 for pm in package_manifest:
                     #
                     if p.dst_filename == pm.filename:
-                        pm.patch_info[u'patch_name'] = \
+                        pm.patch_info['patch_name'] = \
                             os.path.basename(p.patch_name)
                         # Don't try to get hash on a ghost file
                         if not os.path.exists(p.patch_name):
                             p_name = ''
                         else:
                             p_name = gph(p.patch_name)
-                        pm.patch_info[u'patch_hash'] = p_name
+                        pm.patch_info['patch_hash'] = p_name
                         # No need to keep searching
                         # We have the info we need for this patch
                         break
@@ -301,37 +303,37 @@ class PackageHandler(object):
                         log.debug('No patch match found')
         else:
             if self.patch_support is True:
-                log.warning(u'No patches found')
+                log.warning('No patches found')
         return package_manifest
 
     def _update_version_file(self, json_data, package_manifest):
         # Updates version file with package meta-data
-        log.info(u'Adding package meta-data to version manifest')
+        log.info('Adding package meta-data to version manifest')
         easy_dict = EasyAccessDict(json_data)
         for p in package_manifest:
-            patch_name = p.patch_info.get(u'patch_name')
-            patch_hash = p.patch_info.get(u'patch_hash')
+            patch_name = p.patch_info.get('patch_name')
+            patch_hash = p.patch_info.get('patch_hash')
 
             # Converting info to format compatible for version file
-            info = {u'file_hash': p.file_hash,
-                    u'filename': p.filename}
+            info = {'file_hash': p.file_hash,
+                    'filename': p.filename}
             if patch_name and patch_hash:
-                info[u'patch_name'] = patch_name
-                info[u'patch_hash'] = patch_hash
+                info['patch_name'] = patch_name
+                info['patch_hash'] = patch_hash
 
             version_key = '{}*{}*{}'.format(settings.UPDATES_KEY,
                                             p.name, p.version)
             version = easy_dict.get(version_key)
-            log.debug(u'Package Info: {}'.format(version))
+            log.debug('Package Info: {}'.format(version))
 
             if version is None:
-                log.debug(u'Adding new version to file')
+                log.debug('Adding new version to file')
 
                 # First version this package name
                 json_data[settings.UPDATES_KEY][p.name][p.version] = {}
                 platform_key = '{}*{}*{}*{}'.format(settings.UPDATES_KEY,
                                                     p.name, p.version,
-                                                    u'platform')
+                                                    'platform')
 
                 platform = easy_dict.get(platform_key)
                 if platform is None:
@@ -340,61 +342,61 @@ class PackageHandler(object):
 
             else:
                 # package already present, adding another version to it
-                log.debug(u'Appending info data to version file')
+                log.debug('Appending info data to version file')
                 json_data[settings.UPDATES_KEY][p.name][p.version][p.platform] = info
 
             # Will add each individual platform version update
             # to latest.  Now can update platforms independently
-            json_data[u'latest'][p.name][p.platform] = p.version
+            json_data['latest'][p.name][p.platform] = p.version
         return json_data
 
     def _write_json_to_file(self, json_data):
         # Writes json data to disk
-        log.debug(u'Saving version meta-data')
+        log.debug('Saving version meta-data')
         self.db.save(settings.CONFIG_DB_KEY_VERSION_META, json_data)
 
     def _write_config_to_file(self, json_data):
-        log.debug(u'Saving config data')
+        log.debug('Saving config data')
         self.db.save(settings.CONFIG_DB_KEY_PY_REPO_CONFIG, json_data)
 
     def _move_packages(self, package_manifest):
         if len(package_manifest) < 1:
             return
-        log.info(u'Moving packages to deploy folder')
+        log.info('Moving packages to deploy folder')
         for p in package_manifest:
-            patch = p.patch_info.get(u'patch_name')
+            patch = p.patch_info.get('patch_name')
             with jms_utils.paths.ChDir(self.new_dir):
                 if patch:
                     if os.path.exists(os.path.join(self.deploy_dir, patch)):
                         os.remove(os.path.join(self.deploy_dir, patch))
-                    log.debug(u'Moving {} to {}'.format(patch,
+                    log.debug('Moving {} to {}'.format(patch,
                               self.deploy_dir))
                     if os.path.exists(patch):
                         shutil.move(patch, self.deploy_dir)
 
                 shutil.copy(p.filename, self.deploy_dir)
-                log.debug(u'Copying {} to {}'.format(p.filename,
+                log.debug('Copying {} to {}'.format(p.filename,
                           self.deploy_dir))
 
                 if os.path.exists(os.path.join(self.files_dir, p.filename)):
                     os.remove(os.path.join(self.files_dir, p.filename))
                 shutil.move(p.filename, self.files_dir)
-                log.debug(u'Moving {} to {}'.format(p.filename,
+                log.debug('Moving {} to {}'.format(p.filename,
                           self.files_dir))
 
     def _update_file_list(self, json_data, package_info):
         files = json_data[settings.UPDATES_KEY]
-        latest = json_data.get(u'latest')
+        latest = json_data.get('latest')
         if latest is None:
-            json_data[u'latest'] = {}
+            json_data['latest'] = {}
         file_name = files.get(package_info.name)
         if file_name is None:
-            log.debug(u'Adding {} to file list'.format(package_info.name))
+            log.debug('Adding {} to file list'.format(package_info.name))
             json_data[settings.UPDATES_KEY][package_info.name] = {}
 
-        latest_package = json_data[u'latest'].get(package_info.name)
+        latest_package = json_data['latest'].get(package_info.name)
         if latest_package is None:
-            json_data[u'latest'][package_info.name] = {}
+            json_data['latest'][package_info.name] = {}
         return json_data
 
     def _check_make_patch(self, json_data, name, platform):
@@ -403,7 +405,7 @@ class PackageHandler(object):
         # Also calculates patch number
         log.info('Checking if patch creation is possible')
         if bsdiff4 is None:
-            log.warning(u'Bsdiff is missing. Cannot create patches')
+            log.warning('Bsdiff is missing. Cannot create patches')
             return None
         src_file_path = None
         if os.path.exists(self.files_dir):
@@ -416,29 +418,29 @@ class PackageHandler(object):
                 return None
             # If latest not available in version file. Exit
             try:
-                latest = json_data[u'latest'][name][platform]
+                latest = json_data['latest'][name][platform]
             except KeyError:
                 return None
             try:
                 l_plat = json_data[settings.UPDATES_KEY][name][latest]
-                filename = l_plat[platform][u'filename']
+                filename = l_plat[platform]['filename']
             except:
                 return None
             src_file_path = os.path.join(self.files_dir, filename)
 
             try:
-                patch_num = self.config[u'patches'][name]
-                self.config[u'patches'][name] += 1
+                patch_num = self.config['patches'][name]
+                self.config['patches'][name] += 1
             except KeyError:
                 # If no patch number we will start at 100
                 try:
-                    patch_num = self.config[u'boot_strap']
+                    patch_num = self.config['boot_strap']
                 except KeyError:
                     patch_num = 100
-                if u'patches' not in self.config.keys():
-                    self.config[u'patches'] = {}
-                if name not in self.config[u'patches'].keys():
-                    self.config[u'patches'][name] = patch_num + 1
+                if 'patches' not in self.config.keys():
+                    self.config['patches'] = {}
+                if name not in self.config['patches'].keys():
+                    self.config['patches'][name] = patch_num + 1
             num = patch_num + 1
             log.debug('Patch Number: {}'.format(num))
             return src_file_path, num
@@ -448,25 +450,25 @@ class PackageHandler(object):
 def _make_patch(patch_info):
     # Does with the name implies. Used with multiprocessing
     patch = Patch(patch_info)
-    patch_name = patch_info[u'patch_name']
-    dst_path = patch_info[u'dst']
-    patch_number = patch_info[u'patch_num']
-    src_path = patch_info[u'src']
-    patch_name += u'-' + str(patch_number)
+    patch_name = patch_info['patch_name']
+    dst_path = patch_info['dst']
+    patch_number = patch_info['patch_num']
+    src_path = patch_info['src']
+    patch_name += '-' + str(patch_number)
     # Updating with full name - number included
     patch.patch_name = patch_name
     if not os.path.exists(src_path):
-        log.warning(u'Src file does not exist to create patch')
+        log.warning('Src file does not exist to create patch')
 
     else:
-        log.debug(u'Patch source path:{}'.format(src_path))
-        log.debug(u'Patch destination path: {}'.format(dst_path))
+        log.debug('Patch source path:{}'.format(src_path))
+        log.debug('Patch destination path: {}'.format(dst_path))
         if patch.ready is True:
-            log.info(u"Creating patch... "
-                     u"{}".format(os.path.basename(patch_name)))
+            log.info("Creating patch... "
+                     "{}".format(os.path.basename(patch_name)))
             bsdiff4.file_diff(src_path, patch.dst_path, patch.patch_name)
             base_name = os.path.basename(patch_name)
-            log.info(u'Done creating patch... {}'.format(base_name))
+            log.info('Done creating patch... {}'.format(base_name))
         else:
-            log.error(u'Missing patch attr')
+            log.error('Missing patch attr')
     return patch

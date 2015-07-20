@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import logging
 import os
 
@@ -63,25 +65,25 @@ class Loader(object):
         filename = os.path.join(self.cwd, settings.USER_CLIENT_CONFIG_FILENAME)
         attr_str_format = "    {} = '{}'\n"
         attr_format = "    {} = {}\n"
-        with open(filename, u'w') as f:
-            f.write(u'class ClientConfig(object):\n')
-            if hasattr(obj, u'APP_NAME') and obj.APP_NAME is not None:
-                f.write(attr_str_format.format(u'APP_NAME', obj.APP_NAME))
-                log.debug(u'Wrote APP_NAME to client config')
-            if hasattr(obj, u'COMPANY_NAME') and obj.COMPANY_NAME is not None:
-                f.write(attr_str_format.format(u'COMPANY_NAME',
+        with open(filename, 'w') as f:
+            f.write('class ClientConfig(object):\n')
+            if hasattr(obj, 'APP_NAME') and obj.APP_NAME is not None:
+                f.write(attr_str_format.format('APP_NAME', obj.APP_NAME))
+                log.debug('Wrote APP_NAME to client config')
+            if hasattr(obj, 'COMPANY_NAME') and obj.COMPANY_NAME is not None:
+                f.write(attr_str_format.format('COMPANY_NAME',
                         obj.COMPANY_NAME))
-                log.debug(u'Wrote COMPANY_NAME to client config')
-            if hasattr(obj, u'UPDATE_URLS') and obj.UPDATE_URLS is not None:
-                f.write(attr_format.format(u'UPDATE_URLS', obj.UPDATE_URLS))
-                log.debug(u'Wrote UPDATE_URLS to client config')
-            if hasattr(obj, u'PUBLIC_KEYS') and obj.PUBLIC_KEYS is not None:
-                f.write(attr_format.format(u'PUBLIC_KEYS', obj.PUBLIC_KEYS))
-                log.debug(u'Wrote PUBLIC_KEYS to client config')
+                log.debug('Wrote COMPANY_NAME to client config')
+            if hasattr(obj, 'UPDATE_URLS') and obj.UPDATE_URLS is not None:
+                f.write(attr_format.format('UPDATE_URLS', obj.UPDATE_URLS))
+                log.debug('Wrote UPDATE_URLS to client config')
+            if hasattr(obj, 'PUBLIC_KEYS') and obj.PUBLIC_KEYS is not None:
+                f.write(attr_format.format('PUBLIC_KEYS', obj.PUBLIC_KEYS))
+                log.debug('Wrote PUBLIC_KEYS to client config')
 
 
 class PyUpdaterConfig(dict):
-    u"""Works exactly like a dict but provides ways to fill it from files
+    """Works exactly like a dict but provides ways to fill it from files
     or special dictionaries.  There are two common patterns to populate the
     config.
 
@@ -106,7 +108,7 @@ class PyUpdaterConfig(dict):
             self.from_object(obj)
 
     def from_object(self, obj):
-        u"""Updates the values from the given object
+        """Updates the values from the given object
 
         Args:
 
@@ -125,17 +127,17 @@ class PyUpdaterConfig(dict):
                 self[key] = getattr(obj, key)
 
     def update_config(self, obj):
-        u"""Proxy method to update self
+        """Proxy method to update self
 
         Args:
 
             obj (instance): config object
         """
         self.from_object(obj)
-        if self.get(u'APP_NAME') is None:
-            self[u'APP_NAME'] = settings.GENERIC_APP_NAME
-        if self.get(u'COMPANY_NAME') is None:
-            self[u'COMPANY_NAME'] = settings.GENERIC_COMPANY_NAME
+        if self.get('APP_NAME') is None:
+            self['APP_NAME'] = settings.GENERIC_APP_NAME
+        if self.get('COMPANY_NAME') is None:
+            self['COMPANY_NAME'] = settings.GENERIC_COMPANY_NAME
 
     def __str__(self):
         return dict.__repr__(self)
@@ -144,7 +146,7 @@ class PyUpdaterConfig(dict):
         pass
 
     def __repr__(self):
-        return u'<%s %s>' % (self.__class__.__name__, dict.__repr__(self))
+        return '<%s %s>' % (self.__class__.__name__, dict.__repr__(self))
 
 
 # This is the default config used

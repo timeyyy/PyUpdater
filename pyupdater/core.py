@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 from pyupdater.key_handler import KeyHandler
@@ -23,7 +25,7 @@ from pyupdater.utils.storage import Storage
 
 
 class Core(object):
-    u"""Processes, signs & uploads updates
+    """Processes, signs & uploads updates
 
         Kwargs:
 
@@ -36,13 +38,13 @@ class Core(object):
             self.update_config(config, db)
 
     def update_config(self, config, db):
-        u"""Updates internal config
+        """Updates internal config
 
         Args:
 
             config (obj): config object
         """
-        if not hasattr(config, u'DATA_DIR'):
+        if not hasattr(config, 'DATA_DIR'):
             config.DATA_DIR = None
         if config.DATA_DIR is None:
             config.DATA_DIR = os.getcwd()
@@ -60,17 +62,17 @@ class Core(object):
         self.up = Uploader(config)
 
     def setup(self):
-        u"Sets up root dir with required PyUpdater folders"
+        "Sets up root dir with required PyUpdater folders"
         self.ph.setup()
 
     def process_packages(self):
-        u"""Creates hash for updates & adds information about update to
+        """Creates hash for updates & adds information about update to
         version file
         """
         self.ph.process_packages()
 
     def set_uploader(self, requested_uploader):
-        u"""Sets upload destination
+        """Sets upload destination
 
         Args:
 
@@ -79,11 +81,11 @@ class Core(object):
         self.up.set_uploader(requested_uploader)
 
     def upload(self):
-        u"Uploads files in deploy folder"
+        "Uploads files in deploy folder"
         self.up.upload()
 
     def make_keys(self, count=3):
-        u"Creates signing keys"
+        "Creates signing keys"
         self.kh.make_keys(count)
 
     def revoke_key(self, count):
@@ -93,13 +95,13 @@ class Core(object):
         return self.kh.get_recent_revoked_key()
 
     def sign_update(self):
-        u"Signs version file with signing key"
+        "Signs version file with signing key"
         self.kh.sign_update()
 
     def get_public_keys(self):
-        u"Returns public key"
+        "Returns public key"
         return self.kh.get_public_keys()
 
     def print_public_key(self):
-        u"Prints public key to console"
+        "Prints public key to console"
         self.kh.print_public_key()

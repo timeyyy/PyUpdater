@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 from jms_utils.paths import ChDir
@@ -32,8 +34,8 @@ from pyupdater.utils.exceptions import UtilsError, VersionError
 from pyupdater.utils.package import Patch, Package
 
 
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), u'test data',
-                             u'patcher-test-data')
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test data',
+                             'patcher-test-data')
 
 
 @pytest.mark.usefixtures('cleandir')
@@ -50,26 +52,26 @@ class TestUtils(object):
             check_repo()
 
     def test_convert_to_list(self):
-        assert isinstance(convert_to_list(u'test'), list)
-        assert isinstance(convert_to_list((u'test', u'test2')), list)
-        assert isinstance(convert_to_list([u'test']), list)
+        assert isinstance(convert_to_list('test'), list)
+        assert isinstance(convert_to_list(('test', 'test2')), list)
+        assert isinstance(convert_to_list(['test']), list)
 
     def test_convert_to_list_default(self):
         assert isinstance(convert_to_list({}, default=[]), list)
 
     def test_package_hash(self, hasher):
-        digest = (u'cb44ec613a594f3b20e46b768c5ee780e0a9b66ac'
-                  u'6d5ac1468ca4d3635c4aa9b')
+        digest = ('cb44ec613a594f3b20e46b768c5ee780e0a9b66ac'
+                  '6d5ac1468ca4d3635c4aa9b')
         assert digest == get_package_hashes('hash-test.txt')
 
     def test_get_hash(self):
-        digest = (u'380fd2bf3d78bb411e4c1801ce3ce7804bf5a22d79'
-                  u'405d950e5d5c8f3169fca0')
+        digest = ('380fd2bf3d78bb411e4c1801ce3ce7804bf5a22d79'
+                  '405d950e5d5c8f3169fca0')
         assert digest == get_hash('Get this hash please')
 
     def test_get_mac_app_dir(self):
-        main = u'Main'
-        path = os.path.join(main, u'Contents', u'MacOS', u'app')
+        main = 'Main'
+        path = os.path.join(main, 'Contents', 'MacOS', 'app')
         assert get_mac_dot_app_dir(path) == main
 
     def test_easy_access_dict(self):
@@ -81,13 +83,13 @@ class TestUtils(object):
         assert good_easy.get('no-test') is None
 
     def test_parse_platform(self):
-        assert parse_platform(u'app-mac-0.1.0.tar.gz') == u'mac'
-        assert parse_platform(u'app-win-1.0.0.zip') == u'win'
-        assert parse_platform(u'Email Parser-mac-0.2.0.tar.gz') == u'mac'
+        assert parse_platform('app-mac-0.1.0.tar.gz') == 'mac'
+        assert parse_platform('app-win-1.0.0.zip') == 'win'
+        assert parse_platform('Email Parser-mac-0.2.0.tar.gz') == 'mac'
 
     def test_parse_platform_fail(self):
         with pytest.raises(UtilsError):
-            parse_platform(u'app-nex-1.0.0.tar.gz')
+            parse_platform('app-nex-1.0.0.tar.gz')
 
     def test_remove_dot_files(self):
         bad_list = ['.DS_Store', 'test', 'stuff', '.trash']
@@ -108,40 +110,40 @@ class TestUtils(object):
             Version('1')
 
     def test_package_1(self):
-        test_file_1 = u'jms-mac-0.0.1.zip'
+        test_file_1 = 'jms-mac-0.0.1.zip'
         with ChDir(TEST_DATA_DIR):
             p1 = Package(test_file_1)
 
-        assert p1.name == u'jms'
-        assert p1.version == u'0.0.1.2.0'
+        assert p1.name == 'jms'
+        assert p1.version == '0.0.1.2.0'
         assert p1.filename == test_file_1
-        assert p1.platform == u'mac'
-        assert p1.info[u'status'] is True
+        assert p1.platform == 'mac'
+        assert p1.info['status'] is True
 
     def test_package_bad_extension(self):
-        test_file_2 = u'pyu-win-0.0.2.bzip2'
+        test_file_2 = 'pyu-win-0.0.2.bzip2'
         with ChDir(TEST_DATA_DIR):
             p2 = Package(test_file_2)
 
         assert p2.filename == test_file_2
         assert p2.name is None
         assert p2.version is None
-        assert p2.info[u'status'] is False
-        assert p2.info[u'reason'] == (u'Not a supported archive format: '
-                                      u'{}'.format(test_file_2))
+        assert p2.info['status'] is False
+        assert p2.info['reason'] == ('Not a supported archive format: '
+                                     '{}'.format(test_file_2))
 
     def test_package_bad_version(self):
         with ChDir(TEST_DATA_DIR):
             p = Package('pyu-win-1.tar.gz')
-        assert p.info[u'reason'] == u'Package version not formatted correctly'
+        assert p.info['reason'] == 'Package version not formatted correctly'
 
     def test_package_bad_platform(self):
         with ChDir(TEST_DATA_DIR):
             p = Package('pyu-wi-1.1.tar.gz')
-        assert p.info[u'reason'] == u'Package platform not formatted correctly'
+        assert p.info['reason'] == 'Package platform not formatted correctly'
 
     def test_package_ignored_file(self):
-        test_file_3 = u'.DS_Store'
+        test_file_3 = '.DS_Store'
         with ChDir(TEST_DATA_DIR):
             Package(test_file_3)
 

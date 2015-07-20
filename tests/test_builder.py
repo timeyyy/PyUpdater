@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 from jms_utils.paths import ChDir
@@ -38,14 +40,14 @@ class TestBuilder(object):
         t_config.DATA_DIR = os.getcwd()
         pyu = PyUpdater(t_config)
         pyu.setup()
-        new_folder = os.path.join(u'pyu-data', u'new')
-        spec_cmd = [u'make-spec', u'app.py', u'-F']
-        spec_file_name = get_system() + u'.spec'
-        build_cmd = [u'build', u'--app-name', u'MyApp',
-                     u'--app-version', u'0.1.0', spec_file_name]
+        new_folder = os.path.join('pyu-data', 'new')
+        spec_cmd = ['make-spec', 'app.py', '-F']
+        spec_file_name = get_system() + '.spec'
+        build_cmd = ['build', '--app-name', 'MyApp',
+                     '--app-version', '0.1.0', spec_file_name]
 
         parser = get_parser()
-        with open(u'app.py', u'w') as f:
+        with open('app.py', 'w') as f:
             f.write('print "Hello, World!"')
         args, pyu_args = parser.parse_known_args(spec_cmd)
         b = Builder(args, pyu_args)
@@ -63,13 +65,13 @@ class TestBuilder(object):
             t_config.DATA_DIR = os.getcwd()
             pyu = PyUpdater(t_config)
             pyu.setup()
-            spec_cmd = [u'make-spec', u'app.py', u'-F']
-            spec_file_name = get_system() + u'.spec'
-            build_cmd = [u'build', u'--app-name', u'MyApp', u'--clean'
-                         u'--app-version', u'0.1.0', spec_file_name]
+            spec_cmd = ['make-spec', 'app.py', '-F']
+            spec_file_name = get_system() + '.spec'
+            build_cmd = ['build', '--app-name', 'MyApp', '--clean'
+                         '--app-version', '0.1.0', spec_file_name]
 
             parser = get_parser()
-            with open(u'app.py', u'w') as f:
+            with open('app.py', 'w') as f:
                 # Missing closing quote
                 f.write('print "Hello, World!')
             args, pyu_args = parser.parse_known_args(spec_cmd)

@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 import pytest
@@ -36,14 +38,14 @@ class TestClient(object):
         assert os.path.exists(client.data_dir)
 
     def test_new_init(self, client):
-        assert client.app_name == u'jms'
-        assert client.update_urls[0] == (u'https://s3-us-west-1.amazon'
+        assert client.app_name == 'jms'
+        assert client.update_urls[0] == ('https://s3-us-west-1.amazon'
                                          'aws.com/pyupdater-test/')
 
     def test_no_cert(self, client):
         client.verify = False
-        assert client.app_name == u'jms'
-        assert client.update_urls[0] == (u'https://s3-us-west-1.amazon'
+        assert client.app_name == 'jms'
+        assert client.update_urls[0] == ('https://s3-us-west-1.amazon'
                                          'aws.com/pyupdater-test/')
 
     def test_bad_pub_key(self, client):
@@ -51,7 +53,7 @@ class TestClient(object):
         t_config.PUBLIC_KEYS = ['bad key']
         t_config.DATA_DIR = os.getcwd()
         client = Client(t_config, refresh=True, test=True)
-        assert client.update_check(u'jms', '0.0.0') is None
+        assert client.update_check('jms', '0.0.0') is None
 
     def test_check_version(self, client):
         assert client.update_check(client.app_name, '0.0.2') is not None
@@ -65,7 +67,7 @@ class TestClient(object):
     def test_download_https(self, client):
         update = client.update_check(client.app_name, '0.0.1')
         assert update is not None
-        assert update.app_name == u'jms'
+        assert update.app_name == 'jms'
         temp_name = update.name
         update.name = None
         assert update.is_downloaded() is False
@@ -82,12 +84,12 @@ class TestClient(object):
         client = Client(t_config, refresh=True, test=True)
         update = client.update_check(client.app_name, '0.0.1')
         assert update is not None
-        assert update.app_name == u'jms'
+        assert update.app_name == 'jms'
         assert update.download() is True
         assert update.is_downloaded() is True
 
     def test_extract(self, client):
-        update = client.update_check(u'jms', '0.0.1')
+        update = client.update_check('jms', '0.0.1')
         assert update is not None
         assert update.download() is True
         assert update.extract() is True

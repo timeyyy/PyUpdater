@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 import pytest
@@ -26,7 +28,7 @@ from tconfig import TConfig
 s_dir = settings.USER_DATA_FOLDER
 
 
-@pytest.mark.usefixtures(u'cleandir', u'db')
+@pytest.mark.usefixtures('cleandir', 'db')
 class TestPackageHanlder(object):
 
     def test_init(self, db):
@@ -35,8 +37,8 @@ class TestPackageHanlder(object):
         t_config.DATA_DIR = data_dir
         config = PyUpdaterConfig(t_config)
         p = PackageHandler(config, db)
-        assert p.files_dir == os.path.join(data_dir, s_dir, u'files')
-        assert p.deploy_dir == os.path.join(data_dir, s_dir, u'deploy')
+        assert p.files_dir == os.path.join(data_dir, s_dir, 'files')
+        assert p.deploy_dir == os.path.join(data_dir, s_dir, 'deploy')
 
     def test_no_patch_support(self, db):
         data_dir = os.getcwd()

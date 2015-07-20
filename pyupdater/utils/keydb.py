@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import logging
 import time
 
@@ -22,7 +24,7 @@ log = logging.getLogger(__name__)
 
 
 class KeyDB(object):
-    u"""Handles finding, sorting, getting meta-data, moving packages.
+    """Handles finding, sorting, getting meta-data, moving packages.
 
     Kwargs:
 
@@ -44,7 +46,7 @@ class KeyDB(object):
             self.load()
 
     def add_key(self, public, private, key_type='ed25519'):
-        u"""Adds key pair to database
+        """Adds key pair to database
 
         Args:
 
@@ -59,23 +61,23 @@ class KeyDB(object):
             self.load()
         num = len(self.data) + 1
         data = {
-            u'date': _time,
-            u'public': public,
-            u'private': private,
-            u'revoked': False,
-            u'key_type': key_type,
+            'date': _time,
+            'public': public,
+            'private': private,
+            'revoked': False,
+            'key_type': key_type,
         }
         log.info('Adding public key to db. {}'.format(len(public)))
         self.data[num] = data
         self.save()
 
     def get_public_keys(self):
-        u"Returns a list of all valid public keys"
-        return self._get_keys(u'public')
+        "Returns a list of all valid public keys"
+        return self._get_keys('public')
 
     def get_private_keys(self):
-        u"Returns a list of all valid private keys"
-        return self._get_keys(u'private')
+        "Returns a list of all valid private keys"
+        return self._get_keys('private')
 
     def _get_keys(self, key):
         # Returns a list of non revoked keys
@@ -84,30 +86,30 @@ class KeyDB(object):
         order = []
         keys = []
         for k, v in self.data.items():
-            if v[u'revoked'] is False:
+            if v['revoked'] is False:
                 order.append(int(k))
             else:
-                log.debug(u'Revoked key'.format(len(k)))
+                log.debug('Revoked key'.format(len(k)))
         order = sorted(order)
         for o in order:
             try:
                 data = self.data[o]
-                log.debug(u'Got key data')
+                log.debug('Got key data')
                 pub_key = data[key]
                 keys.append(pub_key)
-                log.debug(u'Got public key')
+                log.debug('Got public key')
             except KeyError:  # pragma: no cover
-                log.debug(u'Key error')
+                log.debug('Key error')
                 continue
         return keys
 
     def get_revoked_key(self):
-        u"Returns most recent revoked key pair"
+        "Returns most recent revoked key pair"
         if self.data is None:
             self.load()
         keys = []
         for k, v in self.data.items():
-            if v[u'revoked'] is True:
+            if v['revoked'] is True:
                 keys.append(int(k))
         if len(keys) >= 1:
             key = sorted(keys)[-1]
@@ -117,7 +119,7 @@ class KeyDB(object):
         return info
 
     def revoke_key(self, count=1):
-        u"""Revokes key pair
+        """Revokes key pair
 
         Args:
 
@@ -125,7 +127,7 @@ class KeyDB(object):
         """
         if self.data is None:
             self.load()
-        log.debug(u'Collecting keys')
+        log.debug('Collecting keys')
         keys = map(str, self.data.keys())
         keys = sorted(keys)
         c = 0
@@ -133,21 +135,21 @@ class KeyDB(object):
             if c >= count:
                 break
             k = int(k)
-            if self.data[k][u'revoked'] is False:
-                self.data[k][u'revoked'] = True
-                log.debug(u'Revoked key')
+            if self.data[k]['revoked'] is False:
+                self.data[k]['revoked'] = True
+                log.debug('Revoked key')
                 c += 1
         self.save()
 
     def load(self):
-        u"Loads data from key.db"
+        "Loads data from key.db"
         self.data = self.db.load(settings.CONFIG_DB_KEY_KEYS)
         if self.data is None:
             log.info('Key.db file not found creating new')
             self.data = dict()
 
     def save(self):
-        u"Saves data to key.db"
-        log.debug(u'Saving keys...')
+        "Saves data to key.db"
+        log.debug('Saving keys...')
         self.db.save(settings.CONFIG_DB_KEY_KEYS, self.data)
-        log.debug(u'Saved keys...')
+        log.debug('Saved keys...')

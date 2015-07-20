@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import json
 import logging
 import os
@@ -49,8 +51,8 @@ from pyupdater.wrapper.options import get_parser
 
 CWD = os.getcwd()
 log = logging.getLogger()
-if os.path.exists(os.path.join(CWD, u'pyu.log')):  # pragma: no cover
-    fh = logging.FileHandler(os.path.join(CWD, u'pyu.log'))
+if os.path.exists(os.path.join(CWD, 'pyu.log')):  # pragma: no cover
+    fh = logging.FileHandler(os.path.join(CWD, 'pyu.log'))
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(log_formatter())
     log.addHandler(fh)
@@ -76,12 +78,12 @@ def clean(args):  # pragma: no cover
         _clean()
 
     else:
-        answer = ask_yes_no(u'Are you sure you want to remove '
-                            u'pyupdater data?', default=u'no')
+        answer = ask_yes_no('Are you sure you want to remove '
+                            'pyupdater data?', default='no')
         if answer is True:
             _clean()
         else:
-            log.info(u'Clean canceled.')
+            log.info('Clean canceled.')
 
 
 # Remove all traces of PyUpdater
@@ -90,35 +92,35 @@ def _clean():
     if os.path.exists(settings.CONFIG_DATA_FOLDER):
         cleaned = True
         shutil.rmtree(settings.CONFIG_DATA_FOLDER, ignore_errors=True)
-        log.info(u'Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
+        log.info('Removed {} folder'.format(settings.CONFIG_DATA_FOLDER))
     if os.path.exists(settings.USER_DATA_FOLDER):
         cleaned = True
         shutil.rmtree(settings.USER_DATA_FOLDER, ignore_errors=True)
-        log.info(u'Removed {} folder'.format(settings.USER_DATA_FOLDER))
+        log.info('Removed {} folder'.format(settings.USER_DATA_FOLDER))
     if cleaned is True:
-        log.info(u'Clean complete...')
+        log.info('Clean complete...')
     else:
-        log.info(u'Nothing to clean...')
+        log.info('Nothing to clean...')
 
 
 # Initialize PyUpdater repo
 def init(args):  # pragma: no cover
     count = args.count
     if count > 10:
-        sys.exit(u'Cannot be more then 10')
+        sys.exit('Cannot be more then 10')
     if not os.path.exists(os.path.join(settings.CONFIG_DATA_FOLDER,
                           settings.CONFIG_FILE_USER)):
         config = initial_setup(SetupConfig())
-        log.info(u'Creating pyu-data dir...')
+        log.info('Creating pyu-data dir...')
         pyu = PyUpdater(config, db)
         pyu.setup()
-        log.info(u'Making signing keys...')
+        log.info('Making signing keys...')
         pyu.make_keys(count)
         config.PUBLIC_KEYS = pyu.get_public_keys()
         loader.save_config(config)
-        log.info(u'Setup complete')
+        log.info('Setup complete')
     else:
-        sys.exit(u'Not an empty PyUpdater repository')
+        sys.exit('Not an empty PyUpdater repository')
 
 
 # Revokes keys
@@ -133,42 +135,42 @@ def keys(args):  # pragma: no cover
         key = pyu.get_recent_revoked_key()
         if key is not None:
             log.info('* Most Recent Revoked Key *')
-            log.info('Created: {}'.format(pretty_time(key[u'date'])))
-            log.info('Type: {}'.format(key[u'key_type']))
-            log.info('Public Key: {}'.format(key[u'public']))
+            log.info('Created: {}'.format(pretty_time(key['date'])))
+            log.info('Type: {}'.format(key['key_type']))
+            log.info('Public Key: {}'.format(key['public']))
             if args.private is True:
-                log.info('Private Key: {}'.format(key[u'private']))
+                log.info('Private Key: {}'.format(key['private']))
             else:
-                log.info(u'Private Key: * Next time to show private key '
-                         u'use --show-private *')
+                log.info('Private Key: * Next time to show private key '
+                         'use --show-private *')
     loader.save_config(config)
 
 
 def upload_debug_info(args):  # pragma: no cover
-    log.info(u'Starting log export')
+    log.info('Starting log export')
 
     def _add_file(payload, filename):
-        with open(filename, u'r') as f:
+        with open(filename, 'r') as f:
             data = f.read()
-        payload[u'files'][filename] = {u'content': data}
+        payload['files'][filename] = {'content': data}
 
     def _upload(data):
-        api = u'https://api.github.com/'
-        gist_url = api + u'gists'
+        api = 'https://api.github.com/'
+        gist_url = api + 'gists'
         headers = {"Accept": "application/vnd.github.v3+json"}
         r = requests.post(gist_url, headers=headers, data=json.dumps(data))
-        return r.json()[u'html_url']
+        return r.json()['html_url']
 
-    upload_data = {u'files': {}}
+    upload_data = {'files': {}}
     with ChDir(LOG_DIR):
         temp_files = os.listdir(CWD)
-        log.info(u'Collecting logs')
+        log.info('Collecting logs')
         for t in temp_files:
             if t.startswith(settings.LOG_FILENAME_DEBUG):
                 log.debug('Adding {} to log'.format(t))
                 _add_file(upload_data, t)
-        log.info(u'Found all logs')
-    log.info(u'Log export complete')
+        log.info('Found all logs')
+    log.info('Log export complete')
     url = _upload(upload_data)
     print url
 
@@ -177,16 +179,16 @@ def pkg(args):  # pragma: no cover
     check_repo()
     pyu = PyUpdater(loader.load_config(), db)
     if args.process is False and args.sign is False:
-        sys.exit(u'You must specify a command')
+        sys.exit('You must specify a command')
 
     if args.process is True:
-        log.info(u'Processing packages...')
+        log.info('Processing packages...')
         pyu.process_packages()
-        log.info(u'Processing packages complete')
+        log.info('Processing packages complete')
     if args.sign is True:
-        log.info(u'Signing packages...')
+        log.info('Signing packages...')
         pyu.sign_update()
-        log.info(u'Signing packages complete')
+        log.info('Signing packages complete')
 
 
 def update(args):  # pragma: no cover
@@ -214,7 +216,7 @@ def setter(args):  # pragma: no cover
     if args.s3 is True:
         setup_object_bucket(config)
     loader.save_config(config)
-    log.info(u'Settings update complete')
+    log.info('Settings update complete')
 
 
 def upload(args):  # pragma: no cover
@@ -235,20 +237,20 @@ def upload(args):  # pragma: no cover
         log.debug(str(err))
         mgr = stevedore.ExtensionManager(settings.UPLOAD_PLUGIN_NAMESPACE)
         plugin_names = mgr.names()
-        log.debug(u'Plugin names: {}'.format(plugin_names))
+        log.debug('Plugin names: {}'.format(plugin_names))
         if len(plugin_names) == 0:
-            msg = (u'*** No upload plugins instaled! ***\nYou can install the '
-                   u'aws s3 plugin with\n$ pip install PyUpdater[s3]\n\nOr '
-                   u'the scp plugin with\n$ pip install PyUpdater[scp]')
+            msg = ('*** No upload plugins instaled! ***\nYou can install the '
+                   'aws s3 plugin with\n$ pip install PyUpdater[s3]\n\nOr '
+                   'the scp plugin with\n$ pip install PyUpdater[scp]')
         else:
-            msg = (u'Invalid Uploader\n\nAvailable options:\n'
-                   u'{}'.format(' '.join(plugin_names)))
+            msg = ('Invalid Uploader\n\nAvailable options:\n'
+                   '{}'.format(' '.join(plugin_names)))
         log.error(msg)
         sys.exit(1)
     try:
         pyu.upload()
     except Exception as e:
-        msg = (u'Looks like you forgot to add USERNAME '
+        msg = ('Looks like you forgot to add USERNAME '
                'and/or REMOTE_DIR')
         log.debug(str(e), exc_info=True)
         log.error(msg)
@@ -261,41 +263,41 @@ def _real_main(args):  # pragma: no cover
     parser = get_parser()
     args, pyi_args = parser.parse_known_args(args)
     cmd = args.command
-    if cmd == u'build':
+    if cmd == 'build':
         check_repo()
         builder = Builder(args, pyi_args)
         builder.build()
-    elif cmd == u'clean':
+    elif cmd == 'clean':
         clean(args)
         return True
-    elif cmd == u'init':
+    elif cmd == 'init':
         init(args)
-    elif cmd == u'keys':
+    elif cmd == 'keys':
         keys(args)
     # ToDo: Remove in v1.0
-    elif cmd == u'log':
+    elif cmd == 'log':
         warnings.simplefilter('always', DeprecationWarning)
-        warnings.warn(u'Use "collect-debug-info" ', DeprecationWarning)
+        warnings.warn('Use "collect-debug-info" ', DeprecationWarning)
         upload_debug_info(args)
     # End to do
-    elif cmd == u'collect-debug-info':
+    elif cmd == 'collect-debug-info':
         upload_debug_info(args)
-    elif cmd == u'make-spec':
+    elif cmd == 'make-spec':
         check_repo()
         builder = Builder(args, pyi_args)
         builder.make_spec()
-    elif cmd == u'pkg':
+    elif cmd == 'pkg':
         pkg(args)
-    elif cmd == u'settings':
+    elif cmd == 'settings':
         setter(args)
-    elif cmd == u'update':
+    elif cmd == 'update':
         update(args)
-    elif cmd == u'upload':
+    elif cmd == 'upload':
         upload(args)
-    elif cmd == u'version':
+    elif cmd == 'version':
         print('PyUpdater {}'.format(__version__))
     else:
-        log.error(u'Not Implemented')
+        log.error('Not Implemented')
         sys.exit(1)
 
 
@@ -305,8 +307,8 @@ def main(args=None):  # pragma: no cover
     try:
         clean = _real_main(args)
     except KeyboardInterrupt:
-        print(u'\n')
-        msg = u'Exited by user'
+        print('\n')
+        msg = 'Exited by user'
         log.warning(msg)
         exit = 1
     except Exception as err:
@@ -317,6 +319,6 @@ def main(args=None):  # pragma: no cover
         db._sync_db()
     sys.exit(exit)
 
-if __name__ == u'__main__':  # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     args = sys.argv[1:]
     main(args)

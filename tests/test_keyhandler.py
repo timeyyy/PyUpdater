@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import os
 
 import pytest
@@ -28,18 +30,18 @@ db = Storage()
 #     def test_add(self):
 #         keydb = KeyDB(db, load=True)
 #         assert len(os.listdir(os.getcwd())) == 1
-#         keydb.add_key(u'public1', u'private1')
-#         keydb.add_key(u'public2', u'private2')
+#         keydb.add_key('public1', 'private1')
+#         keydb.add_key('public2', 'private2')
 #         assert len(keydb.get_public_keys()) == 2
-#         assert keydb.get_public_keys()[0] == u'public1'
-#         assert keydb.get_public_keys()[1] == u'public2'
+#         assert keydb.get_public_keys()[0] == 'public1'
+#         assert keydb.get_public_keys()[1] == 'public2'
 
 #     def test_get_revoked_key(self):
 #         keydb = KeyDB(db, load=True)
 #         assert len(os.listdir(os.getcwd())) == 1
 #         assert keydb.get_revoked_key() is None
-#         keydb.add_key(u'public1', u'private1')
-#         keydb.add_key(u'public2', u'private2')
+#         keydb.add_key('public1', 'private1')
+#         keydb.add_key('public2', 'private2')
 #         assert len(keydb.get_public_keys()) == 2
 #         keydb.revoke_key(count=2)
 #         assert len(keydb.get_public_keys()) == 0
@@ -47,10 +49,10 @@ db = Storage()
 #     def test_revoking_break(self):
 #         keydb = KeyDB(db, load=False)
 #         assert len(os.listdir(os.getcwd())) == 1
-#         keydb.add_key(u'public1', u'private1')
-#         keydb.add_key(u'public2', u'private2')
+#         keydb.add_key('public1', 'private1')
+#         keydb.add_key('public2', 'private2')
 #         assert keydb.get_revoked_key() is None
 #         assert len(keydb.get_public_keys()) == 2
 #         keydb.revoke_key(count=1)
 #         assert len(keydb.get_public_keys()) == 1
-#         assert keydb.get_revoked_key()[u'public'] == u'public1'
+#         assert keydb.get_revoked_key()['public'] == 'public1'
