@@ -1,8 +1,10 @@
 # Changelog
 
-
-## v0.23.0 - Master
+## v0.23.1 - Master
 ##### This version is not yet released and is under active development.
+
+
+## v0.23.0 - 2015/07/19
 
 Added
 
@@ -11,7 +13,13 @@ Added
     - f920d3eea510ed088eda5359c04990338600c2b8
     - Ability to provide fixes quicker
 
+Fixed
+
+  - Error when patch info is None
+
+
 ## v0.22.3 - 2015/07/18
+
 Fixed
 
   - Parsing platform names
