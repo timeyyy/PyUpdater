@@ -1,12 +1,13 @@
+from __future__ import unicode_literals
+
 import shutil
 import os
 
-HOME = os.path.join(u'pyupdater', u'vendor', 'PyInstaller', 'lib')
+HOME = os.path.join('dev')
 
-junitxml = os.path.join(HOME, u'junitxml', 'tests')
-unittest2 = os.path.join(HOME, u'unittest2')
-
-items = [junitxml, unittest2]
+junitxml = os.path.join(HOME, 'PyInstaller', 'lib', 'junitxml', 'tests')
+unittest2 = os.path.join(HOME, 'PyInstaller', 'lib', 'unittest2')
+items_to_remove = [junitxml, unittest2]
 
 
 def remove(x):
@@ -17,7 +18,7 @@ def remove(x):
 
 
 def main():
-    for i in items:
+    for i in items_to_remove:
         remove(i)
 
 

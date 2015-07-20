@@ -8,6 +8,7 @@ Added
 
   - Vendored PyInstaller
 
+    - f920d3eea510ed088eda5359c04990338600c2b8
     - Ability to provide fixes quicker
 
 ## v0.22.3 - 2015/07/18

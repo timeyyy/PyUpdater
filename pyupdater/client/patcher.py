@@ -171,7 +171,8 @@ class Patcher(object):
                 info['patch_urls'] = self.update_urls
                 info['patch_hash'] = platform_info['patch_hash']
                 self.patch_data.append(info)
-            except KeyError:
+            except Exception as err:
+                log.debug(str(err), exc_info=True)
                 log.error('Missing required patch meta-data')
                 return False
         return True
