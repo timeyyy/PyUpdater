@@ -8,6 +8,6 @@
 #-----------------------------------------------------------------------------
 
 
-from PyInstaller.hooks.hookutils import collect_submodules
+from hookutils import collect_submodules
 
 hiddenimports = collect_submodules('sqlite3')

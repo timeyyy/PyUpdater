@@ -1,7 +1,18 @@
 # Changelog
 
-## v0.23.2 - Master
+## v0.23.3 - Master
 ##### This version is not yet released and is under active development.
+
+
+## v0.23.2 - 2015/07/21
+
+Fixed
+
+  - Compilation
+
+Updated
+
+  - Downgrade pyinstaller to 2.1
 
 
 ## v0.23.1 - 2015/07/19

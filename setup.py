@@ -18,7 +18,7 @@ class PyTest(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'-x',
-                                 u'--cov', u'pyupdater', u'-n', u'8',
+                                 u'--cov', u'pyupdater', u'-n', u'2',
                                  u'--cov-config', u'.coveragerc'])
         raise SystemExit(errno)
 

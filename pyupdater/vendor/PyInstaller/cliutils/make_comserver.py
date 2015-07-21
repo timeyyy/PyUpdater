@@ -7,20 +7,12 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
-from __future__ import print_function
 
 import optparse
 import os
 import sys
+import win32api
 
-import PyInstaller
-try:
-    import win32api
-except ImportError:
-    # Avoid raising an import error on other platforms, so we can run
-    # the script to get the usage message.
-    if PyInstaller.is_win:
-        raise
 
 import PyInstaller.makespec
 from PyInstaller.utils import misc
@@ -99,11 +91,11 @@ def create(scripts, debug, verbose, workdir, ascii=0):
     d = {'modules': modimports, 'klasses': klassspecs}
     outf.write(tmplt % d)
     outf.close()
-    print("**********************************")
-    print("Driver script", outfnm, "created")
+    print "**********************************"
+    print "Driver script %s created" % outfnm
     specfnm = PyInstaller.makespec.main([outfnm], console=debug, debug=debug,
             workdir=workdir, pathex=paths, comserver=1, ascii=ascii)
-    print("Spec file", specfnm, "created")
+    print "Spec file %s created" % specfnm
 
 
 def analscriptname(script):
@@ -152,7 +144,7 @@ def run():
     parser = optparse.OptionParser(
         usage='python %s [options] <scriptname>.py [<scriptname>.py ...]',
         epilog="The next step is to run pyi-build against the generated"
-               " spec file."
+               "spec file."
         )
     parser.add_option('--debug', default=False, action='store_true',
             help='Enable bootloader debug messages, and register COM servers with debug')
@@ -162,16 +154,14 @@ def run():
                       metavar='DIR',
                       dest='workdir',
                       help='Where to write the generated script and spec file')
-    parser.add_option("-a", "--ascii", action="store_true",
-                 help="Do not include unicode encoding support "
-                      "(default: included if available)")
+    parser.add_option('--ascii', default=False, action='store_true')
 
     opts, args = parser.parse_args()
     if not args:
         parser.error('Requires at least one script filename')
 
     try:
-        print()
-        print(epilog)
+        print
+        print epilog
     except KeyboardInterrupt:
         raise SystemExit("Aborted by user request.")

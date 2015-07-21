@@ -10,7 +10,7 @@ program. The module is intended to offload the most tedious part of the process
 To display the graphs or to generate image files the `graphviz <http://www.research.att.com/sw/tools/graphviz/>`_
 package needs to be installed on the system, moreover the :command:`dot` and :command:`dotty` programs must
 be accesible in the program path so that they can be ran from processes spawned
-within the module.
+within the module. 
 
 Example usage
 -------------
@@ -72,8 +72,8 @@ Example::
     dot.edge_style(4, 5, arrowsize=2, style='bold')
 
 
-.. note::
-
+.. note:: 
+  
    dotty (invoked via :py:func:`~altgraph.Dot.display`) may not be able to
    display all graphics styles. To verify the output save it to an image file
    and look at it that way.
@@ -103,6 +103,7 @@ Valid attributes
       `graphviz reference <http://www.research.att.com/sw/tools/graphviz/refs.html>`_.
 '''
 import os
+from itertools import imap, ifilter
 import warnings
 
 from altgraph import GraphError
@@ -123,7 +124,7 @@ class Dot(object):
         Initialization.
         '''
         self.name, self.attr = name, {}
-
+        
         assert graphtype in ['graph', 'digraph']
         self.type = graphtype
 
@@ -156,7 +157,7 @@ class Dot(object):
                 seen.add(node)
         if edgefn is not None:
             for head in seen:
-                for tail in (n for n in edgefn(head) if n in seen):
+                for tail in ifilter(seen.__contains__, edgefn(head)):
                     if edgevisitor is None:
                         edgestyle = {}
                     else:
@@ -228,7 +229,7 @@ class Dot(object):
             raise GraphError("unsupported graphtype %s" % (self.type,))
 
         # write overall graph attributes
-        for attr_name, attr_value in sorted(self.attr.items()):
+        for attr_name, attr_value in self.attr.iteritems():
             yield '%s="%s";' % (attr_name, attr_value)
         yield '\n'
 
@@ -237,20 +238,20 @@ class Dot(object):
         epatt  = '];\n'          # to end attributes
 
         # write node attributes
-        for node_name, node_attr in sorted(self.nodes.items()):
+        for node_name, node_attr in self.nodes.iteritems():
             yield '\t"%s" [' % (node_name,)
-            for attr_name, attr_value in sorted(node_attr.items()):
+            for attr_name, attr_value in node_attr.iteritems():
                 yield cpatt % (attr_name, attr_value)
             yield epatt
 
         # write edge attributes
-        for head in sorted(self.edges):
-            for tail in sorted(self.edges[head]):
+        for head in self.edges:
+            for tail in self.edges[head]:
                 if self.type == 'digraph':
                     yield '\t"%s" -> "%s" [' % (head, tail)
                 else:
                     yield '\t"%s" -- "%s" [' % (head, tail)
-                for attr_name, attr_value in sorted(self.edges[head][tail].items()):
+                for attr_name, attr_value in self.edges[head][tail].iteritems():
                     yield cpatt % (attr_name, attr_value)
                 yield epatt
 

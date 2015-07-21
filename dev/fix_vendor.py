@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import shutil
 import os
 
-HOME = os.path.join('dev')
+HOME = os.path.join('pyupdater', 'vendor')
 
 junitxml = os.path.join(HOME, 'PyInstaller', 'lib', 'junitxml', 'tests')
 unittest2 = os.path.join(HOME, 'PyInstaller', 'lib', 'unittest2')

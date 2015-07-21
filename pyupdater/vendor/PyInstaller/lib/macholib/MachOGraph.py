@@ -38,36 +38,24 @@ class MachOGraph(ObjectGraph):
         self.trans_table = {}
         self.executable_path = executable_path
 
-    def locate(self, filename, loader=None):
+    def locate(self, filename):
         assert isinstance(filename, (str, unicode))
-        if filename.startswith('@loader_path/') and loader is not None:
-            fn = self.trans_table.get((loader.filename, filename))
-            if fn is None:
-                try:
-                    fn = dyld_find(filename, env=self.env,
-                        executable_path=self.executable_path,
-                        loader=loader.filename)
-                    self.trans_table[(loader.filename, filename)] = fn
-                except ValueError:
-                    return None
-
-        else:
-            fn = self.trans_table.get(filename)
-            if fn is None:
-                try:
-                    fn = dyld_find(filename, env=self.env,
-                        executable_path=self.executable_path)
-                    self.trans_table[filename] = fn
-                except ValueError:
-                    return None
+        fn = self.trans_table.get(filename)
+        if fn is None:
+            try:
+                fn = dyld_find(filename, env=self.env,
+                    executable_path=self.executable_path)
+                self.trans_table[filename] = fn
+            except ValueError:
+                return None
         return fn
 
-    def findNode(self, name, loader=None):
+    def findNode(self, name):
         assert isinstance(name, (str, unicode))
         data = super(MachOGraph, self).findNode(name)
         if data is not None:
             return data
-        newname = self.locate(name, loader=loader)
+        newname = self.locate(name)
         if newname is not None and newname != name:
             return self.findNode(newname)
         return None
@@ -75,7 +63,7 @@ class MachOGraph(ObjectGraph):
     def run_file(self, pathname, caller=None):
         assert isinstance(pathname, (str, unicode))
         self.msgin(2, "run_file", pathname)
-        m = self.findNode(pathname, loader=caller)
+        m = self.findNode(pathname)
         if m is None:
             if not os.path.exists(pathname):
                 raise ValueError('%r does not exist' % (pathname,))
@@ -90,7 +78,7 @@ class MachOGraph(ObjectGraph):
         self.msgin(2, "load_file", name)
         m = self.findNode(name)
         if m is None:
-            newname = self.locate(name, loader=caller)
+            newname = self.locate(name)
             if newname is not None and newname != name:
                 return self.load_file(newname, caller=caller)
             if os.path.exists(name):

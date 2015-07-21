@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from __future__ import unicode_literals
-
 import os
 
 from jms_utils.paths import ChDir
@@ -46,6 +44,7 @@ class TestBuilder(object):
         build_cmd = ['build', '--app-name', 'MyApp',
                      '--app-version', '0.1.0', spec_file_name]
 
+        build_cmd = [str(b) for b in build_cmd]
         parser = get_parser()
         with open('app.py', 'w') as f:
             f.write('print "Hello, World!"')
