@@ -19,10 +19,6 @@
 # See pyi_carchive.py for a more general archive (contains anything)
 # that can be understood by a C program.
 
-# We MUST NOT use anything from __future__, because this will effect
-# compilation in ZlibArchive.Add() below. While `compile()` has an
-# argument `dont_inherit`, this is not supported in Python 2.7.9.
-#from __future__ import print_function
 
 _verbose = 0
 _listdir = None
@@ -58,52 +54,6 @@ if "-vi" in sys.argv[1:]:
     _verbose = 1
 
 
-class ArchiveFile(object):
-    """
-    File class support auto open when access member from file object
-    This class is use to avoid file locking on windows
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        self.pos = 0
-        self.fd = None
-        self.__open()
-
-    def __getattr__(self, name):
-        """
-        Auto open file when access member from file object
-        This function only call when member of name not exist in self
-        """
-        assert self.fd
-        return getattr(self.fd, name)
-
-    def __open(self):
-        """
-        Open file and seek to pos record from last close
-        """
-        if self.fd is None:
-            self.fd = open(*self.args, **self.kwargs)
-            self.fd.seek(self.pos)
-
-    def __enter__(self):
-        self.__open()
-
-    def __exit__(self, type, value, traceback):
-        assert self.fd
-        self.close()
-
-    def close(self):
-        """
-        Close file and record pos
-        """
-        if self.fd is not None:
-            self.pos = self.fd.tell()
-            self.fd.close()
-            self.fd = None
-
-
 class ArchiveReadError(RuntimeError):
     pass
 
@@ -134,10 +84,9 @@ class Archive(object):
         import imp
         self.pymagic = imp.get_magic()
         if path is not None:
-            self.lib = ArchiveFile(self.path, 'rb')
-            with self.lib:
-                self.checkmagic()
-                self.loadtoc()
+            self.lib = open(self.path, 'rb')
+            self.checkmagic()
+            self.loadtoc()
 
     ####### Sub-methods of __init__ - override as needed #############
     def checkmagic(self):
@@ -168,8 +117,7 @@ class Archive(object):
         self.lib.seek(self.start + self.TOCPOS)
         (offset,) = struct.unpack('!i', self.lib.read(4))
         self.lib.seek(self.start + offset)
-        # use marshal.loads() since load() arg must be a file object
-        self.toc = marshal.loads(self.lib.read())
+        self.toc = marshal.load(self.lib)
 
     ######## This is what is called by FuncImporter #######
     ## Since an Archive is flat, we ignore parent and modname.
@@ -195,11 +143,8 @@ class Archive(object):
         ispkg, pos = self.toc.get(name, (0, None))
         if pos is None:
             return None
-        with self.lib:
-            self.lib.seek(self.start + pos)
-            # use marshal.loads() sind load() arg must be a file object
-            obj = marshal.loads(self.lib.read())
-        return ispkg, obj
+        self.lib.seek(self.start + pos)
+        return ispkg, marshal.load(self.lib)
 
     ########################################################################
     # Informational methods
@@ -224,7 +169,7 @@ class Archive(object):
         assert(self.path is None)
 
         self.path = path
-        self.lib = ArchiveFile(path, 'wb')
+        self.lib = open(path, 'wb')
         # Reserve space for the header.
         if self.HDRLEN:
             self.lib.write('\0' * self.HDRLEN)
@@ -298,7 +243,7 @@ class Archive(object):
         Default - toc is a dict
         Gets marshaled to self.lib
         """
-        self.lib.write(marshal.dumps(self.toc))
+        marshal.dump(self.toc, self.lib)
 
     def update_headers(self, tocpos):
         """
@@ -324,7 +269,7 @@ class ZlibArchive(Archive):
     LEVEL = 9
     NO_COMPRESSION_LEVEL = 0
 
-    def __init__(self, path=None, offset=None, level=9, cipher=None):
+    def __init__(self, path=None, offset=None, level=9):
         if path is None:
             offset = 0
         elif offset is None:
@@ -355,24 +300,17 @@ class ZlibArchive(Archive):
             except ImportError:
                 raise RuntimeError('zlib required but cannot be imported')
 
-        if cipher:
-            self.crypted = 1
-            self.cipher = cipher
-        else:
-            self.crypted = 0
+        # TODO this attribute is deprecated and not used anymore.
+        self.crypted = 0
 
     def extract(self, name):
         (ispkg, pos, lngth) = self.toc.get(name, (0, None, 0))
         if pos is None:
             return None
-        with self.lib:
-            self.lib.seek(self.start + pos)
-            obj = self.lib.read(lngth)
+        self.lib.seek(self.start + pos)
+        obj = self.lib.read(lngth)
         try:
-            if self.crypted:
-                obj = self._mod_zlib.decompress(self.cipher.decrypt(obj))
-            else:
-                obj = self._mod_zlib.decompress(obj)
+            obj = self._mod_zlib.decompress(obj)
         except self._mod_zlib.error:
             raise ImportError("PYZ entry '%s' failed to decompress" % name)
         try:
@@ -397,10 +335,7 @@ class ZlibArchive(Archive):
                 f.seek(8)  # skip magic and timestamp
                 bytecode = f.read()
                 marshal.loads(bytecode).co_filename  # to make sure it's valid
-                if self.crypted:
-                    obj = self.cipher.encrypt(self._mod_zlib.compress(bytecode, self.LEVEL))
-                else:
-                    obj = self._mod_zlib.compress(bytecode, self.LEVEL)
+                obj = self._mod_zlib.compress(bytecode, self.LEVEL)
             except (IOError, ValueError, EOFError, AttributeError):
                 raise ValueError("bad bytecode in %s and no source" % pth)
         else:
@@ -409,13 +344,10 @@ class ZlibArchive(Archive):
                 import os
                 co = compile(txt, self.os.path.join(self.path, nm), 'exec')
             except SyntaxError, e:
-                print("Syntax error in " + pth[:-1])
-                print(e.args)
+                print "Syntax error in", pth[:-1]
+                print e.args
                 raise
-            if self.crypted:
-                obj = self.cipher.encrypt(self._mod_zlib.compress(marshal.dumps(co), self.LEVEL))
-            else:
-                obj = self._mod_zlib.compress(marshal.dumps(co), self.LEVEL)
+            obj = self._mod_zlib.compress(marshal.dumps(co), self.LEVEL)
         self.toc[nm] = (ispkg, self.lib.tell(), len(obj))
         self.lib.write(obj)
 
@@ -429,8 +361,3 @@ class ZlibArchive(Archive):
     def checkmagic(self):
         Archive.checkmagic(self)
         self.LEVEL, self.crypted = struct.unpack('!iB', self.lib.read(5))
-
-        if self.crypted:
-            import pyi_crypto
-
-            self.cipher = pyi_crypto.PyiBlockCipher()
