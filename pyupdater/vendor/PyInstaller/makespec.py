@@ -27,15 +27,10 @@ a = Analysis(%(scripts)s,
              hookspath=%(hookspath)r,
              runtime_hooks=%(runtime_hooks)r)
 
-found = 0
 for d in a.datas:
-  if 'pyconfig' in d[0]:
-    if found == 1:
-      break
-    if found == 0:
-      found = 1
-    else:
-      a.datas.remove(d)
+    if 'pyconfig' in d[0]:
+        a.datas.remove(d)
+        break
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
@@ -57,15 +52,10 @@ a = Analysis(%(scripts)s,
              hookspath=%(hookspath)r,
              runtime_hooks=%(runtime_hooks)r)
 
-found = 0
 for d in a.datas:
-  if 'pyconfig' in d[0]:
-    if found == 1:
-      break
-    if found == 0:
-      found = 1
-    else:
-      a.datas.remove(d)
+    if 'pyconfig' in d[0]:
+        a.datas.remove(d)
+        break
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
@@ -92,15 +82,10 @@ a = Analysis(%(scripts)s,
              hookspath=%(hookspath)r,
              runtime_hooks=%(runtime_hooks)r)
 
-found = 0
 for d in a.datas:
-  if 'pyconfig' in d[0]:
-    if found == 1:
-      break
-    if found == 0:
-      found = 1
-    else:
-      a.datas.remove(d)
+    if 'pyconfig' in d[0]:
+        a.datas.remove(d)
+        break
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
