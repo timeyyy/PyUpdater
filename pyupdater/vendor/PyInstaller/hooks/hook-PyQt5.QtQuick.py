@@ -23,7 +23,7 @@ dirs = [#'Qt',
         #'QtGraphicalEffects',
         #'QtMultiMedia',
         'QtQml',
-        #'QtQuick',
+        'QtQuick',
         'QtQuick.2',
         #'QtSensors',
         #'QtTest'
@@ -35,5 +35,6 @@ for dir in dirs:
 
 def hook(mod):
     for dir in dirs:
-        mod.binaries.extend(qt5_qml_plugins_binaries(dir))
+        # TODO fix this hook to use attribute 'binaries'.
+        mod.pyinstaller_binaries.extend(qt5_qml_plugins_binaries(dir))
     return mod

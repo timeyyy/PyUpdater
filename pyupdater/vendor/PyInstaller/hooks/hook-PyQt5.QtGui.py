@@ -14,10 +14,12 @@ from PyInstaller.hooks.hookutils import qt5_plugins_binaries
 
 
 def hook(mod):
-    mod.binaries.extend(qt5_plugins_binaries('accessible'))
-    mod.binaries.extend(qt5_plugins_binaries('iconengines'))
-    mod.binaries.extend(qt5_plugins_binaries('imageformats'))
-    mod.binaries.extend(qt5_plugins_binaries('inputmethods'))
-    mod.binaries.extend(qt5_plugins_binaries('graphicssystems'))
-    mod.binaries.extend(qt5_plugins_binaries('platforms'))
+    # TODO fix this hook to use attribute 'binaries'.
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('accessible'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('iconengines'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('imageformats'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('inputmethods'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('graphicssystems'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('platforms'))
+    mod.pyinstaller_binaries.extend(qt5_plugins_binaries('printsupport'))
     return mod

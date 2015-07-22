@@ -98,8 +98,6 @@ def test_UPX(config, upx_dir):
     config['upx_dir'] = upx_dir
 
 
-# TODO Drop this function when new module system based on 'modulegraph'
-#      is in place.
 def find_PYZ_dependencies(config):
     logger.debug("Computing PYZ dependencies")
     # We need to import `pyi_importers` from `PyInstaller` directory, but
@@ -119,7 +117,7 @@ def find_PYZ_dependencies(config):
     for i, (nm, fnm, typ) in enumerate(toc):
         mod = a.modules[nm]
         tmp = []
-        for importednm, isdelayed, isconditional, level in mod.imports:
+        for importednm, isdelayed, isconditional, level in mod.pyinstaller_imports:
             if not isconditional:
                 realnms = a.analyze_one(importednm, nm)
                 for realnm in realnms:
