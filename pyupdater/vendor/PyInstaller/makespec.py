@@ -30,10 +30,12 @@ a = Analysis(%(scripts)s,
 found = 0
 for d in a.datas:
   if 'pyconfig' in d[0]:
-    if found >= 1:
+    if found == 1:
       break
-    found = 1
-    a.datas.remove(d)
+    if found == 0:
+      found = 1
+    else:
+      a.datas.remove(d)
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
@@ -58,10 +60,12 @@ a = Analysis(%(scripts)s,
 found = 0
 for d in a.datas:
   if 'pyconfig' in d[0]:
-    if found >= 1:
+    if found == 1:
       break
-    found = 1
-    a.datas.remove(d)
+    if found == 0:
+      found = 1
+    else:
+      a.datas.remove(d)
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
@@ -91,10 +95,12 @@ a = Analysis(%(scripts)s,
 found = 0
 for d in a.datas:
   if 'pyconfig' in d[0]:
-    if found >= 1:
+    if found == 1:
       break
-    found = 1
-    a.datas.remove(d)
+    if found == 0:
+      found = 1
+    else:
+      a.datas.remove(d)
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
