@@ -8,12 +8,22 @@
 #-----------------------------------------------------------------------------
 
 
+import os
+
 from PyInstaller.hooks.hookutils import qt5_menu_nib_dir
-from PyInstaller.compat import is_darwin
+from PyInstaller.compat import getsitepackages, is_darwin, is_win
+
+
+# On Windows system PATH has to be extended to point to the PyQt5 directory.
+# The PySide directory contains Qt dlls. We need to avoid including different
+# version of Qt libraries when there is installed another application (e.g. QtCreator)
+if is_win:
+    from PyInstaller.utils.winutils import extend_system_path
+    extend_system_path([os.path.join(x, 'PyQt5') for x in getsitepackages()])
 
 
 # In the new consolidated mode any PyQt depends on _qt
-hiddenimports = ['sip']
+hiddenimports = ['sip', 'PyQt5.Qt']
 
 
 # For Qt to work on Mac OS X it is necessary to include directory qt_menu.nib.

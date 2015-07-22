@@ -26,8 +26,10 @@ import PyInstaller.log
 # Warn when old command line option is used
 
 from PyInstaller import get_version
-from PyInstaller.log import logger
 from PyInstaller.utils import misc
+import PyInstaller.log as logging
+
+logger = logging.getLogger(__name__)
 
 
 def run_makespec(opts, args):
@@ -72,7 +74,7 @@ def run(pyi_args=sys.argv[1:], pyi_config=None):
 
         # Print program version and exit
         if opts.version:
-            print get_version()
+            print(get_version())
             raise SystemExit(0)
 
         if not args:

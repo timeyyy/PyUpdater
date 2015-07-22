@@ -57,12 +57,11 @@ class BuiltinImporter(object):
             # Remove 'fullname' from sys.modules if it was appended there.
             if fullname in sys.modules:
                 sys.modules.pop(fullname)
-            # Release the interpreter's import lock.
-            imp.release_lock()
             raise  # Raise the same exception again.
 
-        # Release the interpreter's import lock.
-        imp.release_lock()
+        finally:
+            # Release the interpreter's import lock.
+            imp.release_lock()
 
         return module
 
@@ -135,7 +134,9 @@ class FrozenImporter(object):
                 # Unzip zip archive bundled with the executable.
                 self._pyz_archive = ZlibArchive(pyz_filepath)
                 # Verify the integrity of the zip archive with Python modules.
-                self._pyz_archive.checkmagic()
+                # This is already done when creating the ZlibArchive instance.
+                #self._pyz_archive.checkmagic()
+
                 # End this method since no Exception was raised we can assume
                 # ZlibArchive was successfully loaded. Let's remove 'pyz_filepath'
                 # from sys.path.
@@ -165,7 +166,7 @@ class FrozenImporter(object):
         Return a loader object if the module was found, or None if it wasn't. If find_module() raises
         an exception, it will be propagated to the caller, aborting the import.
         """
-        # Acquire the interpreter's import lock for the current thread. Tis
+        # Acquire the interpreter's import lock for the current thread. This
         # lock should be used by import hooks to ensure thread-safety when
         # importing modules.
         imp.acquire_lock()
@@ -277,12 +278,11 @@ class FrozenImporter(object):
             # PEP302 requires to raise ImportError exception.
             #raise ImportError("Can't load frozen module: %s" % fullname)
 
-            # Release the interpreter's import lock.
-            imp.release_lock()
             raise
 
-        # Release the interpreter's import lock.
-        imp.release_lock()
+        finally:
+            # Release the interpreter's import lock.
+            imp.release_lock()
 
         # Module returned only in case of no exception.
         return module
@@ -374,23 +374,28 @@ class CExtensionImporter(object):
     """
     def __init__(self):
         # TODO cache directory content for faster module lookup without file system access.
-        # Find the platform specific suffix. On Windows it is .pyd, on Linux/Unix .so.
-        for ext, mode, typ in imp.get_suffixes():
-            if typ == imp.C_EXTENSION:
-                self._c_ext_tuple = (ext, mode, typ)
-                self._suffix = ext  # Just string like .pyd  or  .so
-                break
         # Create hashmap of directory content for better performance.
         files = pyi_os_path.os_listdir(sys.prefix)
         self._file_cache = set(files)
+
+        self._suffixes = dict()
+
+        # Find the platform specific suffixes. On Windows it is .pyd, on Linux/Unix .so.
+        for ext, mode, typ in imp.get_suffixes():
+            if typ == imp.C_EXTENSION:
+                self._suffixes[ext] = (ext, mode, typ)
 
     def find_module(self, fullname, path=None):
         imp.acquire_lock()
         module_loader = None  # None means - no module found by this importer.
 
         # Look in the file list of sys.prefix path (alias PYTHONHOME).
-        if fullname + self._suffix in self._file_cache:
-            module_loader = self
+        for ext, c_ext_tuple in self._suffixes.items():
+            if fullname + ext in self._file_cache:
+                self._c_ext_tuple = c_ext_tuple
+                self._suffix = ext
+                module_loader = self
+                break
 
         imp.release_lock()
         return module_loader
@@ -419,12 +424,11 @@ class CExtensionImporter(object):
             # Remove 'fullname' from sys.modules if it was appended there.
             if fullname in sys.modules:
                 sys.modules.pop(fullname)
-            # Release the interpreter's import lock.
-            imp.release_lock()
             raise  # Raise the same exception again.
 
-        # Release the interpreter's import lock.
-        imp.release_lock()
+        finally:
+            # Release the interpreter's import lock.
+            imp.release_lock()
 
         return module
 
