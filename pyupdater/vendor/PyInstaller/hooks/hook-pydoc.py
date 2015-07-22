@@ -18,8 +18,8 @@ This hook just removes this implicit dependency on Tcl/Tk.
 
 def hook(mod):
     # Ignore 'Tkinter' to prevent inclusion of Tcl/Tk library.
-    for i, m in enumerate(mod.pyinstaller_imports):
+    for i, m in enumerate(mod.imports):
         if m[0] == 'Tkinter':
-            del mod.pyinstaller_imports[i]
+            del mod.imports[i]
             break
     return mod

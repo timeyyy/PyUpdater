@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Copyright (c) 2014, PyInstaller Development Team.
+# Copyright (c) 2013, PyInstaller Development Team.
 #
 # Distributed under the terms of the GNU General Public License with exception
 # for distributing bootloader.
@@ -8,9 +8,4 @@
 #-----------------------------------------------------------------------------
 
 
-# Hook tested with scikit-image (skimage) 0.9.3 on Mac OS 10.9 and Windows 7
-# 64-bit
-hiddenimports = ['skimage.draw.draw',
-                 'skimage._shared.geometry',
-                 'skimage._shared.interpolation',
-                 'skimage.filter.rank.core_cy']
+# empty (just to need Python import machinery happy)

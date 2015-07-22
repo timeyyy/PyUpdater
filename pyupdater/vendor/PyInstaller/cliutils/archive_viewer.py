@@ -12,7 +12,6 @@
 Viewer for archives packaged by archive.py
 """
 
-from __future__ import print_function
 
 import optparse
 import os
@@ -28,21 +27,32 @@ import PyInstaller.log
 
 stack = []
 cleanup = []
+name = None
+debug = False
+rec_debug = False
+brief = False
 
 
-def main(name, brief, debug, rec_debug, **unused_options):
+def main(opts, args):
     misc.check_not_running_as_root()
 
     global stack
-
+    global debug
+    global rec_debug
+    global name
+    global brief
+    name = args[0]
+    debug = opts.log
+    rec_debug = opts.rec
+    brief = opts.brief
     if not os.path.isfile(name):
-        print(name, "is an invalid file name!")
+        print "%s is an invalid file name!" % name
         return 1
 
     arch = get_archive(name)
     stack.append((name, arch))
     if debug or brief:
-        show_log(arch, rec_debug, brief)
+        show_log(name, arch)
         raise SystemExit(0)
     else:
         show(name, arch)
@@ -52,7 +62,7 @@ def main(name, brief, debug, rec_debug, **unused_options):
             toks = raw_input('? ').split(None, 1)
         except EOFError:
             # Ctrl-D
-            print()  # Clear line.
+            print  # Clear line.
             break
         if not toks:
             usage()
@@ -68,19 +78,15 @@ def main(name, brief, debug, rec_debug, **unused_options):
                 arch = stack[-1][1]
                 arch.lib.close()
                 del stack[-1]
-            name, arch = stack[-1]
-            show(name, arch)
+            nm, arch = stack[-1]
+            show(nm, arch)
         elif cmd == 'O':
             if not arg:
                 arg = raw_input('open name? ')
             arg = arg.strip()
-            try:
-                arch = get_archive(arg)
-            except pyi_carchive.NotAnArchiveError as e:
-                print(e)
-                continue
+            arch = get_archive(arg)
             if arch is None:
-                print(arg, "not found")
+                print arg, "not found"
                 continue
             stack.append((arg, arch))
             show(arg, arch)
@@ -90,94 +96,88 @@ def main(name, brief, debug, rec_debug, **unused_options):
             arg = arg.strip()
             data = get_data(arg, arch)
             if data is None:
-                print("Not found")
+                print "Not found"
                 continue
-            filename = raw_input('to filename? ')
-            if not filename:
-                print(repr(data))
+            fnm = raw_input('to filename? ')
+            if not fnm:
+                print repr(data)
             else:
-                open(filename, 'wb').write(data)
+                open(fnm, 'wb').write(data)
         elif cmd == 'Q':
             break
         else:
             usage()
-    do_cleanup()
-
-
-def do_cleanup():
-    global stack, cleanup
-    for (name, arch) in stack:
+    for (nm, arch) in stack:
         arch.lib.close()
     stack = []
-    for filename in cleanup:
+    for fnm in cleanup:
         try:
-            os.remove(filename)
+            os.remove(fnm)
         except Exception, e:
-            print("couldn't delete", filename, e.args)
-    cleanup = []
+            print "couldn't delete", fnm, e.args
 
 
 def usage():
-    print("U: go Up one level")
-    print("O <name>: open embedded archive name")
-    print("X <name>: extract name")
-    print("Q: quit")
+    print "U: go Up one level"
+    print "O <nm>: open embedded archive nm"
+    print "X <nm>: extract nm"
+    print "Q: quit"
 
 
-def get_archive(name):
+def get_archive(nm):
     if not stack:
-        if name[-4:].lower() == '.pyz':
-            return ZlibArchive(name)
-        return pyi_carchive.CArchive(name)
+        if nm[-4:].lower() == '.pyz':
+            return ZlibArchive(nm)
+        return pyi_carchive.CArchive(nm)
     parent = stack[-1][1]
     try:
-        return parent.openEmbedded(name)
+        return parent.openEmbedded(nm)
     except KeyError:
         return None
     except (ValueError, RuntimeError):
-        ndx = parent.toc.find(name)
-        dpos, dlen, ulen, flag, typcd, name = parent.toc[ndx]
+        ndx = parent.toc.find(nm)
+        dpos, dlen, ulen, flag, typcd, nm = parent.toc[ndx]
         x, data = parent.extract(ndx)
-        tempfilename = tempfile.mktemp()
-        cleanup.append(tempfilename)
-        open(tempfilename, 'wb').write(data)
+        tfnm = tempfile.mktemp()
+        cleanup.append(tfnm)
+        open(tfnm, 'wb').write(data)
         if typcd == 'z':
-            return ZlibArchive(tempfilename)
+            return ZlibArchive(tfnm)
         else:
-            return pyi_carchive.CArchive(tempfilename)
+            return pyi_carchive.CArchive(tfnm)
 
 
-def get_data(name, arch):
-    if isinstance(arch.toc, dict):
-        (ispkg, pos, length) = arch.toc.get(name, (0, None, 0))
+def get_data(nm, arch):
+    if type(arch.toc) is type({}):
+        (ispkg, pos, lngth) = arch.toc.get(nm, (0, None, 0))
         if pos is None:
             return None
         arch.lib.seek(arch.start + pos)
-        return zlib.decompress(arch.lib.read(length))
-    ndx = arch.toc.find(name)
-    dpos, dlen, ulen, flag, typcd, name = arch.toc[ndx]
+        return zlib.decompress(arch.lib.read(lngth))
+    ndx = arch.toc.find(nm)
+    dpos, dlen, ulen, flag, typcd, nm = arch.toc[ndx]
     x, data = arch.extract(ndx)
     return data
 
 
-def show(name, arch):
-    if isinstance(arch.toc, dict):
-        print(" Name: (ispkg, pos, len)")
+def show(nm, arch):
+    if type(arch.toc) == type({}):
+        print " Name: (ispkg, pos, len)"
         toc = arch.toc
     else:
-        print(" pos, length, uncompressed, iscompressed, type, name")
+        print " pos, length, uncompressed, iscompressed, type, name"
         toc = arch.toc.data
     pprint.pprint(toc)
 
 
-def get_content(arch, recursive, brief, output):
-    if isinstance(arch.toc, dict):
+def show_log(nm, arch, output=[]):
+    if type(arch.toc) == type({}):
         toc = arch.toc
         if brief:
             for name, _ in toc.items():
                 output.append(name)
         else:
-            output.append(toc)
+            pprint.pprint(toc)
     else:
         toc = arch.toc.data
         for el in toc:
@@ -185,35 +185,11 @@ def get_content(arch, recursive, brief, output):
                 output.append(el[5])
             else:
                 output.append(el)
-            if recursive:
+            if rec_debug:
                 if el[4] in ('z', 'a'):
-                    get_content(get_archive(el[5]), recursive, brief, output)
+                    show_log(el[5], get_archive(el[5]), output)
                     stack.pop()
-
-
-def show_log(arch, recursive, brief, output=[]):
-    output = []
-    get_content(arch, recursive, brief, output)
-    # first print all TOCs
-    for out in output:
-        if isinstance(out, dict):
-            pprint.pprint(out)
-    # then print the other entries
-    pprint.pprint([out for out in output if not isinstance(out, dict)])
-
-
-def get_archive_content(filename):
-    """
-    Get a list of the (recursive) content of archive `filename`.
-
-    This function is primary meant to be used by runtests.
-    """
-    archive = get_archive(filename)
-    stack.append((filename, archive))
-    output = []
-    get_content(archive, recursive=True, brief=True, output=output)
-    do_cleanup()
-    return output
+        pprint.pprint(output)
 
 
 class ZlibArchive(pyi_archive.ZlibArchive):
@@ -228,7 +204,7 @@ class ZlibArchive(pyi_archive.ZlibArchive):
             raise RuntimeError("%s is not a valid %s archive file"
                                % (self.path, self.__class__.__name__))
         if self.lib.read(len(self.pymagic)) != self.pymagic:
-            print("Warning: pyz is from a different Python version")
+            print "Warning: pyz is from a different Python version"
         self.lib.read(4)
 
 
@@ -237,12 +213,12 @@ def run():
     parser.add_option('-l', '--log',
                       default=False,
                       action='store_true',
-                      dest='debug',
+                      dest='log',
                       help='Print an archive log (default: %default)')
     parser.add_option('-r', '--recursive',
                       default=False,
                       action='store_true',
-                      dest='rec_debug',
+                      dest='rec',
                       help='Recursively print an archive log (default: %default). '
                       'Can be combined with -r')
     parser.add_option('-b', '--brief',
@@ -259,6 +235,6 @@ def run():
         parser.error('Requires exactly one pyinstaller archive')
 
     try:
-        raise SystemExit(main(args[0], **vars(opts)))
+        raise SystemExit(main(opts, args))
     except KeyboardInterrupt:
         raise SystemExit("Aborted by user request.")

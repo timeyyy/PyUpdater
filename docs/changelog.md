@@ -4,6 +4,12 @@
 ##### This version is not yet released and is under active development.
 
 
+## v0.23.3 - 2015/07/21
+
+Fixed
+
+  - File already exists error
+
 ## v0.23.2 - 2015/07/21
 
 Fixed
@@ -12,7 +18,7 @@ Fixed
 
 Updated
 
-  - Downgrade pyinstaller to 2.1
+  - PyInstaller to 39b02fe5e7563431115f9812f757a21bbcc78837
 
 
 ## v0.23.1 - 2015/07/19

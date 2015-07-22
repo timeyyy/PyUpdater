@@ -14,28 +14,18 @@ Automatically build spec files containing a description of the project
 
 
 import os
-import sys
 
 
 from PyInstaller import HOMEPATH, DEFAULT_SPECPATH
-from PyInstaller import log as logging
 from PyInstaller.compat import expand_path, is_win, is_cygwin, is_darwin
 
-logger = logging.getLogger(__name__)
-
-# HACK to be used used in tests
-_EXENAME_FORCED_SUFFIX_ = ''
 
 onefiletmplt = """# -*- mode: python -*-
-%(cipher_init)s
-
 a = Analysis(%(scripts)s,
              pathex=%(pathex)s,
              hiddenimports=%(hiddenimports)r,
              hookspath=%(hookspath)r,
-             runtime_hooks=%(runtime_hooks)r,
-             excludes=%(excludes)s,
-             cipher=block_cipher)
+             runtime_hooks=%(runtime_hooks)r)
 
 found = 0
 for d in a.datas:
@@ -47,8 +37,7 @@ for d in a.datas:
     else:
       a.datas.remove(d)
 
-pyz = PYZ(a.pure,
-             cipher=block_cipher)
+pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           a.binaries,
@@ -62,15 +51,11 @@ exe = EXE(pyz,
 """
 
 onedirtmplt = """# -*- mode: python -*-
-%(cipher_init)s
-
 a = Analysis(%(scripts)s,
              pathex=%(pathex)s,
              hiddenimports=%(hiddenimports)r,
              hookspath=%(hookspath)r,
-             runtime_hooks=%(runtime_hooks)r,
-             excludes=%(excludes)s,
-             cipher=block_cipher)
+             runtime_hooks=%(runtime_hooks)r)
 
 found = 0
 for d in a.datas:
@@ -82,8 +67,7 @@ for d in a.datas:
     else:
       a.datas.remove(d)
 
-pyz = PYZ(a.pure,
-             cipher=block_cipher)
+pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
@@ -102,15 +86,12 @@ coll = COLLECT(exe,
 """
 
 comsrvrtmplt = """# -*- mode: python -*-
-%(cipher_init)s
-
 a = Analysis(%(scripts)s,
              pathex=%(pathex)s,
              hiddenimports=%(hiddenimports)r,
              hookspath=%(hookspath)r,
-             runtime_hooks=%(runtime_hooks)r,
-             excludes=%(excludes)s,
-             cipher=block_cipher)
+             runtime_hooks=%(runtime_hooks)r)
+
 found = 0
 for d in a.datas:
   if 'pyconfig' in d[0]:
@@ -121,8 +102,7 @@ for d in a.datas:
     else:
       a.datas.remove(d)
 
-pyz = PYZ(a.pure,
-             cipher=block_cipher)
+pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
@@ -145,26 +125,14 @@ coll = COLLECT(exe, dll,
                name='%(name)s')
 """
 
-cipher_absent_template = """
-block_cipher = None
-"""
-
-cipher_init_template = """
-from PyInstaller.loader import pyi_crypto
-
-block_cipher = pyi_crypto.PyiBlockCipher(key=%(key)r)
-"""
-
 bundleexetmplt = """app = BUNDLE(exe,
              name='%(exename)s.app',
-             icon=%(icon)s,
-             bundle_identifier=%(bundle_identifier)s)
+             icon=%(icon)s)
 """
 
 bundletmplt = """app = BUNDLE(coll,
              name='%(name)s.app',
-             icon=%(icon)s,
-             bundle_identifier=%(bundle_identifier)s)
+             icon=%(icon)s)
 """
 
 
@@ -250,13 +218,6 @@ def __add_options(parser):
             'is executed before any other code or module '
             'to set up special features of the runtime environment. '
             'This option can be used multiple times.')
-    g.add_option('--exclude-module', dest='excludes', action='append',
-                 help='Optional module or package (his Python names,'
-                 'not path names) that will be ignored (as though'
-                 'it was not found).'
-                 'This option can be used multiple times.')
-    g.add_option('--key', dest='key',
-            help='The key used to encrypt Python bytecode.')
 
     g = parser.add_option_group('How to generate')
     g.add_option("-d", "--debug", action="store_true", default=False,
@@ -281,7 +242,7 @@ def __add_options(parser):
                       "On Mac OS X this also triggers building an OS X .app bundle."
                       "This option is ignored in *NIX systems.")
     g.add_option("-i", "--icon", dest="icon_file",
-                 metavar="<FILE.ico or FILE.exe,ID or FILE.icns>",
+                 metavar="FILE.ico or FILE.exe,ID or FILE.icns",
                  help="FILE.ico: apply that icon to a Windows executable. "
                       "FILE.exe,ID, extract the icon with ID from an exe. "
                       "FILE.icns: apply the icon to the "
@@ -291,10 +252,10 @@ def __add_options(parser):
     g.add_option("--version-file",
                  dest="version_file", metavar="FILE",
                  help="add a version resource from FILE to the exe")
-    g.add_option("-m", "--manifest", metavar="<FILE or XML>",
+    g.add_option("-m", "--manifest", metavar="FILE or XML",
                  help="add manifest FILE or XML to the exe")
     g.add_option("-r", "--resource", default=[], dest="resources",
-                 metavar="<FILE[,TYPE[,NAME[,LANGUAGE]]]>", action="append",
+                 metavar="FILE[,TYPE[,NAME[,LANGUAGE]]]", action="append",
                  help="Add or update a resource of the given type, name and language "
                       "from FILE to a Windows executable. FILE can be a "
                       "data file or an exe/dll. For data files, at least "
@@ -305,27 +266,14 @@ def __add_options(parser):
                       "to the final executable if TYPE, NAME and LANGUAGE "
                       "are omitted or specified as wildcard *."
                       "This option can be used multiple times.")
-    g.add_option('--uac-admin', dest='uac_admin', action="store_true", default=False,
-                 help='Using this option creates a Manifest '
-                      'which will request elevation upon application restart.')
-    g.add_option('--uac-uiaccess', dest='uac_uiaccess', action="store_true", default=False,
-                 help='Using this option allows an elevated application to '
-                      'work with Remote Desktop.')
-
-    g = parser.add_option_group('Mac OS X specific options')
-    g.add_option('--osx-bundle-identifier', dest='bundle_identifier',
-                 help='Mac OS X .app bundle identifier is used as the default unique program '
-                      'name for code signing purposes. The usual form is a hierarchical name '
-                      'in reverse DNS notation. For example: com.mycompany.department.appname '
-                      "(default: first script's basename)")
 
 
 def main(scripts, name=None, onefile=False,
          console=True, debug=False, strip=False, noupx=False, comserver=False,
          pathex=[], version_file=None, specpath=DEFAULT_SPECPATH,
-         icon_file=None, manifest=None, resources=[], bundle_identifier=None,
-         hiddenimports=None, hookspath=None, key=None, runtime_hooks=[],
-         excludes=[], uac_admin=False, uac_uiaccess=False, **kwargs):
+         icon_file=None, manifest=None, resources=[],
+         hiddenimports=None, hookspath=None, runtime_hooks=[], **kwargs):
+
     # If appname is not specified - use the basename of the main script as name.
     if name is None:
         name = os.path.splitext(os.path.basename(scripts[0]))[0]
@@ -348,14 +296,10 @@ def main(scripts, name=None, onefile=False,
     pathex = pathex[:]
     pathex.append(specpath)
 
-    # Handle additional EXE options.
     exe_options = ''
     if version_file:
         exe_options = "%s, version='%s'" % (exe_options, quote_win_filepath(version_file))
-    if uac_admin:
-        exe_options = "%s, uac_admin=%s" % (exe_options, 'True')
-    if uac_uiaccess:
-        exe_options = "%s, uac_uiaccess=%s" % (exe_options, 'True')
+
     if icon_file:
         # Icon file for Windows.
         # On Windows default icon is embedded in the bootloader executable.
@@ -367,10 +311,6 @@ def main(scripts, name=None, onefile=False,
         # On OSX default icon has to be copied into the .app bundle.
         # The the text value 'None' means - use default icon.
         icon_file = 'None'
-
-    if bundle_identifier:
-        # We need to encapsulate it into apostrofes.
-        bundle_identifier = "'%s'" % bundle_identifier
 
     if manifest:
         if "<" in manifest:
@@ -386,30 +326,6 @@ def main(scripts, name=None, onefile=False,
     hiddenimports = hiddenimports or []
     scripts = map(Path, scripts)
 
-    if key:
-        # Tries to import PyCrypto since we need it for bytecode obfuscation. Also make sure its
-        # version is >= 2.4.
-        try:
-            import Crypto
-
-            pycrypto_version = map(int, Crypto.__version__.split('.'))
-            is_version_acceptable = pycrypto_version[0] >= 2 and pycrypto_version[1] >= 4
-
-            if not is_version_acceptable:
-                logger.error('PyCrypto version must be >= 2.4, older versions are not supported.')
-
-                sys.exit(1)
-        except ImportError:
-            logger.error('We need PyCrypto >= 2.4 to use byte-code obufscation but we could not')
-            logger.error('find it. You can install it with pip by running:')
-            logger.error('  pip install PyCrypto')
-
-            sys.exit(1)
-
-        cipher_init = cipher_init_template % {'key': key}
-    else:
-        cipher_init = cipher_absent_template
-
     d = {'scripts': scripts,
         'pathex': pathex,
         'hiddenimports': hiddenimports,
@@ -418,19 +334,14 @@ def main(scripts, name=None, onefile=False,
         'strip': strip,
         'upx': not noupx,
         'exe_options': exe_options,
-        'cipher_init': cipher_init,
         # Directory with additional custom import hooks.
         'hookspath': hookspath,
         # List with custom runtime hook files.
         'runtime_hooks': runtime_hooks,
-        # List of modules/pakages to ignore.
-        'excludes': excludes,
         # only Windows and Mac OS X distinguish windowed and console apps
         'console': console,
         # Icon filename. Only OSX uses this item.
         'icon': icon_file,
-        # .app bundle identifier. Only OSX uses this item.
-        'bundle_identifier': bundle_identifier,
     }
 
     if is_win or is_cygwin:
@@ -438,10 +349,6 @@ def main(scripts, name=None, onefile=False,
         d['dllname'] = name + '.dll'
     else:
         d['exename'] = name
-    if _EXENAME_FORCED_SUFFIX_:
-        # HACK to be used used in tests
-        d['exename'] = name + _EXENAME_FORCED_SUFFIX_
-        # but keep the dll name on windows
 
     # Write down .spec file to filesystem.
     specfnm = os.path.join(specpath, name + '.spec')

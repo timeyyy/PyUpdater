@@ -19,8 +19,4 @@ from PyInstaller.compat import is_win
 
 # Python.net is available only for Windows.
 if is_win:
-    library = ctypes.util.find_library('Python.Runtime')
-    # :todo: Should be issue a warning-message, if the libary is not
-    # found?
-    if library:
-        datas = [(library, '')]
+    datas = [(ctypes.util.find_library('Python.Runtime'), '')]

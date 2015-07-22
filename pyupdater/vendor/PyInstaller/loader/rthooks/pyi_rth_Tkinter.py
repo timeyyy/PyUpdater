@@ -12,23 +12,13 @@ import os
 import sys
 
 
-try:
-    FileNotFoundError
-except NameError:
-    # FileNotFoundError is new in Python 3.0
-    # NB: Aliasing IOError is not a full emulation of FileNotFoundError,
-    # but far enough for this usecase, where the whole frozen program
-    # terminates when this exception occurs.
-    FileNotFoundError = IOError
+basedir = sys._MEIPASS
 
-tcldir = os.path.join(sys._MEIPASS, 'tcl')
-tkdir = os.path.join(sys._MEIPASS, 'tk')
 
-if not os.path.isdir(tcldir):
-    raise FileNotFoundError('Tcl data directory "%s" not found.' % (tcldir))
-if not os.path.isdir(tkdir):
-    raise FileNotFoundError('Tk data directory "%s" not found.' % (tkdir))
+tcldir = os.path.join(basedir, '_MEI', 'tcl')
+tkdir = os.path.join(basedir, '_MEI', 'tk')
 
-# Notify "tkinter" of such directories.
+
+# Directories with .tcl files.
 os.environ["TCL_LIBRARY"] = tcldir
 os.environ["TK_LIBRARY"] = tkdir
