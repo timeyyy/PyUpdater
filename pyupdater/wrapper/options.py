@@ -17,7 +17,7 @@ import argparse
 
 
 def make_parser():
-    parser = argparse.ArgumentParser(usage='%(prog)s <command> [opts]')
+    parser = argparse.ArgumentParser(usage='%(prog)s ')
     return parser
 
 
