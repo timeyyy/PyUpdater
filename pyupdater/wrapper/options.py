@@ -200,7 +200,7 @@ def add_keys_parser(subparsers):
                              'adds the same amount of new good key pairs to '
                              'keys db. Verson file will no longer be signed '
                              'by revoked keys. Default 1',
-                             type=int, default=1, const=1)
+                             type=int, default=1)
 
 
 def add_debug_parser(subparsers):
