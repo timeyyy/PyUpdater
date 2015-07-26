@@ -26,11 +26,11 @@ environment:
       TESTENV: "py27"
       PYWIN_DL: "https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe"
 
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.x" # currently 2.7.9
-      PYTHON_ARCH: "64"
-      TESTENV: "py27"
-      PYWIN_DL: "https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
+    # - PYTHON: "C:\\Python27-x64"
+    #   PYTHON_VERSION: "2.7.x" # currently 2.7.9
+    #   PYTHON_ARCH: "64"
+    #   TESTENV: "py27"
+    #   PYWIN_DL: "https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
 
     # - PYTHON: "C:\\Python33"
     #   PYTHON_VERSION: "3.3.x" # currently 3.3.5
