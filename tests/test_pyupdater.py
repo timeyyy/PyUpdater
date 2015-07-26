@@ -30,6 +30,11 @@ cmd = ['build', '--app-name', 'myapp', '--app-version',
 cmd2 = ['build', '--app-name', 'myapp', '--app-version',
         '0.1.1', 'app.py', '-F']
 
+if get_system() == 'win':
+    ext = '.zip'
+else:
+    ext = '.tar.gz'
+
 
 @pytest.mark.usefixtures('cleandir', 'db')
 class TestPyUpdater(object):
@@ -61,7 +66,7 @@ class TestPyUpdater(object):
         assert os.path.exists(os.path.join(pyu_data_dir, 'new'))
 
     def test_execution(self, pyu, db):
-        archive_name = 'myapp-{}-0.1.0.tar.gz'.format(get_system())
+        archive_name = 'myapp-{}-0.1.0{}'.format(get_system(), ext)
         parser = get_parser()
         data_dir = pyu.config['DATA_DIR']
         pyu_data_dir = os.path.join(data_dir, 'pyu-data')
@@ -88,7 +93,7 @@ class TestPyUpdater(object):
                               'versions.gz'))
 
     def test_execution_patch(self, pyu, db):
-        archive_name = 'myapp-{}-0.1.1.tar.gz'.format(get_system())
+        archive_name = 'myapp-{}-0.1.1{}'.format(get_system(), ext)
         parser = get_parser()
         data_dir = pyu.config['DATA_DIR']
         pyu_data_dir = os.path.join(data_dir, 'pyu-data')

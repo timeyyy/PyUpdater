@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 
 import os
 
+from jms_utils.system import get_system
 import pytest
 
 from pyupdater.client import Client
@@ -75,7 +76,8 @@ class TestClient(object):
         assert update.is_downloaded() is False
         assert update.download() is True
         assert update.is_downloaded() is True
-        assert update.extract() is True
+        if get_system() != 'win':
+            assert update.extract() is True
 
     def test_download_http(client):
         t_config = TConfig()
@@ -92,4 +94,5 @@ class TestClient(object):
         update = client.update_check('jms', '0.0.1')
         assert update is not None
         assert update.download() is True
-        assert update.extract() is True
+        if get_system() != 'win':
+            assert update.extract() is True

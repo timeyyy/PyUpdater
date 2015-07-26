@@ -1,5 +1,6 @@
 [![](https://badge.fury.io/py/PyUpdater.svg)](http://badge.fury.io/py/PyUpdater)
 [![](https://img.shields.io/circleci/project/JMSwag/PyUpdater.svg)](https://circleci.com/gh/JMSwag/PyUpdater)
+[![Build status](https://ci.appveyor.com/api/projects/status/xb85x8ay34rwldui/branch/master?svg=true)](https://ci.appveyor.com/project/JMSwag/pyupdater/branch/master)
 [![](https://requires.io/github/JMSwag/PyUpdater/requirements.svg?branch=master)](https://requires.io/github/JMSwag/PyUpdater/requirements/?branch=master)
 [![codecov.io](http://codecov.io/github/JMSwag/PyUpdater/coverage.svg?branch=master)](http://codecov.io/github/JMSwag/PyUpdater?branch=master)
 
