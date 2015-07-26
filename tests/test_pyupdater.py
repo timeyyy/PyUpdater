@@ -87,7 +87,13 @@ class TestPyUpdater(object):
                               'versions.gz'))
 
     def test_execution_patch(self, pyu, db):
-        archive_name = 'myapp-{}-0.1.1{}'.format(get_system(), ext)
+
+        def gen_archive_name(version):
+            archive_name = 'myapp-{}-0.1.{}{}'.format(get_system(),
+                                                     version,
+                                                     ext)
+            return archive_name
+
         parser = get_parser()
         data_dir = pyu.config['DATA_DIR']
         pyu_data_dir = os.path.join(data_dir, 'pyu-data')
@@ -103,21 +109,20 @@ class TestPyUpdater(object):
             b.build()
             pyu.process_packages()
             pyu.sign_update()
+            assert os.path.exists(os.path.join(pyu_data_dir, 'files',
+                                  gen_archive_name(1)))
+            assert os.path.exists(os.path.join(pyu_data_dir, 'deploy',
+                                  gen_archive_name(1)))
 
             args, pyu_args = parser.parse_known_args(create_build_cmd(2))
             b = Builder(args, pyu_args)
             b.build()
             pyu.process_packages()
             pyu.sign_update()
+            assert os.path.exists(os.path.join(pyu_data_dir, 'files',
+                                  gen_archive_name(2)))
+            assert os.path.exists(os.path.join(pyu_data_dir, 'deploy',
+                                  gen_archive_name(2)))
 
-            args, pyu_args = parser.parse_known_args(create_build_cmd(3))
-            b = Builder(args, pyu_args)
-            b.build()
-            pyu.process_packages()
-            pyu.sign_update()
         files = os.listdir(os.path.join(pyu_data_dir, 'deploy'))
-        assert len(files) == 6
-        assert os.path.exists(os.path.join(pyu_data_dir, 'deploy',
-                              archive_name))
-        assert os.path.exists(os.path.join(pyu_data_dir, 'files',
-                              archive_name))
+        assert len(files) == 4
