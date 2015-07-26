@@ -15,19 +15,11 @@
 # --------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import os
-
 
 class TConfig(object):
     bad_attr = 'bad attr'
     # If left None "Not_So_TUF" will be used
     APP_NAME = 'jms'
-
-    # Directory for updater to place verified updates.
-    # If left blank will be place in the users home
-    # directory Unix ".Not_So_TUF"
-    # windows "Not_So_Tuf"
-    APP_DATA_DIR = os.path.join('app_data')
 
     COMPANY_NAME = 'JMS LLC'
 

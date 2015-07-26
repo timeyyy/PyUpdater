@@ -2,7 +2,9 @@ import os
 import shutil
 import tempfile
 
+from pyupdater import PyUpdater
 from pyupdater.utils.storage import Storage
+from tconfig import TConfig
 
 import pytest
 
@@ -22,3 +24,11 @@ def cleandir(request):
 def db():
     db = Storage()
     return db
+
+
+@pytest.fixture
+def pyu():
+    t_config = TConfig()
+    t_config.DATA_DIR = os.getcwd()
+    pyu = PyUpdater(t_config)
+    return pyu

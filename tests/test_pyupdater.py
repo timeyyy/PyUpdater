@@ -25,10 +25,11 @@ from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
 
-cmd = ['build', '--app-name', 'myapp', '--app-version',
-       '0.1.0', 'app.py', '-F']
-cmd2 = ['build', '--app-name', 'myapp', '--app-version',
-        '0.1.1', 'app.py', '-F']
+
+def create_build_cmd(version):
+    cmd = ['build', '--app-name', 'myapp', '--app-version',
+           '0.1.{}'.format(version), 'app.py', '-F']
+    return cmd
 
 if get_system() == 'win':
     ext = '.zip'
@@ -36,15 +37,8 @@ else:
     ext = '.tar.gz'
 
 
-@pytest.mark.usefixtures('cleandir', 'db')
+@pytest.mark.usefixtures('cleandir', 'db', 'pyu')
 class TestPyUpdater(object):
-
-    @pytest.fixture
-    def pyu(self):
-        t_config = TConfig()
-        t_config.DATA_DIR = os.getcwd()
-        pyu = PyUpdater(t_config)
-        return pyu
 
     def test_dev_dir_none(self):
         updater = PyUpdaterConfig()
@@ -77,7 +71,7 @@ class TestPyUpdater(object):
             loader.save_config(pyu.config.copy())
             with open('app.py', 'w') as f:
                 f.write('print "Hello World"')
-            args, pyu_args = parser.parse_known_args(cmd)
+            args, pyu_args = parser.parse_known_args(create_build_cmd(0))
             b = Builder(args, pyu_args)
             b.build()
 
@@ -104,18 +98,25 @@ class TestPyUpdater(object):
             loader.save_config(pyu.config.copy())
             with open('app.py', 'w') as f:
                 f.write('print "Hello World"')
-            args, pyu_args = parser.parse_known_args(cmd)
+            args, pyu_args = parser.parse_known_args(create_build_cmd(1))
             b = Builder(args, pyu_args)
             b.build()
             pyu.process_packages()
+            pyu.sign_update()
 
-            args, pyu_args = parser.parse_known_args(cmd2)
+            args, pyu_args = parser.parse_known_args(create_build_cmd(2))
+            b = Builder(args, pyu_args)
+            b.build()
+            pyu.process_packages()
+            pyu.sign_update()
+
+            args, pyu_args = parser.parse_known_args(create_build_cmd(3))
             b = Builder(args, pyu_args)
             b.build()
             pyu.process_packages()
             pyu.sign_update()
         files = os.listdir(os.path.join(pyu_data_dir, 'deploy'))
-        assert len(files) == 3
+        assert len(files) == 6
         assert os.path.exists(os.path.join(pyu_data_dir, 'deploy',
                               archive_name))
         assert os.path.exists(os.path.join(pyu_data_dir, 'files',

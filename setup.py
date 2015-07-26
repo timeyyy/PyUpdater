@@ -91,7 +91,7 @@ setup(
         'pyupdater.vendor.PyInstaller.loader': ['rthooks.dat'],
         },
     include_package_data=True,
-    tests_require=['pytest', ],
+    tests_require=['pytest', extra_patch],
     cmdclass=cmd_class,
     install_requires=required,
     packages=find_packages(),
