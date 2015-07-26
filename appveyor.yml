@@ -56,9 +56,10 @@ environment:
       PYTHON_ARCH: "32"
       TESTENV: "py26"
 
+init:
+  - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
-  - cinst pywin32
   - ECHO "Filesystem root:"
   - ps: "ls \"C:/\""
 
@@ -77,6 +78,9 @@ install:
   # Check that we have the expected version and architecture for Python
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py'+$env:PYTHON_VERSION+'.exe', 'C:\Projects\pywin32-219.win32-py'+$env:PYTHON_VERSION+'.exe')
+  - "%CMD_IN_ENV% easy_install C:\\Projects\\pywin32-219.win32-py%PYTHON_VERSION%.exe"
 
   # Install the build dependencies of the project. If some dependencies contain
   # compiled extensions and are not provided as pre-built wheel packages,
