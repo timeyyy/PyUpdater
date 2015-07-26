@@ -21,3 +21,5 @@ htmlcov
 site
 
 .coverage.gw*
+
+.tox
