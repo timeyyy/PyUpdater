@@ -1,7 +1,5 @@
 platform:
   - x86
-  - Any CPU
-
 
 environment:
   global:
