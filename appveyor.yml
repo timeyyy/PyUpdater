@@ -58,6 +58,7 @@ environment:
 
 
 install:
+  - cinst pywin32
   - ECHO "Filesystem root:"
   - ps: "ls \"C:/\""
 
