@@ -2,3 +2,4 @@
 omit =
     pyupdater/_version.py
     pyupdater/vendor/*
+    pyupdater/hooks/*
