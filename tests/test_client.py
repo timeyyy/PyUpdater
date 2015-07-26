@@ -76,7 +76,7 @@ class TestClient(object):
         assert update.is_downloaded() is False
         assert update.download() is True
         assert update.is_downloaded() is True
-        if not get_system == 'win32':
+        if get_system() != 'win':
             assert update.extract() is True
 
     def test_download_http(client):
@@ -94,5 +94,5 @@ class TestClient(object):
         update = client.update_check('jms', '0.0.1')
         assert update is not None
         assert update.download() is True
-        if not get_system == 'win32':
+        if get_system() != 'win':
             assert update.extract() is True
