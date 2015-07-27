@@ -89,7 +89,7 @@ def clean(args):  # pragma: no cover
         if answer is True:
             _clean()
         else:
-            log.info('Clean canceled.')
+            log.info('Clean aborted!')
 
 
 # Remove all traces of PyUpdater
@@ -129,8 +129,21 @@ def init(args):  # pragma: no cover
         sys.exit('Not an empty PyUpdater repository')
 
 
+def keys(args):
+    if args.yes is True:
+        _keys(args)
+
+    else:
+        answer = ask_yes_no('Are you sure you want to revoke?',
+                            default='no')
+        if answer is True:
+            _keys(args)
+        else:
+            log.info('Revoke aborted!')
+
+
 # Revokes keys
-def keys(args):  # pragma: no cover
+def _keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
     pyu = PyUpdater(config, db)
