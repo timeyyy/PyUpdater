@@ -161,6 +161,7 @@ def upload_debug_info(args):  # pragma: no cover
         payload['files'][filename] = {'content': data}
 
     def _upload(data):
+        log.debug(json.dumps(data, indent=2))
         api = 'https://api.github.com/'
         gist_url = api + 'gists'
         headers = {"Accept": "application/vnd.github.v3+json"}
