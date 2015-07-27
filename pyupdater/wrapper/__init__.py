@@ -70,6 +70,11 @@ log.addHandler(sh)
 db = Storage()
 loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
+rfh = logging.handlers.RotatingFileHandler(LOG_DIR, 'pyu.log',
+                                           maxBytes=30000, backupCount=3)
+rfh.setFormatter(log_formatter())
+rfh.setLevel(logging.DEBUG)
+log.addHandler(rfh)
 
 
 # Get permission before deleting PyUpdater repo
