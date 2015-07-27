@@ -70,6 +70,12 @@ log.addHandler(sh)
 db = Storage()
 loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
+log_file = os.path.join(LOG_DIR, settings.LOG_FILENAME_DEBUG)
+rfh = logging.handlers.RotatingFileHandler(log_file, maxBytes=35000,
+                                           backupCount=2)
+rfh.setFormatter(log_formatter())
+rfh.setLevel(logging.DEBUG)
+log.addHandler(rfh)
 
 
 # Get permission before deleting PyUpdater repo
@@ -83,7 +89,7 @@ def clean(args):  # pragma: no cover
         if answer is True:
             _clean()
         else:
-            log.info('Clean canceled.')
+            log.info('Clean aborted!')
 
 
 # Remove all traces of PyUpdater
@@ -123,8 +129,21 @@ def init(args):  # pragma: no cover
         sys.exit('Not an empty PyUpdater repository')
 
 
+def keys(args):
+    if args.yes is True:
+        _keys(args)
+
+    else:
+        answer = ask_yes_no('Are you sure you want to revoke?',
+                            default='no')
+        if answer is True:
+            _keys(args)
+        else:
+            log.info('Revoke aborted!')
+
+
 # Revokes keys
-def keys(args):  # pragma: no cover
+def _keys(args):  # pragma: no cover
     check_repo()
     config = loader.load_config()
     pyu = PyUpdater(config, db)
@@ -155,24 +174,37 @@ def upload_debug_info(args):  # pragma: no cover
         payload['files'][filename] = {'content': data}
 
     def _upload(data):
+        log.debug(json.dumps(data, indent=2))
         api = 'https://api.github.com/'
         gist_url = api + 'gists'
         headers = {"Accept": "application/vnd.github.v3+json"}
         r = requests.post(gist_url, headers=headers, data=json.dumps(data))
-        return r.json()['html_url']
+        try:
+            url = r.json()['html_url']
+        except Exception as err:
+            log.debug(str(err), exc_info=True)
+            log.debug(json.dumps(r.json(), indent=2))
+            url = None
+        return url
 
     upload_data = {'files': {}}
     with ChDir(LOG_DIR):
-        temp_files = os.listdir(CWD)
+        temp_files = os.listdir(os.getcwd())
+        if len(temp_files) == 0:
+            log.info('No log files to collect')
+            return
         log.info('Collecting logs')
         for t in temp_files:
             if t.startswith(settings.LOG_FILENAME_DEBUG):
                 log.debug('Adding {} to log'.format(t))
                 _add_file(upload_data, t)
         log.info('Found all logs')
-    log.info('Log export complete')
-    url = _upload(upload_data)
-    print url
+        url = _upload(upload_data)
+    if url is None:
+        log.error('Could not upload debug info to github')
+    else:
+        log.info('Log export complete')
+        log.info(url)
 
 
 def pkg(args):  # pragma: no cover

@@ -17,7 +17,7 @@ import argparse
 
 
 def make_parser():
-    parser = argparse.ArgumentParser(usage='%(prog)s <command> [opts]')
+    parser = argparse.ArgumentParser(usage='%(prog)s ')
     return parser
 
 
@@ -201,6 +201,11 @@ def add_keys_parser(subparsers):
                              'keys db. Verson file will no longer be signed '
                              'by revoked keys. Default 1',
                              type=int, default=1)
+    keys_parser.add_argument('--show-private', help='Prints private key to '
+                             'console when revoking',
+                             action='store_true', dest='private')
+    keys_parser.add_argument('-y', '--yes', help='Confirms revoking of key(s)',
+                             action='store_true')
 
 
 def add_debug_parser(subparsers):

@@ -89,7 +89,7 @@ class KeyDB(object):
             if v['revoked'] is False:
                 order.append(int(k))
             else:
-                log.debug('Revoked key'.format(len(k)))
+                log.debug('Revoked key: {}'.format(k))
         order = sorted(order)
         for o in order:
             try:

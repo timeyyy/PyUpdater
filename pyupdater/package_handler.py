@@ -268,7 +268,13 @@ class PackageHandler(object):
         if len(patch_manifest) < 1:
             return pool_output
         log.info('Starting patch creation')
-        cpu_count = multiprocessing.cpu_count() * 2
+        try:
+            cpu_count = multiprocessing.cpu_count() * 2
+        except Exception as err:
+            log.debug(str(err), exc_info=True)
+            log.warning('Cannot get cpu count from os. Using default 2')
+            cpu_count = 2
+
         pool = multiprocessing.Pool(processes=cpu_count)
         pool_output = pool.map(_make_patch, patch_manifest)
         return pool_output

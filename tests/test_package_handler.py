@@ -28,7 +28,7 @@ from tconfig import TConfig
 s_dir = settings.USER_DATA_FOLDER
 
 
-@pytest.mark.usefixtures('cleandir', 'db')
+@pytest.mark.usefixtures('cleandir', 'db', 'pyu')
 class TestPackageHanlder(object):
 
     def test_init(self, db):
