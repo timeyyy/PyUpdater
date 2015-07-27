@@ -179,11 +179,11 @@ def upload_debug_info(args):  # pragma: no cover
                 log.debug('Adding {} to log'.format(t))
                 _add_file(upload_data, t)
         log.info('Found all logs')
-    log.info('Log export complete')
-    url = _upload(upload_data)
+        url = _upload(upload_data)
     if url is None:
         log.error('Could not upload debug info to github')
     else:
+        log.info('Log export complete')
         log.info(url)
 
 
