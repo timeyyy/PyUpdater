@@ -203,7 +203,7 @@ def add_keys_parser(subparsers):
                              type=int, default=1)
     keys_parser.add_argument('--show-private', help='Prints private key to '
                              'console when revoking',
-                             action='store_true')
+                             action='store_true', dest='private')
 
 
 def add_debug_parser(subparsers):
