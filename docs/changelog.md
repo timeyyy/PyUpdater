@@ -1,8 +1,36 @@
 # Changelog
 
-## v0.23.4 - Master
+## v1.24 - Master
 ##### This version is not yet released and is under active development.
 
+Added
+
+  - CI testing on windows
+  - Conformation for revoking keys
+  - Tox testing
+
+Updated
+
+  - Some py3 compat
+  - Logging errors for 3rd party services
+  - Info messages
+  - Cli help messages
+  - Tests for windows
+  - Optimized tests
+    - Centralized PyUpdater object creation
+    - Test filename generators
+  - Libs
+    - urllib3 1.11
+
+Fixed
+
+  - Error when not able to get cpu count on windows
+  - Writing debug
+  - Uploading debug logs
+
+Removed
+
+  - Some unused code
 
 ## v0.23.3 - 2015/07/21
 
