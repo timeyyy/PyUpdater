@@ -176,7 +176,7 @@ def upload_debug_info(args):  # pragma: no cover
 
     upload_data = {'files': {}}
     with ChDir(LOG_DIR):
-        temp_files = os.listdir(CWD)
+        temp_files = os.listdir(os.getcwd())
         if len(temp_files) == 0:
             log.info('No log files to collect')
             return
