@@ -201,6 +201,9 @@ def add_keys_parser(subparsers):
                              'keys db. Verson file will no longer be signed '
                              'by revoked keys. Default 1',
                              type=int, default=1)
+    keys_parser.add_argument('--show-private', help='Prints private key to '
+                             'console when revoking',
+                             action='store_true')
 
 
 def add_debug_parser(subparsers):

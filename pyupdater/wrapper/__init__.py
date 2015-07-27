@@ -159,7 +159,13 @@ def upload_debug_info(args):  # pragma: no cover
         gist_url = api + 'gists'
         headers = {"Accept": "application/vnd.github.v3+json"}
         r = requests.post(gist_url, headers=headers, data=json.dumps(data))
-        return r.json()['html_url']
+        try:
+            url = r.json()['html_url']
+        except Exception as err:
+            log.debug(str(err), exc_info=True)
+            log.debug(r.json())
+            url = None
+        return url
 
     upload_data = {'files': {}}
     with ChDir(LOG_DIR):
@@ -172,7 +178,10 @@ def upload_debug_info(args):  # pragma: no cover
         log.info('Found all logs')
     log.info('Log export complete')
     url = _upload(upload_data)
-    print url
+    if url is None:
+        log.error('Could not upload debug info to github')
+    else:
+        log.info(url)
 
 
 def pkg(args):  # pragma: no cover
