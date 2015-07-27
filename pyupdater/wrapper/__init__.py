@@ -167,9 +167,12 @@ def upload_debug_info(args):  # pragma: no cover
             url = None
         return url
 
-    upload_data = {str('files'): {}}
+    upload_data = {'files': {}}
     with ChDir(LOG_DIR):
         temp_files = os.listdir(CWD)
+        if len(temp_files) == 0:
+            log.info('No log files to collect')
+            return
         log.info('Collecting logs')
         for t in temp_files:
             if t.startswith(settings.LOG_FILENAME_DEBUG):
