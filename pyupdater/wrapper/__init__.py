@@ -163,7 +163,7 @@ def upload_debug_info(args):  # pragma: no cover
             url = r.json()['html_url']
         except Exception as err:
             log.debug(str(err), exc_info=True)
-            log.debug(r.json())
+            log.debug(json.dumps(r.json(), indent=2))
             url = None
         return url
 
