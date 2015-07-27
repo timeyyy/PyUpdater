@@ -167,7 +167,7 @@ def upload_debug_info(args):  # pragma: no cover
             url = None
         return url
 
-    upload_data = {'files': {}}
+    upload_data = {str('files'): {}}
     with ChDir(LOG_DIR):
         temp_files = os.listdir(CWD)
         log.info('Collecting logs')
