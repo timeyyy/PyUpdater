@@ -70,7 +70,7 @@ log.addHandler(sh)
 db = Storage()
 loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
-log_file = os.path.join(LOG_DIR, 'pyu.log')
+log_file = os.path.join(LOG_DIR, settings.LOG_FILENAME_DEBUG)
 rfh = logging.handlers.RotatingFileHandler(log_file, maxBytes=30000,
                                            backupCount=3)
 rfh.setFormatter(log_formatter())
