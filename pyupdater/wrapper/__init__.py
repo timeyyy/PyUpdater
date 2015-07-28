@@ -307,6 +307,18 @@ def upload(args):  # pragma: no cover
     db._sync_db()
 
 
+def _make_spec(args, pyi_args):
+    check_repo()
+    builder = Builder(args, pyi_args)
+    builder.make_spec()
+
+
+def _build(args, pyi_args):
+    check_repo()
+    builder = Builder(args, pyi_args)
+    builder.build()
+
+
 def _real_main(args):  # pragma: no cover
     if args is None:
         args = sys.argv[1:]
@@ -314,9 +326,7 @@ def _real_main(args):  # pragma: no cover
     args, pyi_args = parser.parse_known_args(args)
     cmd = args.command
     if cmd == 'build':
-        check_repo()
-        builder = Builder(args, pyi_args)
-        builder.build()
+        _build(args, pyi_args)
     elif cmd == 'clean':
         clean(args)
     elif cmd == 'init':
@@ -332,9 +342,7 @@ def _real_main(args):  # pragma: no cover
     elif cmd == 'collect-debug-info':
         upload_debug_info(args)
     elif cmd == 'make-spec':
-        check_repo()
-        builder = Builder(args, pyi_args)
-        builder.make_spec()
+        _make_spec(args, pyi_args)
     elif cmd == 'pkg':
         pkg(args)
     elif cmd == 'settings':

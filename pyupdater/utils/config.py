@@ -23,6 +23,18 @@ from pyupdater import settings
 log = logging.getLogger(__name__)
 
 
+# Used to transistion from pickle data to plain json
+class TransistionDict(dict):
+    def __getattribute__(self, name):
+        try:
+            dict.__getitem__(self, name)
+        except AttributeError:
+            raise KeyError
+
+    def __setattr__(self, name, value):
+        dict.__setitem__(self, name, value)
+
+
 class Loader(object):
     """Loads &  saves config file
     """
@@ -33,14 +45,25 @@ class Loader(object):
         self.password = os.environ.get(settings.USER_PASS_ENV)
         self.config_key = settings.CONFIG_DB_KEY_APP_CONFIG
 
+    def _convert_obj_to_dict(self, obj):
+        config = {}
+        for k, v in obj.__dict__.items():
+            config[k] = v
+        return config
+
     def load_config(self):
         """Loads config from database
 
             Returns (obj): Config object
         """
         config_data = self.db.load(self.config_key)
-        config_data.DATA_DIR = os.getcwd()
-        return config_data
+        if isinstance(config_data, dict) is False:
+            config_data = self._convert_obj_to_json(config_data)
+        backwards_compat_config = TransistionDict()
+        for k, v in config_data.items():
+            backwards_compat_config[k] = v
+        backwards_compat_config.DATA_DIR = os.getcwd()
+        return backwards_compat_config
 
     def save_config(self, obj):
         """Saves config file to pyupdater database

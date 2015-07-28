@@ -77,7 +77,7 @@ class Storage(object):
             self.load_db()
         log.debug('Syncing db to filesystem')
         with open(self.filename, 'w') as f:
-            f.write(json.dumps(self.db, indent=2, sort_keys=True))
+            f.write(json.dumps(self.db, indent=4, sort_keys=True))
 
     def _export(self):
         export = {}
