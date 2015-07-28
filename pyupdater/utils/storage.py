@@ -38,6 +38,9 @@ class Storage(object):
         if data_dir is None:
             data_dir = os.getcwd()
         self.config_dir = os.path.join(data_dir, settings.CONFIG_DATA_FOLDER)
+        if not os.path.exists(self.config_dir):
+            log.info('Creating config dir')
+            os.mkdir(self.config_dir)
         log.debug('Config Dir: {}'.format(self.config_dir))
         self.filename = os.path.join(self.config_dir,
                                      settings.CONFIG_FILE_USER)
@@ -48,10 +51,6 @@ class Storage(object):
 
     def load_db(self):
         "Loads database into memory."
-        if not os.path.exists(self.config_dir):
-            log.info('Creating config dir')
-            os.makedirs(self.config_dir)
-
         if not os.path.exists(self.filename):
             self.db = {}
             log.debug('Created new config data file')
@@ -76,10 +75,19 @@ class Storage(object):
     def _sync_db(self):
         if self.db is None:
             self.load_db()
-        if os.path.exists(self.config_dir):
-            log.debug('Syncing db to filesystem')
-            with open(self.filename, 'w') as f:
-                f.write(json.dumps(self.db, indent=2, sort_keys=True))
+        log.debug('Syncing db to filesystem')
+        with open(self.filename, 'w') as f:
+            f.write(json.dumps(self.db, indent=2, sort_keys=True))
+
+    def _export(self):
+        export = {}
+        if self.db is None:
+            self.load_db()
+        for k, v in self.db.items():
+            export[k] = pickle.loads(v)
+        print export
+        with open('export.db', 'w') as f:
+            f.write(str(export))
 
     def save(self, key, value):
         """Saves key & value to database
