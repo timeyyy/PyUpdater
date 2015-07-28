@@ -80,14 +80,8 @@ class Storage(object):
             f.write(json.dumps(self.db, indent=4, sort_keys=True))
 
     def _export(self):
-        export = {}
-        if self.db is None:
-            self.load_db()
-        for k, v in self.db.items():
-            export[k] = pickle.loads(v)
-        print export
         with open('export.db', 'w') as f:
-            f.write(str(export))
+            f.write(json.dumps(self.db))
 
     def save(self, key, value):
         """Saves key & value to database
@@ -107,7 +101,7 @@ class Storage(object):
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
 
-        self.db[key] = pickle.dumps(value)
+        self.db[key] = value
 
     def load(self, key):
         """Loads value for given key
@@ -129,7 +123,4 @@ class Storage(object):
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
 
-        value = self.db.get(key)
-        if value is not None:
-            value = pickle.loads(value)
-        return value
+        return self.db.get(key)

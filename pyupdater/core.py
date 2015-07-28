@@ -20,7 +20,7 @@ import os
 from pyupdater.key_handler import KeyHandler
 from pyupdater.package_handler import PackageHandler
 from pyupdater.uploader import Uploader
-from pyupdater.utils.config import PyUpdaterConfig
+from pyupdater.utils.config import TransistionDict
 from pyupdater.utils.storage import Storage
 
 
@@ -32,7 +32,7 @@ class Core(object):
             config (obj): config object
     """
     def __init__(self, config=None, db=None):
-        self.config = PyUpdaterConfig()
+        self.config = TransistionDict()
         # Important to keep this before updating config
         if config is not None:
             self.update_config(config, db)
@@ -53,7 +53,7 @@ class Core(object):
             self.db = Storage(config.DATA_DIR)
         else:
             self.db = db
-        self.config.update_config(config)
+        self.config.from_object(config)
         self._update(self.config, self.db)
 
     def _update(self, config, db):

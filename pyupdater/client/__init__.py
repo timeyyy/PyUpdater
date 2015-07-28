@@ -24,7 +24,7 @@ from pyupdater.utils import (convert_to_list,
                              gzip_decompress,
                              lazy_import,
                              Version)
-from pyupdater.utils.config import PyUpdaterConfig
+from pyupdater.utils.config import TransistionDict
 
 
 @lazy_import
@@ -137,7 +137,8 @@ class Client(object):
         """
         # Used to add missing required information
         # i.e. APP_NAME
-        pyi_config = PyUpdaterConfig(obj)
+        pyi_config = TransistionDict()
+        pyi_config.from_object(obj)
         config = pyi_config.copy()
 
         self.FROZEN = jms_utils.app.FROZEN

@@ -20,7 +20,7 @@ from jms_utils.paths import ChDir
 from jms_utils.system import get_system
 
 from pyupdater import PyUpdater
-from pyupdater.utils.config import Loader, PyUpdaterConfig
+from pyupdater.utils.config import Loader, TransistionDict
 from pyupdater.wrapper.builder import Builder
 from pyupdater.wrapper.options import get_parser
 from tconfig import TConfig
@@ -41,10 +41,10 @@ else:
 class TestPyUpdater(object):
 
     def test_dev_dir_none(self):
-        updater = PyUpdaterConfig()
         myconfig = TConfig()
         myconfig.APP_NAME = None
-        updater.update_config(myconfig)
+        updater = TransistionDict()
+        updater.from_object(myconfig)
         assert updater['APP_NAME'] == 'PyUpdater App'
 
     def test_setup(self):
@@ -90,8 +90,7 @@ class TestPyUpdater(object):
 
         def gen_archive_name(version):
             archive_name = 'myapp-{}-0.1.{}{}'.format(get_system(),
-                                                     version,
-                                                     ext)
+                                                      version, ext)
             return archive_name
 
         parser = get_parser()
