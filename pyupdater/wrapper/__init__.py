@@ -67,8 +67,6 @@ sh.setFormatter(fmt)
 sh.setLevel(logging.INFO)
 log.addHandler(sh)
 
-db = Storage()
-loader = Loader(db)
 LOG_DIR = user_log_dir(settings.APP_NAME, settings.APP_AUTHOR)
 log_file = os.path.join(LOG_DIR, settings.LOG_FILENAME_DEBUG)
 rfh = logging.handlers.RotatingFileHandler(log_file, maxBytes=35000,
@@ -111,6 +109,8 @@ def _clean():
 
 # Initialize PyUpdater repo
 def init(args):  # pragma: no cover
+    db = Storage()
+    loader = Loader(db)
     count = args.count
     if count > 10:
         sys.exit('Cannot be more then 10')
@@ -125,6 +125,7 @@ def init(args):  # pragma: no cover
         config.PUBLIC_KEYS = pyu.get_public_keys()
         loader.save_config(config)
         log.info('Setup complete')
+        db._sync_db()
     else:
         sys.exit('Not an empty PyUpdater repository')
 
@@ -145,6 +146,8 @@ def keys(args):
 # Revokes keys
 def _keys(args):  # pragma: no cover
     check_repo()
+    db = Storage()
+    loader = Loader(db)
     config = loader.load_config()
     pyu = PyUpdater(config, db)
     if args.revoke is not None:
@@ -162,7 +165,8 @@ def _keys(args):  # pragma: no cover
             else:
                 log.info('Private Key: * Next time to show private key '
                          'use --show-private *')
-    loader.save_config(config)
+        loader.save_config(config)
+        db._sync_db()
 
 
 def upload_debug_info(args):  # pragma: no cover
@@ -209,6 +213,8 @@ def upload_debug_info(args):  # pragma: no cover
 
 def pkg(args):  # pragma: no cover
     check_repo()
+    db = Storage()
+    loader = Loader(db)
     pyu = PyUpdater(loader.load_config(), db)
     if args.process is False and args.sign is False:
         sys.exit('You must specify a command')
@@ -221,19 +227,25 @@ def pkg(args):  # pragma: no cover
         log.info('Signing packages...')
         pyu.sign_update()
         log.info('Signing packages complete')
+    db._sync_db()
 
 
 def update(args):  # pragma: no cover
     check_repo()
+    db = Storage()
+    loader = Loader(db)
     log.info('Starting repo update')
     config = loader.load_config()
     repo_update(config)
     loader.save_config(config)
     log.info('Reconfig complete')
+    db._sync_db()
 
 
 def setter(args):  # pragma: no cover
     check_repo()
+    db = Storage()
+    loader = Loader(db)
     config = loader.load_config()
     if args.appname is True:
         setup_appname(config)
@@ -249,44 +261,50 @@ def setter(args):  # pragma: no cover
         setup_object_bucket(config)
     loader.save_config(config)
     log.info('Settings update complete')
+    db._sync_db()
 
 
 def upload(args):  # pragma: no cover
+    error = False
     check_repo()
+    db = Storage()
+    loader = Loader(db)
     upload_service = args.service
     if upload_service is None:
         log.error('Must provide service name')
-        sys.exit(1)
+        error = True
 
-    pyu = PyUpdater(loader.load_config(), db)
-
-    try:
-        pyu.set_uploader(upload_service)
-    except UploaderError as err:
-        log.error(str(err))
-        sys.exit(1)
-    except UploaderPluginError as err:
-        log.debug(str(err))
-        mgr = stevedore.ExtensionManager(settings.UPLOAD_PLUGIN_NAMESPACE)
-        plugin_names = mgr.names()
-        log.debug('Plugin names: {}'.format(plugin_names))
-        if len(plugin_names) == 0:
-            msg = ('*** No upload plugins instaled! ***\nYou can install the '
-                   'aws s3 plugin with\n$ pip install PyUpdater[s3]\n\nOr '
-                   'the scp plugin with\n$ pip install PyUpdater[scp]')
-        else:
-            msg = ('Invalid Uploader\n\nAvailable options:\n'
-                   '{}'.format(' '.join(plugin_names)))
-        log.error(msg)
-        sys.exit(1)
-    try:
-        pyu.upload()
-    except Exception as e:
-        msg = ('Looks like you forgot to add USERNAME '
-               'and/or REMOTE_DIR')
-        log.debug(str(e), exc_info=True)
-        log.error(msg)
-        sys.exit(1)
+    if error is False:
+        pyu = PyUpdater(loader.load_config(), db)
+        try:
+            pyu.set_uploader(upload_service)
+        except UploaderError as err:
+            log.error(str(err))
+            error = True
+        except UploaderPluginError as err:
+            log.debug(str(err))
+            error = True
+            mgr = stevedore.ExtensionManager(settings.UPLOAD_PLUGIN_NAMESPACE)
+            plugin_names = mgr.names()
+            log.debug('Plugin names: {}'.format(plugin_names))
+            if len(plugin_names) == 0:
+                msg = ('*** No upload plugins instaled! ***\nYou can install '
+                       'the aws s3 plugin with\n$ pip install PyUpdater'
+                       '[s3]\n\nOr the scp plugin with\n$ pip install '
+                       'PyUpdater[scp]')
+            else:
+                msg = ('Invalid Uploader\n\nAvailable options:\n'
+                       '{}'.format(' '.join(plugin_names)))
+            log.error(msg)
+    if error is False:
+        try:
+            pyu.upload()
+        except Exception as e:
+            msg = ('Looks like you forgot to add USERNAME '
+                   'and/or REMOTE_DIR')
+            log.debug(str(e), exc_info=True)
+            log.error(msg)
+    db._sync_db()
 
 
 def _real_main(args):  # pragma: no cover
@@ -301,7 +319,6 @@ def _real_main(args):  # pragma: no cover
         builder.build()
     elif cmd == 'clean':
         clean(args)
-        return True
     elif cmd == 'init':
         init(args)
     elif cmd == 'keys':
@@ -334,22 +351,15 @@ def _real_main(args):  # pragma: no cover
 
 
 def main(args=None):  # pragma: no cover
-    exit = 0
-    clean = None
     try:
-        clean = _real_main(args)
+        _real_main(args)
     except KeyboardInterrupt:
         print('\n')
         msg = 'Exited by user'
         log.warning(msg)
-        exit = 1
     except Exception as err:
-        exit = 1
         log.debug(str(err), exc_info=True)
         log.error(str(err))
-    if clean is None:
-        db._sync_db()
-    sys.exit(exit)
 
 if __name__ == '__main__':  # pragma: no cover
     args = sys.argv[1:]
