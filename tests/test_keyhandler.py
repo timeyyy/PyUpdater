@@ -21,38 +21,43 @@ import pytest
 
 from pyupdater.utils.storage import Storage
 from pyupdater.utils.keydb import KeyDB
-db = Storage()
 
 
-# @pytest.mark.usefixtures("cleandir")
-# class TestKeyDB(object):
+@pytest.mark.usefixtures("cleandir")
+class TestKeyDB(object):
 
-#     def test_add(self):
-#         keydb = KeyDB(db, load=True)
-#         assert len(os.listdir(os.getcwd())) == 1
-#         keydb.add_key('public1', 'private1')
-#         keydb.add_key('public2', 'private2')
-#         assert len(keydb.get_public_keys()) == 2
-#         assert keydb.get_public_keys()[0] == 'public1'
-#         assert keydb.get_public_keys()[1] == 'public2'
+    def test_add(self):
+        db = Storage()
+        keydb = KeyDB(db, load=True)
+        db._sync_db()
+        assert len(os.listdir(os.getcwd())) == 1
+        keydb.add_key('public1', 'private1')
+        keydb.add_key('public2', 'private2')
+        assert len(keydb.get_public_keys()) == 2
+        assert keydb.get_public_keys()[0] == 'public1'
+        assert keydb.get_public_keys()[1] == 'public2'
 
-#     def test_get_revoked_key(self):
-#         keydb = KeyDB(db, load=True)
-#         assert len(os.listdir(os.getcwd())) == 1
-#         assert keydb.get_revoked_key() is None
-#         keydb.add_key('public1', 'private1')
-#         keydb.add_key('public2', 'private2')
-#         assert len(keydb.get_public_keys()) == 2
-#         keydb.revoke_key(count=2)
-#         assert len(keydb.get_public_keys()) == 0
+    def test_get_revoked_key(self):
+        db = Storage()
+        keydb = KeyDB(db, load=True)
+        db._sync_db()
+        assert len(os.listdir(os.getcwd())) == 1
+        assert keydb.get_revoked_key() is None
+        keydb.add_key('public1', 'private1')
+        keydb.add_key('public2', 'private2')
+        assert len(keydb.get_public_keys()) == 2
+        keydb.revoke_key(count=2)
+        assert len(keydb.get_public_keys()) == 0
 
-#     def test_revoking_break(self):
-#         keydb = KeyDB(db, load=False)
-#         assert len(os.listdir(os.getcwd())) == 1
-#         keydb.add_key('public1', 'private1')
-#         keydb.add_key('public2', 'private2')
-#         assert keydb.get_revoked_key() is None
-#         assert len(keydb.get_public_keys()) == 2
-#         keydb.revoke_key(count=1)
-#         assert len(keydb.get_public_keys()) == 1
-#         assert keydb.get_revoked_key()['public'] == 'public1'
+    def test_revoking_break(self):
+        db = Storage()
+        keydb = KeyDB(db, load=False)
+        db._sync_db()
+        assert len(os.listdir(os.getcwd())) == 1
+        keydb.add_key('public1', 'private1')
+        keydb.add_key('public2', 'private2')
+        assert keydb.get_revoked_key() is None
+        assert len(keydb.get_public_keys()) == 2
+        keydb.revoke_key(count=1)
+        assert len(keydb.get_public_keys()) == 1
+        assert keydb.get_revoked_key()['public'] == 'public1'
