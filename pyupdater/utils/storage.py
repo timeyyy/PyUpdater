@@ -84,7 +84,7 @@ class Storage(object):
         if self.db is None:
             self.load_db()
         for k, v in self.db.items():
-            export[k] = v
+            export[k] = pickle.loads(v)
         print export
         with open('export.db', 'w') as f:
             f.write(str(export))
