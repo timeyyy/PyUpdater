@@ -87,7 +87,7 @@ class Storage(object):
             export[k] = v
         print export
         with open('export.db', 'w') as f:
-            f.write(export)
+            f.write(str(export))
 
     def save(self, key, value):
         """Saves key & value to database
