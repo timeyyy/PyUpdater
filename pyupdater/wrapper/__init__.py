@@ -150,8 +150,8 @@ def _keys(args):  # pragma: no cover
     loader = Loader(db)
     config = loader.load_config()
     pyu = PyUpdater(config, db)
-    if args.revoke is not None:
-        count = args.revoke
+    if args.count is not None:
+        count = args.count
         pyu.revoke_key(count)
         config.PUBLIC_KEYS = pyu.get_public_keys()
         key = pyu.get_recent_revoked_key()
