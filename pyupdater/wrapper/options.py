@@ -196,10 +196,10 @@ def add_init_parser(subparsers):
 
 def add_keys_parser(subparsers):
     keys_parser = subparsers.add_parser('keys', help='Manage signing keys')
-    keys_parser.add_argument('--revoke', help='Revokes oldest signing key & '
-                             'adds the same amount of new good key pairs to '
-                             'keys db. Verson file will no longer be signed '
-                             'by revoked keys. Default 1',
+    keys_parser.add_argument('-c', '--count', help='Revokes oldest signing '
+                             'key & adds the same amount of new good key '
+                             'pairs to keys db. Verson file will no longer '
+                             'be signed by revoked keys. Default 1',
                              type=int, default=1)
     keys_parser.add_argument('--show-private', help='Prints private key to '
                              'console when revoking',
