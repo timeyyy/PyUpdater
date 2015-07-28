@@ -15,6 +15,8 @@
 # --------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+import threading
+
 from pyupdater.client.downloader import FileDownloader
 from pyupdater.client.patcher import Patcher
 from pyupdater import settings
@@ -104,6 +106,12 @@ class LibUpdate(object):
                                           settings.UPDATE_FOLDER)
         self.verify = data.get('verify', True)
         self.current_app_dir = os.path.dirname(sys.argv[0])
+        self.status = False
+        # If user is using async download this will be True.
+        # Future calls to an download methods will not run
+        # until the current download is complete. Which will
+        # set this back to False.
+        self._is_downloading = False
 
     def is_downloaded(self):
         """Returns (bool):
@@ -112,11 +120,22 @@ class LibUpdate(object):
 
             False: File hasn't already been downloaded.
         """
-        if self.name is None:
+        if self.name is None or self._is_downloading is True:
             return False
         return self._is_downloaded(self.name)
 
-    def download(self):
+    def download(self, async=False):
+        if async is True:
+            if self._is_downloading is False:
+                self._is_downloading = True
+                download = threading.Thread(target=self._download)
+                download.start()
+        else:
+            if self._is_downloading is False:
+                self._is_downloading = True
+                return self._download()
+
+    def _download(self):
         """Will download the package update that was referenced
         with check update.
 
@@ -130,32 +149,33 @@ class LibUpdate(object):
 
                 False - Download failed
         """
-        status = False
         if self.name is not None:
             # Tested elsewhere
             if self._is_downloaded(self.name) is True:  # pragma: no cover
-                status = True
+                self.status = True
+                return self.status
             else:
                 log.info('Starting patch download')
                 patch_success = self._patch_update(self.name, self.version)
                 # Tested elsewhere
                 if patch_success:  # pragma: no cover
-                    status = True
+                    self.status = True
                     log.info('Patch download successful')
                 else:
                     log.error('Patch update failed')
                     log.info('Starting full download')
                     update_success = self._full_update(self.name)
                     if update_success:
-                        status = True
+                        self.status = True
                         log.info('Full download successful')
                     else:  # pragma: no cover
                         log.error('Full download failed')
-        # Removes old versions, of update being checked, from
-        # updates folder.  Since we only start patching from
-        # the current binary this shouldn't be a problem.
-        self._remove_old_updates()
-        return status
+                # Removes old versions, of update being checked, from
+                # updates folder.  Since we only start patching from
+                # the current binary this shouldn't be a problem.
+                self._remove_old_updates()
+                self._is_downloading = False
+                return self.status
 
     def extract(self):
         """Will extract archived update and leave in update folder.
@@ -235,15 +255,19 @@ class LibUpdate(object):
         filename = get_filename(name, latest, self.platform, self.easy_data)
 
         hash_key = '{}*{}*{}*{}*{}'.format(self.updates_key, name,
-                                            latest, self.platform,
-                                            'file_hash')
+                                           latest, self.platform,
+                                           'file_hash')
         _hash = self.easy_data.get(hash_key)
         # Comparing file hashes to ensure security
         with jms_utils.paths.ChDir(self.update_folder):
             if not os.path.exists(filename):
                 return False
-            with open(filename, 'rb') as f:
-                data = f.read()
+            try:
+                with open(filename, 'rb') as f:
+                    data = f.read()
+            except Exception as err:
+                log.debug(err, exc_info=True)
+                return False
             if _hash == get_hash(data):
                 return True
             else:
@@ -287,8 +311,8 @@ class LibUpdate(object):
         filename = get_filename(name, latest, self.platform, self.easy_data)
 
         hash_key = '{}*{}*{}*{}*{}'.format(self.updates_key, name,
-                                            latest, self.platform,
-                                            'file_hash')
+                                           latest, self.platform,
+                                           'file_hash')
         file_hash = self.easy_data.get(hash_key)
 
         with jms_utils.paths.ChDir(self.update_folder):

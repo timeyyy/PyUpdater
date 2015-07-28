@@ -16,6 +16,7 @@
 from __future__ import unicode_literals
 
 import os
+import time
 
 from jms_utils.system import get_system
 import pytest
@@ -24,16 +25,8 @@ from pyupdater.client import Client
 from tconfig import TConfig
 
 
-@pytest.mark.usefixtures("cleandir")
+@pytest.mark.usefixtures("cleandir", "client")
 class TestClient(object):
-
-    @pytest.fixture
-    def client(self):
-        t_config = TConfig()
-        t_config.DATA_DIR = os.getcwd()
-        client = Client(t_config, refresh=True, test=True)
-        client.FROZEN = True
-        return client
 
     def test_data_dir(self, client):
         assert os.path.exists(client.data_dir)
@@ -79,6 +72,27 @@ class TestClient(object):
         if get_system() != 'win':
             assert update.extract() is True
 
+    def test_download_async_https(self, client):
+        update = client.update_check(client.app_name, '0.0.1')
+        assert update is not None
+        assert update.app_name == 'jms'
+        temp_name = update.name
+        update.name = None
+        assert update.is_downloaded() is False
+        update.name = temp_name
+        assert update.is_downloaded() is False
+        update.download(async=True)
+        count = 0
+        while count < 61:
+            if update.is_downloaded() is True:
+                break
+            time.sleep(1)
+            count += 1
+        assert update.is_downloaded() is True
+
+        if get_system() != 'win':
+            assert update.extract() is True
+
     def test_download_http(client):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
@@ -88,6 +102,42 @@ class TestClient(object):
         assert update is not None
         assert update.app_name == 'jms'
         assert update.download() is True
+        assert update.is_downloaded() is True
+
+    def test_download_async_http(client):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.VERIFY_SERVER_CERT = False
+        client = Client(t_config, refresh=True, test=True)
+        update = client.update_check(client.app_name, '0.0.1')
+        assert update is not None
+        assert update.app_name == 'jms'
+        update.download(async=True)
+        count = 0
+        while count < 61:
+            if update.is_downloaded() is True:
+                break
+            time.sleep(1)
+            count += 1
+        assert update.is_downloaded() is True
+
+    def test_multipule_download_async_calls(client):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.VERIFY_SERVER_CERT = False
+        client = Client(t_config, refresh=True, test=True)
+        update = client.update_check(client.app_name, '0.0.1')
+        assert update is not None
+        assert update.app_name == 'jms'
+        update.download(async=True)
+        count = 0
+        assert update.download(async=True) is None
+        assert update.download() is None
+        while count < 61:
+            if update.is_downloaded() is True:
+                break
+            time.sleep(1)
+            count += 1
         assert update.is_downloaded() is True
 
     def test_extract(self, client):
