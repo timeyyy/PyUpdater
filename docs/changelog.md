@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.24 - Master
+## v0.24 - Master
 ##### This version is not yet released and is under active development.
 
 Added
@@ -8,6 +8,8 @@ Added
   - CI testing on windows
   - Conformation for revoking keys
   - Tox testing
+  - Async download
+    - download(async=True)
 
 Updated
 
