@@ -79,6 +79,16 @@ class Storage(object):
         with open(self.filename, 'w') as f:
             f.write(json.dumps(self.db, indent=2, sort_keys=True))
 
+    def _export(self):
+        export = {}
+        if self.db is None:
+            self.load_db()
+        for k, v in self.db.items():
+            export[k] = v
+        print export
+        with open('export.db', 'w') as f:
+            f.write(export)
+
     def save(self, key, value):
         """Saves key & value to database
 
