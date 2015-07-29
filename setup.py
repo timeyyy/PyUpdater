@@ -18,24 +18,7 @@ class PyTest(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'-x',
-                                 u'--cov', u'pyupdater', u'-n', u'2',
-                                 u'--cov-config', u'.coveragerc'])
-        raise SystemExit(errno)
-
-
-class PyTestCover(Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
-                                 u'--cov', u'pyupdater', u'-n', u'1',
-                                 u'--cov-config', u'.coveragerc'])
+                                 u'-n', u'2'])
         raise SystemExit(errno)
 
 
@@ -50,9 +33,7 @@ class PyTestMyCover(Command):
 
     def run(self):
         errno = subprocess.call([sys.executable, u'runtests.py', u'tests',
-                                 u'--cov-report', u'html', u'--cov',
-                                 u'pyupdater', u'-n', u'4',
-                                 u'--cov-config', u'.coveragerc'])
+                                 u'--cov-report', u'html', u'-n', u'4'])
         raise SystemExit(errno)
 
 with open(u'requirements.txt', u'r') as f:
@@ -60,7 +41,6 @@ with open(u'requirements.txt', u'r') as f:
 
 cmd_class = versioneer.get_cmdclass()
 cmd_class.update({u'test': PyTest,
-                  u'ctest': PyTestCover,
                   u'mytest': PyTestMyCover})
 
 extra_s3 = 'PyUpdater-s3-Plugin == 2.4'
