@@ -27,7 +27,7 @@ my_config = TConfig()
 
 
 @pytest.mark.usefixtures('cleandir')
-class TestUploader(object):
+class TestUtils(object):
 
     def test_plugin_baseclass_not_implemented(self):
 
@@ -62,6 +62,9 @@ class TestUploader(object):
         mu.init()
         mu.upload()
 
+
+@pytest.mark.usefixtures('cleandir')
+class TestExecution(object):
     def test_fail_no_uploader_set_fail(self, httpbin):
         with pytest.raises(UploaderError):
             u = Uploader()

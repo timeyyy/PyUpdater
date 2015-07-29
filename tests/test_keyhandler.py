@@ -24,7 +24,7 @@ from pyupdater.utils.keydb import KeyDB
 
 
 @pytest.mark.usefixtures("cleandir")
-class TestKeyDB(object):
+class TestAdd(object):
 
     def test_add(self):
         db = Storage()
@@ -36,6 +36,10 @@ class TestKeyDB(object):
         assert len(keydb.get_public_keys()) == 2
         assert keydb.get_public_keys()[0] == 'public1'
         assert keydb.get_public_keys()[1] == 'public2'
+
+
+@pytest.mark.usefixtures("cleandir")
+class TestRevoke(object):
 
     def test_get_revoked_key(self):
         db = Storage()

@@ -26,7 +26,7 @@ from tconfig import TConfig
 
 
 @pytest.mark.usefixtures("cleandir", "client")
-class TestClient(object):
+class TestSetup(object):
 
     def test_data_dir(self, client):
         assert os.path.exists(client.data_dir)
@@ -53,12 +53,16 @@ class TestClient(object):
         assert client.update_check(client.app_name, '0.0.2') is not None
         assert client.update_check(client.app_name, '6.0.0') is None
 
-    def test_failed_refresh_download(self, client):
+
+@pytest.mark.usefixtures("cleandir", "client")
+class TestDownload(object):
+
+    def test_failed_refresh(self, client):
         client = Client(None, refresh=True, test=True)
         client.data_dir = os.getcwd()
         assert client.ready is False
 
-    def test_download_https(self, client):
+    def test_https(self, client):
         update = client.update_check(client.app_name, '0.0.1')
         assert update is not None
         assert update.app_name == 'jms'
@@ -72,7 +76,7 @@ class TestClient(object):
         if get_system() != 'win':
             assert update.extract() is True
 
-    def test_download_async_https(self, client):
+    def test_async_https(self, client):
         update = client.update_check(client.app_name, '0.0.1')
         assert update is not None
         assert update.app_name == 'jms'
@@ -93,7 +97,7 @@ class TestClient(object):
         if get_system() != 'win':
             assert update.extract() is True
 
-    def test_download_http(client):
+    def test_http(client):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
         t_config.VERIFY_SERVER_CERT = False
@@ -104,7 +108,7 @@ class TestClient(object):
         assert update.download() is True
         assert update.is_downloaded() is True
 
-    def test_download_async_http(client):
+    def test_async_http(client):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
         t_config.VERIFY_SERVER_CERT = False
@@ -121,7 +125,7 @@ class TestClient(object):
             count += 1
         assert update.is_downloaded() is True
 
-    def test_multipule_download_async_calls(client):
+    def test_multipule_async_calls(client):
         t_config = TConfig()
         t_config.DATA_DIR = os.getcwd()
         t_config.VERIFY_SERVER_CERT = False
@@ -139,6 +143,10 @@ class TestClient(object):
             time.sleep(1)
             count += 1
         assert update.is_downloaded() is True
+
+
+@pytest.mark.usefixtures("cleandir", "client")
+class TestExtract(object):
 
     def test_extract(self, client):
         update = client.update_check('jms', '0.0.1')
