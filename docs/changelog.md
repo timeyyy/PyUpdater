@@ -13,6 +13,7 @@ Added
 
 Updated
 
+  - Config is now a dict instead of class
   - Some py3 compat
   - Logging errors for 3rd party services
   - Info messages
@@ -33,6 +34,7 @@ Fixed
 Removed
 
   - Some unused code
+    - PyUpdaterConfig
 
 ## v0.23.3 - 2015/07/21
 

@@ -23,6 +23,36 @@ from pyupdater import settings
 log = logging.getLogger(__name__)
 
 
+# Used to transistion from pickle data to plain json
+class TransistionDict(dict):
+    def __init__(self, *args, **kwargs):
+        super(TransistionDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
+
+    def from_object(self, obj):
+        """Updates the values from the given object
+
+        Args:
+
+            obj (instance): Object with config attributes
+
+        Objects are classes.
+
+        Just the uppercase variables in that object are stored in the config.
+        Example usage::
+
+            from yourapplication import default_config
+            app.config.from_object(default_config())
+        """
+        for key in dir(obj):
+            if key.isupper():
+                self[key] = getattr(obj, key)
+        if self.get('APP_NAME') is None:
+            self['APP_NAME'] = settings.GENERIC_APP_NAME
+        if self.get('COMPANY_NAME') is None:
+            self['COMPANY_NAME'] = settings.GENERIC_COMPANY_NAME
+
+
 class Loader(object):
     """Loads &  saves config file
     """
@@ -33,14 +63,25 @@ class Loader(object):
         self.password = os.environ.get(settings.USER_PASS_ENV)
         self.config_key = settings.CONFIG_DB_KEY_APP_CONFIG
 
+    def _convert_obj_to_dict(self, obj):
+        config = {}
+        for k, v in obj.__dict__.items():
+            config[k] = v
+        return config
+
     def load_config(self):
         """Loads config from database
 
             Returns (obj): Config object
         """
         config_data = self.db.load(self.config_key)
-        config_data.DATA_DIR = os.getcwd()
-        return config_data
+        if isinstance(config_data, dict) is False:
+            config_data = self._convert_obj_to_json(config_data)
+        backwards_compat_config = TransistionDict()
+        for k, v in config_data.items():
+            backwards_compat_config[k] = v
+        backwards_compat_config.DATA_DIR = os.getcwd()
+        return backwards_compat_config
 
     def save_config(self, obj):
         """Saves config file to pyupdater database
@@ -82,97 +123,14 @@ class Loader(object):
                 log.debug('Wrote PUBLIC_KEYS to client config')
 
 
-class PyUpdaterConfig(dict):
-    """Works exactly like a dict but provides ways to fill it from files
-    or special dictionaries.  There are two common patterns to populate the
-    config.
-
-    You can define the configuration options in the
-    module that calls :meth:`from_object`.  It is also possible to tell it
-    to use the same module and with that provide the configuration values
-    just before the call.
-
-    Loading from modules, only uppercase keys are added to the config.
-    This makes it possible to use lowercase values in the config file for
-    temporary values that are not added to the config or to define the config
-    keys in the same file that implements the application.
-
-    Kwargs:
-
-        obj (object): Object with config values as attributes.
-    """
-
-    def __init__(self, obj=None):
-        super(PyUpdaterConfig, self).__init__(dict())
-        if obj is not None:
-            self.from_object(obj)
-
-    def from_object(self, obj):
-        """Updates the values from the given object
-
-        Args:
-
-            obj (instance): Object with config attributes
-
-        Objects are classes.
-
-        Just the uppercase variables in that object are stored in the config.
-        Example usage::
-
-            from yourapplication import default_config
-            app.config.from_object(default_config())
-        """
-        for key in dir(obj):
-            if key.isupper():
-                self[key] = getattr(obj, key)
-
-    def update_config(self, obj):
-        """Proxy method to update self
-
-        Args:
-
-            obj (instance): config object
-        """
-        self.from_object(obj)
-        if self.get('APP_NAME') is None:
-            self['APP_NAME'] = settings.GENERIC_APP_NAME
-        if self.get('COMPANY_NAME') is None:
-            self['COMPANY_NAME'] = settings.GENERIC_COMPANY_NAME
-
-    def __str__(self):
-        return dict.__repr__(self)
-
-    def __unicode__(self):
-        pass
-
-    def __repr__(self):
-        return '<%s %s>' % (self.__class__.__name__, dict.__repr__(self))
-
-
 # This is the default config used
-class SetupConfig(object):
-    """Default config object
-    """
+SetupConfig = {
     # If left None "Not_So_TUF" will be used
-    APP_NAME = None
+    'APP_NAME': settings.GENERIC_APP_NAME,
 
     # Company/Your name
-    COMPANY_NAME = None
-
-    # Public Keys used by your app to verify update data
-    # REQUIRED
-    PUBLIC_KEYS = None
-
-    # List of urls to ping for updates
-    # REQUIRED
-    UPDATE_URLS = None
+    'COMPANY_NAME': settings.GENERIC_APP_NAME,
 
     # Support for patch updates
-    UPDATE_PATCHES = True
-
-    # Upload Setup
-    OBJECT_BUCKET = None
-
-    SSH_REMOTE_DIR = None
-    SSH_HOST = None
-    SSH_USERNAME = None
+    'UPDATE_PATCHES': True
+    }

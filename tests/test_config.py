@@ -15,7 +15,7 @@
 # --------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-from pyupdater.utils.config import PyUpdaterConfig
+from pyupdater.utils.config import TransistionDict
 
 
 class DevConfig(object):
@@ -36,28 +36,28 @@ class BasicCofig(object):
 
 
 def test_dev_config():
-    config = PyUpdaterConfig()
+    config = TransistionDict()
     test_config = DevConfig()
     config.from_object(test_config)
     assert config['TESTING'] is True
 
 
 def test_dev_config_bad_attr():
-    config = PyUpdaterConfig()
+    config = TransistionDict()
     test_config = DevConfig()
     config.from_object(test_config)
     assert config.get('BAD_ATTR', None) is None
 
 
 def test_prod_config():
-    config = PyUpdaterConfig()
+    config = TransistionDict()
     prod_config = ProdConfig()
     config.from_object(prod_config)
     assert config['MORE_INFO'] == 'Yes Please'
 
 
 def test_prod_bad_atter():
-    config = PyUpdaterConfig()
+    config = TransistionDict()
     prod_config = ProdConfig()
     config.from_object(prod_config)
     assert config.get('DEBUG', None) is not None
