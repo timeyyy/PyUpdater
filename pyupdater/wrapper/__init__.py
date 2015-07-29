@@ -136,7 +136,7 @@ def init(args):  # pragma: no cover
         sys.exit('Not an empty PyUpdater repository')
 
 
-def keys(args):
+def keys(args):  # pragma: no cover
     if args.yes is True:
         _keys(args)
 
@@ -181,7 +181,7 @@ def _make_spec(args, pyi_args):
     builder.make_spec()
 
 
-def pkg(args):  # pragma: no cover
+def pkg(args):
     check_repo()
     db = Storage()
     loader = Loader(db)

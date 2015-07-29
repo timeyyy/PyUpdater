@@ -65,8 +65,9 @@ class Loader(object):
 
     def _convert_obj_to_dict(self, obj):
         config = {}
-        for k, v in obj.__dict__.items():
-            config[k] = v
+        if obj is not None:
+            for k, v in obj.__dict__.items():
+                config[k] = v
         return config
 
     def load_config(self):
@@ -76,7 +77,7 @@ class Loader(object):
         """
         config_data = self.db.load(self.config_key)
         if isinstance(config_data, dict) is False:
-            config_data = self._convert_obj_to_json(config_data)
+            config_data = self._convert_obj_to_dict(config_data)
         backwards_compat_config = TransistionDict()
         for k, v in config_data.items():
             backwards_compat_config[k] = v
