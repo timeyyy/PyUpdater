@@ -17,8 +17,7 @@ from __future__ import unicode_literals
 
 import pytest
 
-from pyupdater.wrapper.options import (make_parser,
-                                       make_subparser,
+from pyupdater.wrapper.options import (make_subparser,
                                        add_build_parser,
                                        add_clean_parser,
                                        add_debug_parser,
@@ -30,13 +29,8 @@ from pyupdater.wrapper.options import (make_parser,
                                        add_version_parser)
 
 
-@pytest.mark.usefixtures('cleandir')
+@pytest.mark.usefixtures('cleandir', 'parser')
 class TestWrapper(object):
-
-    @pytest.fixture
-    def parser(self):
-        parser = make_parser()
-        return parser
 
     def test_build_no_options(self, parser):
         subparser = make_subparser(parser)
