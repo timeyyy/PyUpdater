@@ -39,7 +39,8 @@ class TestBuilder(object):
         pyu = PyUpdater(t_config)
         pyu.setup()
         new_folder = os.path.join('pyu-data', 'new')
-        spec_cmd = ['make-spec', 'app.py', '-F']
+        spec_cmd = ['make-spec', 'app.py', '-F', '--app-name', 'MyApp',
+                    '--app-version', '0.1.0']
         spec_file_name = get_system() + '.spec'
         build_cmd = ['build', '--app-name', 'MyApp',
                      '--app-version', '0.1.0', spec_file_name]

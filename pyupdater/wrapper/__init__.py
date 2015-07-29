@@ -76,6 +76,12 @@ rfh.setLevel(logging.DEBUG)
 log.addHandler(rfh)
 
 
+def _build(args, pyi_args):
+    check_repo()
+    builder = Builder(args, pyi_args)
+    builder.build()
+
+
 # Get permission before deleting PyUpdater repo
 def clean(args):  # pragma: no cover
     if args.yes is True:
@@ -169,6 +175,53 @@ def _keys(args):  # pragma: no cover
         db._sync_db()
 
 
+def _make_spec(args, pyi_args):
+    check_repo()
+    builder = Builder(args, pyi_args)
+    builder.make_spec()
+
+
+def pkg(args):  # pragma: no cover
+    check_repo()
+    db = Storage()
+    loader = Loader(db)
+    pyu = PyUpdater(loader.load_config(), db)
+    if args.process is False and args.sign is False:
+        sys.exit('You must specify a command')
+
+    if args.process is True:
+        log.info('Processing packages...')
+        pyu.process_packages()
+        log.info('Processing packages complete')
+    if args.sign is True:
+        log.info('Signing packages...')
+        pyu.sign_update()
+        log.info('Signing packages complete')
+    db._sync_db()
+
+
+def _setting(args):  # pragma: no cover
+    check_repo()
+    db = Storage()
+    loader = Loader(db)
+    config = loader.load_config()
+    if args.appname is True:
+        setup_appname(config)
+    if args.company is True:
+        setup_company(config)
+    if args.urls is True:
+        setup_urls(config)
+    if args.patches is True:
+        setup_patches(config)
+    if args.scp is True:
+        setup_scp(config)
+    if args.s3 is True:
+        setup_object_bucket(config)
+    loader.save_config(config)
+    log.info('Settings update complete')
+    db._sync_db()
+
+
 def upload_debug_info(args):  # pragma: no cover
     log.info('Starting log export')
 
@@ -211,25 +264,6 @@ def upload_debug_info(args):  # pragma: no cover
         log.info(url)
 
 
-def pkg(args):  # pragma: no cover
-    check_repo()
-    db = Storage()
-    loader = Loader(db)
-    pyu = PyUpdater(loader.load_config(), db)
-    if args.process is False and args.sign is False:
-        sys.exit('You must specify a command')
-
-    if args.process is True:
-        log.info('Processing packages...')
-        pyu.process_packages()
-        log.info('Processing packages complete')
-    if args.sign is True:
-        log.info('Signing packages...')
-        pyu.sign_update()
-        log.info('Signing packages complete')
-    db._sync_db()
-
-
 def update(args):  # pragma: no cover
     check_repo()
     db = Storage()
@@ -239,28 +273,6 @@ def update(args):  # pragma: no cover
     repo_update(config)
     loader.save_config(config)
     log.info('Reconfig complete')
-    db._sync_db()
-
-
-def setter(args):  # pragma: no cover
-    check_repo()
-    db = Storage()
-    loader = Loader(db)
-    config = loader.load_config()
-    if args.appname is True:
-        setup_appname(config)
-    if args.company is True:
-        setup_company(config)
-    if args.urls is True:
-        setup_urls(config)
-    if args.patches is True:
-        setup_patches(config)
-    if args.scp is True:
-        setup_scp(config)
-    if args.s3 is True:
-        setup_object_bucket(config)
-    loader.save_config(config)
-    log.info('Settings update complete')
     db._sync_db()
 
 
@@ -307,18 +319,6 @@ def upload(args):  # pragma: no cover
     db._sync_db()
 
 
-def _make_spec(args, pyi_args):
-    check_repo()
-    builder = Builder(args, pyi_args)
-    builder.make_spec()
-
-
-def _build(args, pyi_args):
-    check_repo()
-    builder = Builder(args, pyi_args)
-    builder.build()
-
-
 def _real_main(args):  # pragma: no cover
     if args is None:
         args = sys.argv[1:]
@@ -346,7 +346,7 @@ def _real_main(args):  # pragma: no cover
     elif cmd == 'pkg':
         pkg(args)
     elif cmd == 'settings':
-        setter(args)
+        _setting(args)
     elif cmd == 'update':
         update(args)
     elif cmd == 'upload':

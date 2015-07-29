@@ -26,78 +26,67 @@ def make_subparser(parser):
     return subparsers
 
 
-def add_build_parser(subparsers):
-    build_parser = subparsers.add_parser('build', help='compiles script '
-                                         'or spec file',
-                                         usage='%(prog)s <script> [opts]')
-
+def _build_make_spec_commom(subparser):
     # Start of args override
     # start a clean build
-    build_parser.add_argument('--clean', help='Clean build. '
-                              'Bypass the cache', action="store_true")
+    subparser.add_argument('--clean', help='Clean build. '
+                           'Bypass the cache', action="store_true")
+
     # This will be set to the pyu-data/new directory.
     # When we make the final compressed archive we will look
     # for an exe in that dir.
-    build_parser.add_argument('-o', help=argparse.SUPPRESS)
-    build_parser.add_argument('--distpath', help=argparse.SUPPRESS)
+    subparser.add_argument('-o', '--distpath', help=argparse.SUPPRESS)
 
     # Will be set to .pyupdater/spec/
     # Trying to keep root dir clean
-    build_parser.add_argument('--specpath', help=argparse.SUPPRESS)
+    subparser.add_argument('--specpath', help=argparse.SUPPRESS)
 
     # Will be set to .pyupdater/build
     # Trying to keep root dir clean
-    build_parser.add_argument('--workpath', help=argparse.SUPPRESS)
+    subparser.add_argument('--workpath', help=argparse.SUPPRESS)
 
     # Will be set to platform name i.e. mac, win, nix, nix64, arm\
     # When archiving we will change the name to the value passed to
     # --app-name
-    build_parser.add_argument('-n', help=argparse.SUPPRESS)
-    build_parser.add_argument('--name', help=argparse.SUPPRESS)
+    subparser.add_argument('-n', '--name', help=argparse.SUPPRESS)
 
     # Just capturing these argument.
     # PyUpdater only supports onefile mode at the moment
-    build_parser.add_argument('-D', action="store_true",
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--onedir', action="store_true",
-                              help=argparse.SUPPRESS)
+    subparser.add_argument('-D', '--onedir', action="store_true",
+                           help=argparse.SUPPRESS)
 
     # Just capturing these argument.
     # Will be added later to pyinstaller build command
-    build_parser.add_argument('-F', action="store_true",
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--onefile', action="store_true",
-                              help=argparse.SUPPRESS)
+    subparser.add_argument('-F', '--onefile', action="store_true",
+                           help=argparse.SUPPRESS)
 
     # Just capturing these arguments
-    build_parser.add_argument('-c', action="store_true",
-                              help=argparse.SUPPRESS, dest='_console')
-    build_parser.add_argument('--console', action="store_true",
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--nowindowed', action="store_true",)
+    subparser.add_argument('-c', '--console', '--nowindowed',
+                           action="store_true", dest='console')
 
-    build_parser.add_argument('-w', action="store_true", dest='_windowed',
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--windowed', action="store_true",
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--noconsole', action="store_true",
-                              help=argparse.SUPPRESS)
+    subparser.add_argument('-w', '--windowed', '--noconsole',
+                           action="store_true", help=argparse.SUPPRESS,
+                           dest='windowed')
 
     # Potentially harmful for cygwin on windows
     # ToDo: Maybe do a check for cygwin and disable if cygwin is true
-    build_parser.add_argument('-s', action="store_true",
-                              help=argparse.SUPPRESS)
-    build_parser.add_argument('--strip', action="store_true",
-                              help=argparse.SUPPRESS)
+    subparser.add_argument('-s', '--strip', action="store_true",
+                           help=argparse.SUPPRESS)
     # End of args override
 
     # Used by PyiWrapper
-    build_parser.add_argument('--app-name', dest="app_name", required=True)
-    build_parser.add_argument('--app-version', dest="app_version",
-                              required=True)
-    build_parser.add_argument('-k', '--keep', dest='keep',
-                              action='store_true',
-                              help='Won\'t delete update after archiving')
+    subparser.add_argument('--app-name', dest="app_name", required=True)
+    subparser.add_argument('--app-version', dest="app_version",
+                           required=True)
+    subparser.add_argument('-k', '--keep', dest='keep', action='store_true',
+                           help='Won\'t delete update after archiving')
+
+
+def add_build_parser(subparsers):
+    build_parser = subparsers.add_parser('build', help='compiles script '
+                                         'or spec file',
+                                         usage='%(prog)s <script> [opts]')
+    _build_make_spec_commom(build_parser)
 
 
 def add_make_spec_parser(subparsers):
@@ -105,74 +94,7 @@ def add_make_spec_parser(subparsers):
                                              'spec file',
                                              usage='%(prog)s <script> '
                                              '[opts]')
-
-    # Start of args override
-    # start a clean build
-    make_spec_parser.add_argument('--clean', help='Clean build. '
-                                  'Bypass the cache', action="store_true")
-    # This will be set to the pyu-data/new directory.
-    # When we make the final compressed archive we will look
-    # for an exe in that dir.
-    make_spec_parser.add_argument('-o', help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--distpath', help=argparse.SUPPRESS)
-
-    # Will be set to .pyupdater/spec/
-    # Trying to keep root dir clean
-    make_spec_parser.add_argument('--specpath', help=argparse.SUPPRESS)
-
-    # Will be set to .pyupdater/build
-    # Trying to keep root dir clean
-    make_spec_parser.add_argument('--workpath', help=argparse.SUPPRESS)
-
-    # Will be set to platform name i.e. mac, win, nix, nix64, arm\
-    # When archiving we will change the name to the value passed to
-    # --app-name
-    make_spec_parser.add_argument('-n', help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--name', help=argparse.SUPPRESS)
-
-    # Just capturing these argument.
-    # PyUpdater only supports onefile mode at the moment
-    make_spec_parser.add_argument('-D', action="store_true",
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--onedir', action="store_true",
-                                  help=argparse.SUPPRESS)
-
-    # Just capturing these argument.
-    # Will be added later to pyinstaller build command
-    make_spec_parser.add_argument('-F', action="store_true",
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--onefile', action="store_true",
-                                  help=argparse.SUPPRESS)
-
-    # Just capturing these arguments
-    make_spec_parser.add_argument('-c', action="store_true",
-                                  help=argparse.SUPPRESS, dest='_console')
-    make_spec_parser.add_argument('--console', action="store_true",
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--nowindowed', action="store_true",)
-
-    make_spec_parser.add_argument('-w', action="store_true",
-                                  dest='_windowed',
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--windowed', action="store_true",
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--noconsole', action="store_true",
-                                  help=argparse.SUPPRESS)
-
-    # Potentially harmful for cygwin on windows
-    # ToDo: Maybe do a check for cygwin and disable if cygwin is true
-    make_spec_parser.add_argument('-s', action="store_true",
-                                  help=argparse.SUPPRESS)
-    make_spec_parser.add_argument('--strip', action="store_true",
-                                  help=argparse.SUPPRESS)
-    # End of args override
-
-    # Used by PyiWrapper
-    make_spec_parser.add_argument('--app-name', dest="app_name")
-    make_spec_parser.add_argument('--app-version', dest="app_version")
-    make_spec_parser.add_argument('-k', '--keep', dest='keep',
-                                  action='store_true',
-                                  help='Won\'t delete update after archiving')
+    _build_make_spec_commom(make_spec_parser)
 
 
 def add_clean_parser(subparsers):
