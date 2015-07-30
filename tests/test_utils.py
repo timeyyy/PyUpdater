@@ -104,10 +104,15 @@ class TestUtils(object):
         v3 = Version('1.2.1b1')
         v4 = Version('1.2.1')
         assert v3 < v4
+        v5 = Version('1.2.1a1')
+        v6 = Version('1.2.1a2')
+        assert v5 < v6
         assert Version('5.0') == Version('5.0')
         assert Version('4.5') != Version('5.1')
         with pytest.raises(VersionError):
             Version('1')
+        with pytest.raises(VersionError):
+            Version('1.1.1.1')
 
     def test_package_1(self):
         test_file_1 = 'jms-mac-0.0.1.zip'

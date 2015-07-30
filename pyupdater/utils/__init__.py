@@ -331,7 +331,7 @@ def gzip_decompress(data):
     return data
 
 
-def setup_appname(config):
+def setup_appname(config):  # pragma: no cover
     if config.APP_NAME is not None:
         default = config.APP_NAME
     else:
@@ -342,7 +342,7 @@ def setup_appname(config):
                                                             default=default)
 
 
-def setup_company(config):
+def setup_company(config):  # pragma: no cover
     if config.COMPANY_NAME is not None:
         default = config.COMPANY_NAME
     else:
@@ -354,7 +354,7 @@ def setup_company(config):
     config.COMPANY_NAME = temp
 
 
-def setup_urls(config):
+def setup_urls(config):  # pragma: no cover
     url = jms_utils.terminal.get_correct_answer('Enter a url to ping for '
                                                 'updates.', required=True)
     config.UPDATE_URLS = [url]
@@ -370,14 +370,14 @@ def setup_urls(config):
             break
 
 
-def setup_patches(config):
+def setup_patches(config):  # pragma: no cover
     config.UPDATE_PATCHES = jms_utils.terminal.ask_yes_no('Would you like to '
                                                           'enable patch upda'
                                                           'tes?',
                                                           default='yes')
 
 
-def setup_scp(config):
+def setup_scp(config):  # pragma: no cover
     _temp = jms_utils.terminal.get_correct_answer('Enter remote dir',
                                                   required=True)
     config.SSH_REMOTE_DIR = _temp
@@ -389,13 +389,13 @@ def setup_scp(config):
                                                                 required=True)
 
 
-def setup_object_bucket(config):
+def setup_object_bucket(config):  # pragma: no cover
     _temp = jms_utils.terminal.get_correct_answer('Enter bucket name',
                                                   required=True)
     config.OBJECT_BUCKET = _temp
 
 
-def setup_uploader(config):
+def setup_uploader(config):  # pragma: no cover
     answer1 = jms_utils.terminal.ask_yes_no('Would you like to add scp '
                                             'settings?', default='no')
 
@@ -409,7 +409,7 @@ def setup_uploader(config):
         setup_object_bucket(config)
 
 
-def initial_setup(config):
+def initial_setup(config):  # pragma: no cover
     setup_appname(config)
     setup_company(config)
     setup_urls(config)
@@ -727,15 +727,13 @@ class Version(object):
 
         version (str): Version number to normalizes
     """
+    v_re = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.?(?P<'
+                      'patch>\d+)?-?(?P<release>[a,b])?(?P<'
+                      'releaseversion>\d+)?')
 
-    re_2 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)(?P<re'
-                      'lease>[b])?(?P<releaseversion>\d+)?')
-    re_3 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
-                      'patch>\d+)(?P<release>[b])?(?P<rele'
-                      'aseversion>\d+)?')
-    re_4 = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.(?P<'
-                      'patch>\d+)\.(?P<release>\d+)\.(?P<re'
-                      'leaseversion>\d+)')
+    v_re_big = re.compile('(?P<major>\d+)\.(?P<minor>\d+)\.'
+                          '(?P<patch>\d+)\.(?P<release>\d+)'
+                          '\.(?P<releaseversion>\d+)')
 
     def __init__(self, version):
         self.version_str = version
@@ -744,23 +742,21 @@ class Version(object):
     def _parse_version_str(self, version):
         count = self._quick_sanatize(version)
         try:
-            # version in the form of 1.1
-            if count == 1:
-                version_data = self._major_minor_re(version)
-            # version in the form of 1.1.1
-            elif count == 2:
-                version_data = self._major_minor_patch_re(version)
+            # version in the form of 1.1, 1.1.1, 1.1.1-b1, 1.1.1a2
+            if count == 4:
+                version_data = self._parse_parsed_version(version)
             else:
-                version_data = self._version_re(version)
+                version_data = self._parse_version(version)
         except AssertionError:
             raise VersionError('Cannot parse version')
 
         self.major = int(version_data.get('major', 0))
         self.minor = int(version_data.get('minor', 0))
-        if 'patch' in version_data.keys():
-            self.patch = int(version_data.get('patch', 0))
-        else:
+        patch = version_data.get('patch')
+        if patch is None:
             self.patch = 0
+        else:
+            self.patch = int(patch)
         release = version_data.get('release')
         if release is None:
             self.release = 2
@@ -785,18 +781,13 @@ class Version(object):
         self.version_tuple = (self.major, self.minor, self.patch,
                               self.release, self.release_version)
 
-    def _major_minor_re(self, version):
-        r = self.re_2.search(version)
+    def _parse_version(self, version):
+        r = self.v_re.search(version)
         assert r is not None
         return r.groupdict()
 
-    def _major_minor_patch_re(self, version):
-        r = self.re_3.search(version)
-        assert r is not None
-        return r.groupdict()
-
-    def _version_re(self, version):
-        r = self.re_4.search(version)
+    def _parse_parsed_version(self, version):
+        r = self.v_re_big.search(version)
         assert r is not None
         return r.groupdict()
 
@@ -812,8 +803,11 @@ class Version(object):
             log.debug('Removed ".tar.gz"')
             version = version[:-7]
         count = version.count('.')
+        # There will be 4 dots when version is passed
+        # That was created with Version object.
+        # 1.1 once parsed will be 1.1.0.0.0
         if count not in [1, 2, 4]:
-            msg = ('Incorrect version format. 1, 2 or 4 dots '
+            msg = ('Incorrect version format. 1 or 2 dots '
                    'You have {} dots'.format(count))
             log.error(msg)
             raise VersionError(msg)
