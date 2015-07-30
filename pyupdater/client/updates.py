@@ -407,7 +407,7 @@ class AppUpdate(LibUpdate):
             log.error(str(err))
             log.debug(str(err), exc_info=True)
 
-    def _overwrite_app(self):
+    def _overwrite_app(self):  # pragma: no cover
         # Unix: Overwrites the running applications binary
         if jms_utils.system.get_system() == 'mac':
             if self.current_app_dir.endswith('MacOS') is True:
