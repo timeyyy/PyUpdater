@@ -408,9 +408,7 @@ class AppUpdate(LibUpdate):
             log.debug(str(err), exc_info=True)
 
     def _overwrite_app(self):
-        # Unix: Overwrites the running applications binary,
-        #       then starts the updated binary in the currently
-        #       running applications process memory.
+        # Unix: Overwrites the running applications binary
         if jms_utils.system.get_system() == 'mac':
             if self.current_app_dir.endswith('MacOS') is True:
                 log.debug('Looks like we\'re dealing with a Mac Gui')

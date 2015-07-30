@@ -85,6 +85,24 @@ class TestBuild(object):
         with ChDir(new_folder):
             assert len(os.listdir(os.getcwd())) == 1
 
+    def test_build_mac_dot_app(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        pyu = PyUpdater(t_config)
+        pyu.setup()
+        new_folder = os.path.join('pyu-data', 'new')
+        build_cmd = ['build', '-F', '-w', '--app-name', 'MyApp',
+                     '--app-version', '0.1.0', 'app.py']
+        build_cmd = [str(b) for b in build_cmd]
+        parser = get_parser()
+        with open('app.py', 'w') as f:
+            f.write('print "Hello, World!"')
+        args, pyu_args = parser.parse_known_args(build_cmd)
+        b = Builder(args, pyu_args)
+        b.build()
+        with ChDir(new_folder):
+            assert len(os.listdir(os.getcwd())) == 1
+
     def test_build_fail(self):
         with pytest.raises(SystemExit):
             t_config = TConfig()
