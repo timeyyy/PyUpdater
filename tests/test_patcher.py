@@ -34,6 +34,9 @@ json_data = json.loads(urllib2.urlopen(version_file_url).read())
 def cb(status):
     pass
 
+def cb2(status):
+    raise IndexError
+
 update_data = {
     'name': 'jms',
     'json_data': json_data,
@@ -42,7 +45,7 @@ update_data = {
     'update_folder': None,
     'update_urls': ['https://s3-us-west-1.amazonaws.com/pyupdater-test/'],
     'platform': 'mac',
-    'progress_hooks': [cb]
+    'progress_hooks': [cb, cb2]
     }
 
 

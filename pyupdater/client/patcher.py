@@ -20,7 +20,7 @@ import os
 
 try:
     import bsdiff4
-except ImportError:
+except ImportError:  # pragma: no cover
     bsdiff4 = None
 
 from pyupdater.client.downloader import FileDownloader
@@ -31,7 +31,7 @@ from pyupdater.utils import (get_package_hashes,
                              Version)
 from pyupdater.utils.exceptions import PatcherError
 
-if bsdiff4 is None:
+if bsdiff4 is None:  # pragma: no cover
     from pyupdater.utils import bsdiff4_py as bsdiff4
 
 log = logging.getLogger(__name__)
@@ -256,7 +256,7 @@ class Patcher(object):
                 log.error(err)
                 raise PatcherError('Patch failed to apply')
 
-    def _write_update_to_disk(self):
+    def _write_update_to_disk(self):  # pragma: no cover
         # Writes updated binary to disk
         log.debug('Writing update to disk')
         filename_key = '{}*{}*{}*{}*{}'.format(settings.UPDATES_KEY, self.name,

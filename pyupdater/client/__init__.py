@@ -107,7 +107,8 @@ class Client(object):
         call_back (func): Used for download progress
     """
 
-    def __init__(self, obj=None, refresh=False, call_back=None, test=False):
+    def __init__(self, obj=None, refresh=False, call_back=None,
+                 call_backs=[], test=False):
         self.name = None
         self.version = None
         self.json_data = None
@@ -116,6 +117,8 @@ class Client(object):
         self.progress_hooks = []
         if call_back is not None:
             self.progress_hooks.append(call_back)
+        for c in call_backs:
+            self.progress_hooks.append(call_backs)
         if obj is not None:
             self.init_app(obj, refresh, test)
 

@@ -60,10 +60,16 @@ class TestSetup(object):
     def test_callback(self):
         def cb(status):
             print(status)
+
+        def cb2(status):
+            raise IndexError
+
         t_config = TConfig()
         t_config.PUBLIC_KEYS = ['bad key']
         t_config.DATA_DIR = os.getcwd()
-        client = Client(t_config, refresh=True, test=True, call_back=cb)
+        client = Client(t_config, refresh=True, test=True, call_back=cb,
+                        call_backs=[cb, cb2])
+        client.add_call_back(cb2)
         assert client.update_check('jms', '0.0.0') is None
 
     def test_manifest_filesystem(self):
