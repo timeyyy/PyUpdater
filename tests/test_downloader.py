@@ -34,6 +34,13 @@ class TestData(object):
         binary_data = fd.download_verify_return()
         assert binary_data is not None
 
+    def test_cb(self):
+        def cb(status):
+            pass
+        fd = FileDownloader(FILENAME, URL, FILE_HASH, progress_hooks=[cb])
+        binary_data = fd.download_verify_return()
+        assert binary_data is not None
+
     def test_return_fail(self):
         fd = FileDownloader(FILENAME, URL, 'JKFEIFJILEFJ983NKFNKL')
         binary_data = fd.download_verify_return()
@@ -60,7 +67,7 @@ class TestContentLength(object):
             headers = {}
         fd = FileDownloader(FILENAME, URL, FILE_HASH)
         data = FakeHeaders()
-        assert fd._get_content_length(data) == 100000
+        assert fd._get_content_length(data) == 100001
 
     def test_good_conent_length(self):
         fd = FileDownloader(FILENAME, URL, FILE_HASH)

@@ -57,7 +57,7 @@ class Loader(object):
     """Loads &  saves config file
     """
 
-    def __init__(self, db):
+    def __init__(self, db=None):
         self.cwd = os.getcwd()
         self.db = db
         self.password = os.environ.get(settings.USER_PASS_ENV)

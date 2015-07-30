@@ -15,7 +15,9 @@
 # --------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-from pyupdater.utils.config import TransistionDict
+import os
+
+from pyupdater.utils.config import TransistionDict, Loader
 
 
 class DevConfig(object):
@@ -33,6 +35,9 @@ class ProdConfig(object):
 
 class BasicCofig(object):
     APP_NAME = 'Tester'
+    COMPANY_NAME = 'Test App LLC'
+    UPDATE_URLS = 'http://acme.com/updates'
+    PUBLIC_KEYS = '838d88df8adkld8s9s'
 
 
 def test_dev_config():
@@ -61,3 +66,12 @@ def test_prod_bad_atter():
     prod_config = ProdConfig()
     config.from_object(prod_config)
     assert config.get('DEBUG', None) is not None
+
+def test_write_config(cleandir):
+    config = TransistionDict()
+    prod_config = ProdConfig()
+    config.from_object(prod_config)
+    l = Loader()
+    l.write_config_py(config)
+    assert 'client_config.py' in os.listdir(os.getcwd())
+
