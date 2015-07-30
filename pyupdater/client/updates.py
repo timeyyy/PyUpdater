@@ -329,7 +329,6 @@ class LibUpdate(object):
 
     # Removed old update archives
     def _remove_old_updates(self):
-        temp = os.listdir(self.update_folder)
         try:
             filename = get_filename(self.name, self.version,
                                     self.platform, self.easy_data)
@@ -348,6 +347,7 @@ class LibUpdate(object):
             current_version = Version('0.0.0')
         log.debug('Current verion: {}'.format(str(current_version)))
         with jms_utils.paths.ChDir(self.update_folder):
+            temp = os.listdir(os.getcwd())
             for t in temp:
                 try:
                     old_version = Version(t)
