@@ -418,7 +418,7 @@ def initial_setup(config):  # pragma: no cover
     return config
 
 
-def repo_update_attr_urls(config):
+def repo_update_attr_urls(config):  # pragma: no cover
     "Updates url to new attribute"
     log.info('Checking for deprecated UPDATE_URL')
     if hasattr(config, 'UPDATE_URLS'):
@@ -440,7 +440,7 @@ def repo_update_attr_urls(config):
         del config.UPDATE_URL
 
 
-def repo_update_remove_attr(config):
+def repo_update_remove_attr(config):  # pragma: no cover
     "Removes unused attributes"
     log.info('Looking for unused attributes')
     upload_settings = False

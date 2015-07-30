@@ -13,8 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
 import os
 import time
 
@@ -50,8 +52,71 @@ class TestSetup(object):
         assert client.update_check('jms', '0.0.0') is None
 
     def test_check_version(self, client):
-        assert client.update_check(client.app_name, '0.0.2') is not None
         assert client.update_check(client.app_name, '6.0.0') is None
+        assert client.update_check(client.app_name, '0.0.2') is not None
+        client.ready = False
+        assert client.update_check(client.app_name, '0.0.2') is None
+
+    def test_callback(self):
+        def cb(status):
+            print(status)
+        t_config = TConfig()
+        t_config.PUBLIC_KEYS = ['bad key']
+        t_config.DATA_DIR = os.getcwd()
+        client = Client(t_config, refresh=True, test=True, call_back=cb)
+        assert client.update_check('jms', '0.0.0') is None
+
+    def test_manifest_filesystem(self):
+        t_config = TConfig()
+        t_config.PUBLIC_KEYS = ['bad key']
+        t_config.DATA_DIR = os.getcwd()
+        client = Client(t_config, refresh=True, test=True)
+        filesystem_data = client._get_manifest_filesystem()
+        filesystem_data = json.loads(filesystem_data)
+        del filesystem_data['sigs']
+        assert client.json_data == filesystem_data
+
+    def test_url_str_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URL = 'http://acme.com/update'
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
+
+    def test_url_list_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URL = ['http://acme.com/update']
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
+
+    def test_url_tuple_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URL = ('http://acme.com/update')
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
+
+    def test_urls_str_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URLS = 'http://acme.com/update'
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
+
+    def test_urls_list_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URLS = ['http://acme.com/update']
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
+
+    def test_urls_tuple_attr(self):
+        t_config = TConfig()
+        t_config.DATA_DIR = os.getcwd()
+        t_config.UPDATE_URLS = ('http://acme.com/update')
+        client = Client(t_config, refresh=True, test=True)
+        assert isinstance(client.update_urls, list)
 
 
 @pytest.mark.usefixtures("cleandir", "client")
