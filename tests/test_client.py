@@ -18,9 +18,11 @@ from __future__ import unicode_literals
 
 import json
 import os
+import shutil
 import time
 
 from jms_utils.system import get_system
+from jms_utils.paths import ChDir
 import pytest
 
 from pyupdater.client import Client
@@ -225,3 +227,17 @@ class TestExtract(object):
         assert update.download() is True
         if get_system() != 'win':
             assert update.extract() is True
+
+    def test_extract_no_file(self, client):
+        update = client.update_check('jms', '0.0.1')
+        assert update is not None
+        assert update.download() is True
+        with ChDir(update.update_folder):
+            files = os.listdir(os.getcwd())
+            for f in files:
+                if os.path.isfile(f):
+                    os.remove(f)
+                else:
+                    shutil.rmtree(f, ignore_errors=True)
+        if get_system() != 'win':
+            assert update.extract() is False

@@ -206,7 +206,8 @@ class LibUpdate(object):
         with jms_utils.paths.ChDir(self.update_folder):
             platform_name = self.name
             # Ensuring we only add .exe when applicable
-            if sys.platform == 'win32' and self.name == self.app_name:
+            if sys.platform == 'win32' and \
+                    self.name == self.app_name:  # pragma: no cover
                 # We only add .exe to app executable.  Not libs or dll
                 log.debug('Adding .exe to filename for windows main '
                           'app udpate.')
