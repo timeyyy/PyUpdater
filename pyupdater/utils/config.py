@@ -16,7 +16,11 @@
 from __future__ import unicode_literals
 
 import logging
+import json
 import os
+import pickle
+
+import six
 
 from pyupdater import settings
 
@@ -76,11 +80,13 @@ class Loader(object):
             Returns (obj): Config object
         """
         config_data = self.db.load(self.config_key)
-        if isinstance(config_data, dict) is False:
+        if config_data.__class__.__name__ == 'SetupConfig':
             config_data = self._convert_obj_to_dict(config_data)
+
         backwards_compat_config = TransistionDict()
-        for k, v in config_data.items():
-            backwards_compat_config[k] = v
+        if config_data is not None:
+            for k, v in config_data.items():
+                backwards_compat_config[k] = v
         backwards_compat_config.DATA_DIR = os.getcwd()
         return backwards_compat_config
 
@@ -125,7 +131,7 @@ class Loader(object):
 
 
 # This is the default config used
-SetupConfig = {
+setup_config = {
     # If left None "Not_So_TUF" will be used
     'APP_NAME': settings.GENERIC_APP_NAME,
 
@@ -135,3 +141,35 @@ SetupConfig = {
     # Support for patch updates
     'UPDATE_PATCHES': True
     }
+
+
+# Deprecated
+# This is the default config used
+class SetupConfig(object):
+    """Default config object
+    """
+    # If left None "Not_So_TUF" will be used
+    APP_NAME = None
+
+    # Company/Your name
+    COMPANY_NAME = None
+
+    DATA_DIR = None
+
+    # Public Keys used by your app to verify update data
+    # REQUIRED
+    PUBLIC_KEYS = None
+
+    # List of urls to ping for updates
+    # REQUIRED
+    UPDATE_URLS = None
+
+    # Support for patch updates
+    UPDATE_PATCHES = True
+
+    # Upload Setup
+    OBJECT_BUCKET = None
+
+    SSH_REMOTE_DIR = None
+    SSH_HOST = None
+    SSH_USERNAME = None

@@ -39,7 +39,6 @@ class Patch(object):
         self.src_path = patch_info.get('src_patch')
         self.patch_name = patch_info.get('patch_name')
         self.patch_number = patch_info.get('patch_number')
-        self.patch_path = patch_info.get('patch_path')
         self.ready = self._check_attrs()
 
     def _check_attrs(self):

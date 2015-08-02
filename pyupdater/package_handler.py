@@ -210,8 +210,6 @@ class PackageHandler(object):
                         patch_number = path[1]
                         patch_info = dict(src_path=src_path,
                                           dst_path=os.path.abspath(p),
-                                          patch_path=os.path.join(self.new_dir,
-                                                                  patch_name),
                                           patch_number=patch_number,
                                           patch_name=patch_name)
                         # ready for patching
@@ -459,13 +457,17 @@ def _make_patch(patch_info):
     patch = Patch(patch_info)
 
     if patch.ready is True:
-        log.debug('Patch source path:{}'.format(patch.src_path))
-        log.debug('Patch destination path: {}'.format(patch.dst_path))
-        log.info("Creating patch... ")
-        log.info("Patch name: {}".format(os.path.basename(patch.patch_name)))
-        bsdiff4.file_diff(patch.src_path, patch.dst_path, patch.patch_name)
-        base_name = os.path.basename(patch.patch_name)
-        log.info('Done creating patch... {}'.format(base_name))
+        try:
+            log.debug('Patch source path:{}'.format(patch.src_path))
+            log.debug('Patch destination path: {}'.format(patch.dst_path))
+            log.info("Creating patch... ")
+            log.info("Patch name: "
+                     "{}".format(os.path.basename(patch.patch_name)))
+            bsdiff4.file_diff(patch.src_path, patch.dst_path, patch.patch_name)
+            base_name = os.path.basename(patch.patch_name)
+            log.info('Done creating patch... {}'.format(base_name))
+        except Exception as err:
+            log.debug(err, exc_info=True)
     else:
         log.error('Missing patch attr')
     return patch
