@@ -509,7 +509,7 @@ def make_archive(name, version, target):
         shutil.copytree(target, temp_file)
     # Only use zip on windows. Zip doens't preserve file
     # permissions on nix & mac
-    if jms_utils.system.get_system() == 'win':
+    if jms_utils.system.get_system() == 'win':  # pragma: no cover
         ext = '.zip'
         with zipfile.ZipFile(filename_path + '.zip', 'w') as zf:
             zf.write(target, temp_file)

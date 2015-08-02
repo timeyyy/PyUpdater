@@ -35,25 +35,42 @@ class Patch(object):
     """
 
     def __init__(self, patch_info):
-        self.dst_path = patch_info.get('dst')
+        self.dst_path = patch_info.get('dst_path')
+        self.src_path = patch_info.get('src_patch')
         self.patch_name = patch_info.get('patch_name')
-        self.dst_filename = patch_info.get('package')
+        self.patch_number = patch_info.get('patch_number')
+        self.patch_path = patch_info.get('patch_path')
         self.ready = self._check_attrs()
 
     def _check_attrs(self):
-        if self.dst_path is not None:
-            # Cannot create patch if destination file is missing
-            if not os.path.exists(self.dst_path):
-                return False
         # Cannot create patch if destination file is missing
+        if self.dst_path is not None and os.path.exists(self.dst_path):
+            # Used when adding patch to version.json
+            # To match file it was created for
+            self.dst_filename = os.path.basename(self.dst_path)
+            return True
         else:
+            log.warning('Destination file does not exist to create patch')
+            return False
+        # Cannot create patch if source file is missing
+        if self.src_path is not None and os.path.exists(self.src_path):
+            return True
+        else:
+            log.warning('Source file does not exist to create patch')
             return False
         # Cannot create patch if name is missing
         if self.patch_name is None:
+            log.debug('* No patch name *')
             return False
-        # Cannot create patch is destination filename is missing
-        if self.dst_filename is None:
+
+        if self.patch_number is None:
+            log.debug('* No patch number *')
             return False
+        # Updating with full name - number included
+        self.patch_name += '-'
+        self.patch_name += unicode(self.patch_number)
+        self.patch_name
+        log.info('Patch name: {}'.format(self.patch_name))
         return True
 
 

@@ -153,11 +153,6 @@ class TestUtils(object):
             p = Package('pyu-wi-1.1.tar.gz')
         assert p.info['reason'] == 'Package platform not formatted correctly'
 
-    def test_package_ignored_file(self):
-        test_file_3 = '.DS_Store'
-        with ChDir(TEST_DATA_DIR):
-            Package(test_file_3)
-
     def test_package_missing(self):
         test_file_4 = 'jms-nix-0.0.3.tar.gz'
         with ChDir(TEST_DATA_DIR):
@@ -167,26 +162,31 @@ class TestUtils(object):
         with open('app.py', 'w') as f:
             f.write('a = 0')
 
+        with open('app2.py', 'w') as f:
+            f.write('b = 2')
+
         info = {
-            'dst': 'app.py',
+            'dst_path': 'app.py',
             'patch_name': 'p-name-1',
-            'package': 'filename-mac-0.1.1.tar.gz'
+            'dst_filename': 'filename-mac-0.1.1.tar.gz',
+            'src_path': 'app2.py',
             }
         p = Patch(info)
         assert p.ready is True
 
     def test_patch_bad_info(self):
         info = {
-            'dst': 'app.py',
+            'dst_path': 'app.py',
             'patch_name': 'p-name-1',
-            'package': 'filename-mac-0.1.1.tar.gz'
+            'dst_filename': 'filename-mac-0.1.1.tar.gz',
+            'src_path': 'app2.py',
             }
-        temp_dst = info['dst']
-        info['dst'] = None
+        temp_dst = info['dst_path']
+        info['dst_path'] = None
         p = Patch(info)
         assert p.ready is False
 
-        info['dst'] = temp_dst
+        info['dst_path'] = temp_dst
         temp_patch = info['patch_name']
         info['patch_name'] = None
         p = Patch(info)

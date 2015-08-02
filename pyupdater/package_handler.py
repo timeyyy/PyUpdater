@@ -208,12 +208,12 @@ class PackageHandler(object):
                         patch_name = package.name + '-' + package.platform
                         src_path = path[0]
                         patch_number = path[1]
-                        patch_info = dict(src=src_path,
-                                          dst=os.path.abspath(p),
-                                          patch_name=os.path.join(self.new_dir,
+                        patch_info = dict(src_path=src_path,
+                                          dst_path=os.path.abspath(p),
+                                          patch_path=os.path.join(self.new_dir,
                                                                   patch_name),
-                                          patch_num=patch_number,
-                                          package=package.filename)
+                                          patch_number=patch_number,
+                                          patch_name=patch_name)
                         # ready for patching
                         patch_manifest.append(patch_info)
                     else:
@@ -258,10 +258,10 @@ class PackageHandler(object):
             return
         log.info('Cleaning up files directory')
         for p in patch_manifest:
-            if os.path.exists(p['src']):
-                basename = os.path.basename(p['src'])
+            if os.path.exists(p['src_path']):
+                basename = os.path.basename(p['src_path'])
                 log.info('Removing {}'.format(basename))
-                os.remove(p['src'])
+                os.remove(p['src_path'])
 
     def _make_patches(self, patch_manifest):
         pool_output = list()
@@ -409,10 +409,11 @@ class PackageHandler(object):
         # Check to see if previous version is available to
         # make patch updates
         # Also calculates patch number
-        log.info('Checking if patch creation is possible')
+        log.info('Looking for bsdiff')
         if bsdiff4 is None:
             log.warning('Bsdiff is missing. Cannot create patches')
             return None
+        log.info('Bsdiff found')
         src_file_path = None
         if os.path.exists(self.files_dir):
             with jms_utils.paths.ChDir(self.files_dir):
@@ -456,25 +457,15 @@ class PackageHandler(object):
 def _make_patch(patch_info):
     # Does with the name implies. Used with multiprocessing
     patch = Patch(patch_info)
-    patch_name = patch_info['patch_name']
-    dst_path = patch_info['dst']
-    patch_number = patch_info['patch_num']
-    src_path = patch_info['src']
-    patch_name += '-' + str(patch_number)
-    # Updating with full name - number included
-    patch.patch_name = patch_name
-    if not os.path.exists(src_path):
-        log.warning('Src file does not exist to create patch')
 
+    if patch.ready is True:
+        log.debug('Patch source path:{}'.format(patch.src_path))
+        log.debug('Patch destination path: {}'.format(patch.dst_path))
+        log.info("Creating patch... ")
+        log.info("Patch name: {}".format(os.path.basename(patch.patch_name)))
+        bsdiff4.file_diff(patch.src_path, patch.dst_path, patch.patch_name)
+        base_name = os.path.basename(patch.patch_name)
+        log.info('Done creating patch... {}'.format(base_name))
     else:
-        log.debug('Patch source path:{}'.format(src_path))
-        log.debug('Patch destination path: {}'.format(dst_path))
-        if patch.ready is True:
-            log.info("Creating patch... "
-                     "{}".format(os.path.basename(patch_name)))
-            bsdiff4.file_diff(src_path, patch.dst_path, patch.patch_name)
-            base_name = os.path.basename(patch_name)
-            log.info('Done creating patch... {}'.format(base_name))
-        else:
-            log.error('Missing patch attr')
+        log.error('Missing patch attr')
     return patch
