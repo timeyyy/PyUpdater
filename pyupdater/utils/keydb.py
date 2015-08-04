@@ -135,6 +135,9 @@ class KeyDB(object):
             if c >= count:
                 break
             k = int(k)
+            if self.data.get(k) is None:
+                count += 1
+                continue
             if self.data[k]['revoked'] is False:
                 self.data[k]['revoked'] = True
                 log.debug('Revoked key')

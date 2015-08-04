@@ -158,13 +158,11 @@ class Builder(object):
                    app_info, spec_only=False):
         log.debug('App Info: {}'.format(app_info))
 
-        if args.console is True or args.nowindowed is True \
-                or args._console is True:
+        if args.console is True:
             if '-c' not in spec_args:
                 log.debug('Adding -c to pyi args')
                 spec_args.append('-c')
-        if args.windowed is True or args.noconsole is True \
-                or args._windowed is True:
+        if args.windowed is True:
             if '-w' not in spec_args:
                 log.debug('Adding -w to pyi args')
                 spec_args.append('-w')

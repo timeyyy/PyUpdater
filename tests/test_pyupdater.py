@@ -38,7 +38,7 @@ else:
 
 
 @pytest.mark.usefixtures('cleandir', 'db', 'pyu')
-class TestPyUpdater(object):
+class TestUtils(object):
 
     def test_dev_dir_none(self):
         myconfig = TConfig()
@@ -59,6 +59,9 @@ class TestPyUpdater(object):
         assert os.path.exists(os.path.join(pyu_data_dir, 'files'))
         assert os.path.exists(os.path.join(pyu_data_dir, 'new'))
 
+
+@pytest.mark.usefixtures('cleandir', 'db', 'pyu')
+class TestExecution(object):
     def test_execution(self, pyu, db):
         archive_name = 'myapp-{}-0.1.0{}'.format(get_system(), ext)
         parser = get_parser()

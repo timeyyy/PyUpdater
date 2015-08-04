@@ -27,17 +27,28 @@ URL = 'https://s3-us-west-1.amazonaws.com/pyupdater-test/'
 
 
 @pytest.mark.usefixtue("cleandir")
-class TestDownload(object):
-    def test_download_return(self):
+class TestData(object):
+
+    def test_return(self):
         fd = FileDownloader(FILENAME, URL, FILE_HASH)
         binary_data = fd.download_verify_return()
         assert binary_data is not None
 
-    def test_download_return_fail(self):
+    def test_cb(self):
+        def cb(status):
+            pass
+        fd = FileDownloader(FILENAME, URL, FILE_HASH, progress_hooks=[cb])
+        binary_data = fd.download_verify_return()
+        assert binary_data is not None
+
+    def test_return_fail(self):
         fd = FileDownloader(FILENAME, URL, 'JKFEIFJILEFJ983NKFNKL')
         binary_data = fd.download_verify_return()
         assert binary_data is None
 
+
+@pytest.mark.usefixtue("cleandir")
+class TestUrl(object):
     def test_url_with_spaces(self):
         fd = FileDownloader(FILENAME_WITH_SPACES, URL, FILE_HASH)
         binary_data = fd.download_verify_return()
@@ -48,12 +59,15 @@ class TestDownload(object):
         binary_data = fd.download_verify_return()
         assert binary_data is None
 
+
+@pytest.mark.usefixtue("cleandir")
+class TestContentLength(object):
     def test_bad_content_length(self):
         class FakeHeaders(object):
             headers = {}
         fd = FileDownloader(FILENAME, URL, FILE_HASH)
         data = FakeHeaders()
-        assert fd._get_content_length(data) == 100000
+        assert fd._get_content_length(data) == 100001
 
     def test_good_conent_length(self):
         fd = FileDownloader(FILENAME, URL, FILE_HASH)

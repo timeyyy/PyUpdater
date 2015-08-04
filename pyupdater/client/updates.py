@@ -206,7 +206,8 @@ class LibUpdate(object):
         with jms_utils.paths.ChDir(self.update_folder):
             platform_name = self.name
             # Ensuring we only add .exe when applicable
-            if sys.platform == 'win32' and self.name == self.app_name:
+            if sys.platform == 'win32' and \
+                    self.name == self.app_name:  # pragma: no cover
                 # We only add .exe to app executable.  Not libs or dll
                 log.debug('Adding .exe to filename for windows main '
                           'app udpate.')
@@ -329,7 +330,6 @@ class LibUpdate(object):
 
     # Removed old update archives
     def _remove_old_updates(self):
-        temp = os.listdir(self.update_folder)
         try:
             filename = get_filename(self.name, self.version,
                                     self.platform, self.easy_data)
@@ -348,6 +348,7 @@ class LibUpdate(object):
             current_version = Version('0.0.0')
         log.debug('Current verion: {}'.format(str(current_version)))
         with jms_utils.paths.ChDir(self.update_folder):
+            temp = os.listdir(os.getcwd())
             for t in temp:
                 try:
                     old_version = Version(t)
@@ -407,10 +408,8 @@ class AppUpdate(LibUpdate):
             log.error(str(err))
             log.debug(str(err), exc_info=True)
 
-    def _overwrite_app(self):
-        # Unix: Overwrites the running applications binary,
-        #       then starts the updated binary in the currently
-        #       running applications process memory.
+    def _overwrite_app(self):  # pragma: no cover
+        # Unix: Overwrites the running applications binary
         if jms_utils.system.get_system() == 'mac':
             if self.current_app_dir.endswith('MacOS') is True:
                 log.debug('Looks like we\'re dealing with a Mac Gui')

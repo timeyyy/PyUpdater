@@ -107,7 +107,8 @@ class Client(object):
         call_back (func): Used for download progress
     """
 
-    def __init__(self, obj=None, refresh=False, call_back=None, test=False):
+    def __init__(self, obj=None, refresh=False, call_back=None,
+                 callbacks=[], test=False):
         self.name = None
         self.version = None
         self.json_data = None
@@ -116,6 +117,8 @@ class Client(object):
         self.progress_hooks = []
         if call_back is not None:
             self.progress_hooks.append(call_back)
+        for c in callbacks:
+            self.progress_hooks.append(callbacks)
         if obj is not None:
             self.init_app(obj, refresh, test)
 
@@ -155,7 +158,7 @@ class Client(object):
             # No need to test for other platforms at the moment
             self.data_dir = obj.DATA_DIR
             self.platform = 'mac'
-        else:
+        else:  # pragma: no cover
             # Getting platform specific application directory
             self.data_dir = appdirs.user_data_dir(self.app_name,
                                                   self.company_name,
@@ -185,11 +188,7 @@ class Client(object):
 
     def refresh(self):
         "Will download and verify your version file."
-        try:
-            self._get_update_manifest()
-        except Exception as err:
-            log.debug(str(err), exc_info=True)
-            log.error(str(err))
+        self._get_update_manifest()
 
     def update_check(self, name, version):
         """
@@ -211,12 +210,7 @@ class Client(object):
 
                 False - Update Failed
         """
-        try:
-            return self._update_check(name, version)
-        except Exception as err:
-            log.error('Update check failed: {}'.format(str(err)))
-            log.debug(str(err), exc_info=True)
-            return None
+        return self._update_check(name, version)
 
     def _update_check(self, name, version):
         self.name = name
@@ -227,7 +221,7 @@ class Client(object):
         app = False
 
         # No json data is loaded.
-        # User may need to call update_check
+        # User may need to call refresh
         if self.ready is False:
             log.warning('No update manifest found')
             return None
@@ -249,6 +243,7 @@ class Client(object):
         latest = get_highest_version(name, self.platform,
                                      self.easy_data)
         if latest is None:
+            log.debug('Could not find the latest version')
             return None
         latest = Version(latest)
         log.debug('Current vesion: {}'.format(str(version)))
@@ -444,11 +439,21 @@ class Client(object):
         # Making sure final output is a list
         if isinstance(urls, list):
             _urls += urls
-        elif isinstance(url, tuple):
-            _urls += list(url)
         elif isinstance(urls, six.string_types):
             log.warning('UPDATE_URLS value should only be a list.')
             _urls.append(urls)
+        elif isinstance(urls, tuple):
+            _urls += list(urls)
+        else:
+            log.warning('UPDATE_URLS should be type "{}" got '
+                        '"{}"'.format(type([]), type('')))
+
+        if isinstance(url, tuple):
+            _urls += list(url)
+        elif isinstance(url, six.string_types):
+            _urls.append(url)
+        elif isinstance(url, list):
+            _urls += url
         else:
             log.warning('UPDATE_URLS should be type "{}" got '
                         '"{}"'.format(type([]), type('')))

@@ -154,6 +154,7 @@ class FileDownloader(object):
         # Setting start point to show progress
         recieved_data = 0
 
+        start_download = time.time()
         while 1:
             # Grabbing start time for use with best block size
             start_block = time.time()
@@ -175,10 +176,14 @@ class FileDownloader(object):
             recieved_data += len(block)
             percent = self._calc_progress_percent(recieved_data,
                                                   self.content_length)
+            time_left = FileDownloader._calc_eta(start_download, time.time(),
+                                                 self.content_length,
+                                                 recieved_data)
             status = {'total': self.content_length,
-                      'downloaed': recieved_data,
+                      'downloaded': recieved_data,
                       'status': 'downloading',
-                      'percent_complete': percent}
+                      'percent_complete': percent,
+                      'time': time_left}
             self._call_progress_hooks(status)
 
         # Flushing data to prepare to write to file
@@ -187,7 +192,8 @@ class FileDownloader(object):
         self.file_binary_data = self.my_file.read()
         status = {'total': self.content_length,
                   'downloaed': recieved_data,
-                  'status': 'finished'}
+                  'status': 'finished',
+                  'time': '00:00'}
         self._call_progress_hooks(status)
         log.debug('Download Complete')
 
@@ -277,7 +283,7 @@ class FileDownloader(object):
         return False
 
     def _get_content_length(self, data):
-        content_length = int(data.headers.get("Content-Length", 100000))
+        content_length = int(data.headers.get("Content-Length", 100001))
         log.debug('Got content length of: %s', content_length)
         return content_length
 

@@ -104,10 +104,15 @@ class TestUtils(object):
         v3 = Version('1.2.1b1')
         v4 = Version('1.2.1')
         assert v3 < v4
+        v5 = Version('1.2.1a1')
+        v6 = Version('1.2.1a2')
+        assert v5 < v6
         assert Version('5.0') == Version('5.0')
         assert Version('4.5') != Version('5.1')
         with pytest.raises(VersionError):
             Version('1')
+        with pytest.raises(VersionError):
+            Version('1.1.1.1')
 
     def test_package_1(self):
         test_file_1 = 'jms-mac-0.0.1.zip'
@@ -119,6 +124,12 @@ class TestUtils(object):
         assert p1.filename == test_file_1
         assert p1.platform == 'mac'
         assert p1.info['status'] is True
+
+    def test_package_ignored_file(self):
+        with open('.DS_Store', 'w') as f:
+            f.write('')
+        p = Package('.DS_Store')
+        assert p.info['status'] is False
 
     def test_package_bad_extension(self):
         test_file_2 = 'pyu-win-0.0.2.bzip2'
@@ -151,3 +162,37 @@ class TestUtils(object):
         test_file_4 = 'jms-nix-0.0.3.tar.gz'
         with ChDir(TEST_DATA_DIR):
             Package(test_file_4)
+
+    def test_patch(self):
+        with open('app.py', 'w') as f:
+            f.write('a = 0')
+
+        info = {
+            'dst': 'app.py',
+            'patch_name': 'p-name-1',
+            'package': 'filename-mac-0.1.1.tar.gz'
+            }
+        p = Patch(info)
+        assert p.ready is True
+
+    def test_patch_bad_info(self):
+        info = {
+            'dst': 'app.py',
+            'patch_name': 'p-name-1',
+            'package': 'filename-mac-0.1.1.tar.gz'
+            }
+        temp_dst = info['dst']
+        info['dst'] = None
+        p = Patch(info)
+        assert p.ready is False
+
+        info['dst'] = temp_dst
+        temp_patch = info['patch_name']
+        info['patch_name'] = None
+        p = Patch(info)
+        assert p.ready is False
+
+        info['patch_name'] = temp_patch
+        info['package'] = None
+        p = Patch(info)
+        assert p.ready is False

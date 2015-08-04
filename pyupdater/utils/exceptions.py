@@ -53,40 +53,10 @@ class STDError(Exception):
         return ''.join(traceback.format_tb(self.traceback))
 
 
-class ArchiverError(STDError):
-    """Raised for Archiver exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(ArchiverError, self).__init__(*args, **kwargs)
-
-
 class ClientError(STDError):
     """Raised for Client exceptions"""
     def __init__(self, *args, **kwargs):
         super(ClientError, self).__init__(*args, **kwargs)
-
-
-class ConfigError(STDError):
-    """Raised for Config exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(ConfigError, self).__init__(*args, **kwargs)
-
-
-class FileDownloaderError(STDError):
-    """Raised for FileDownloader exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(FileDownloaderError, self).__init__(*args, **kwargs)
-
-
-class KeyHandlerError(STDError):
-    """Raised for KeyHandler exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(KeyHandlerError, self).__init__(*args, **kwargs)
-
-
-class PackageError(STDError):
-    """Raised for Package exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(PackageError, self).__init__(*args, **kwargs)
 
 
 class PackageHandlerError(STDError):
@@ -99,18 +69,6 @@ class PatcherError(STDError):
     """Raised for Patcher exceptions"""
     def __init__(self, *args, **kwargs):
         super(PatcherError, self).__init__(*args, **kwargs)
-
-
-class PyUpdaterError(STDError):
-    """Raised for Framework exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(PyUpdaterError, self).__init__(*args, **kwargs)
-
-
-class UpdaterError(STDError):
-    """Raised for Updater exceptions"""
-    def __init__(self, *args, **kwargs):
-        super(UpdaterError, self).__init__(*args, **kwargs)
 
 
 class UploaderError(STDError):

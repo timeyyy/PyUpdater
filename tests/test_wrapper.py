@@ -15,77 +15,179 @@
 # --------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+import os
+
 import pytest
 
-from pyupdater.wrapper.options import (make_subparser,
-                                       add_build_parser,
+from pyupdater.wrapper import (_build, clean,
+                               keys, _make_spec,
+                               pkg, update)
+from pyupdater.wrapper.options import (add_build_parser,
                                        add_clean_parser,
-                                       add_debug_parser,
-                                       add_init_parser,
                                        add_keys_parser,
                                        add_make_spec_parser,
                                        add_package_parser,
-                                       add_upload_parser,
-                                       add_version_parser)
+                                       add_update_parser,
+                                       make_subparser)
 
 
-@pytest.mark.usefixtures('cleandir', 'parser')
-class TestWrapper(object):
+@pytest.mark.usefixtures('cleandir', 'parser', 'pyu')
+class TestBuilder(object):
 
     def test_build_no_options(self, parser):
         subparser = make_subparser(parser)
         add_build_parser(subparser)
         with pytest.raises(SystemExit):
-            parser.parse_args(['build'])
+            parser.parse_known_args(['build'])
 
     def test_build_no_appanme(self, parser):
         subparser = make_subparser(parser)
         add_build_parser(subparser)
         with pytest.raises(SystemExit):
-            parser.parse_args(['build', '--app-version=0.2.10'])
+            parser.parse_known_args(['build', '--app-version=0.2.10'])
 
     def test_build_no_appversion(self, parser):
         subparser = make_subparser(parser)
         add_build_parser(subparser)
         with pytest.raises(SystemExit):
-            parser.parse_args(['build', '--app-name=Test'])
+            parser.parse_known_args(['build', '--app-name=Test'])
 
-    def test_clean(self, parser):
+    def test_build_no_arguments(self, parser, pyu):
+        pyu.setup()
+        pyu.make_keys(3)
+        subparser = make_subparser(parser)
+        add_build_parser(subparser)
+        with pytest.raises(SystemExit):
+            with open('app.py', 'w') as f:
+                f.write('print "Hello World"')
+            opts, other = parser.parse_known_args(['build', 'app.py'])
+            _build(opts, other)
+
+    def test_build(self, parser, pyu):
+        pyu.setup()
+        pyu.make_keys(3)
+        subparser = make_subparser(parser)
+        add_build_parser(subparser)
+        with open('app.py', 'w') as f:
+            f.write('print "Hello World"')
+
+        build_cmd = ['build', '-F', '--app-name=Test',
+                     '--app-version=0.1.0', 'app.py']
+        build_cmd = [str(b) for b in build_cmd]
+        opts, other = parser.parse_known_args(build_cmd)
+        _build(opts, other)
+
+
+@pytest.mark.usefixtures('cleandir', 'parser')
+class TestClean(object):
+
+    def test_no_args(self, parser):
         subparser = make_subparser(parser)
         add_clean_parser(subparser)
-        assert parser.parse_args(['clean'])
+        assert parser.parse_known_args(['clean'])
 
-    def test_init(self, parser):
+    def test_execution(self, parser):
+        update_folder = 'pyu-data'
+        data_folder = '.pyupdater'
         subparser = make_subparser(parser)
-        add_init_parser(subparser)
-        assert parser.parse_args(['init'])
+        add_clean_parser(subparser)
+        os.mkdir(update_folder)
+        os.mkdir(data_folder)
+        args, other = parser.parse_known_args(['clean', '-y'])
+        clean(args)
+        assert not os.path.exists(update_folder)
+        assert not os.path.exists(data_folder)
 
-    def test_keys(self, parser):
+    def test_execution_no_clean(self, parser):
+        update_folder = 'pyu-data'
+        data_folder = '.pyupdater'
+        subparser = make_subparser(parser)
+        add_clean_parser(subparser)
+        args, other = parser.parse_known_args(['clean', '-y'])
+        clean(args)
+        assert not os.path.exists(update_folder)
+        assert not os.path.exists(data_folder)
+
+
+@pytest.mark.usefixtures('cleandir', 'parser')
+class TestKeys(object):
+
+    def test_no_options(self, parser):
         subparser = make_subparser(parser)
         add_keys_parser(subparser)
-        assert parser.parse_args(['keys'])
+        assert parser.parse_known_args(['keys'])
 
-    def test_log(self, parser):
+    def test_revoke(self, parser):
         subparser = make_subparser(parser)
-        add_debug_parser(subparser)
-        assert parser.parse_args(['collect-debug-info'])
+        add_keys_parser(subparser)
+        cmd = ['keys', '-y']
+        opts, other = parser.parse_known_args(cmd)
 
-    def test_make_spec(self, parser):
+    def test_revoke_count(self, parser):
+        subparser = make_subparser(parser)
+        add_keys_parser(subparser)
+        cmd = ['keys', '-y', '--count=3']
+        opts, other = parser.parse_known_args(cmd)
+
+
+@pytest.mark.usefixtures('cleandir', 'parser', 'pyu')
+class TestMakeSpec(object):
+
+    def test_no_options(self, parser):
         subparser = make_subparser(parser)
         add_make_spec_parser(subparser)
-        assert parser.parse_args(['make-spec'])
+        with pytest.raises(SystemExit):
+            assert parser.parse_known_args(['make-spec'])
 
-    def test_package(self, parser):
+    def test_execution(self, parser, pyu):
+        pyu.setup()
+        pyu.make_keys(3)
+        subparser = make_subparser(parser)
+        add_make_spec_parser(subparser)
+        with open('app.py', 'w') as f:
+            f.write('print "Hello World"')
+        opts, other = parser.parse_known_args(['make-spec', '-F',
+                                               '--app-name=Test',
+                                               '--app-version=0.1.0',
+                                               'app.py'])
+        _make_spec(opts, other)
+
+
+@pytest.mark.usefixtures('cleandir', 'parser', 'pyu', 'db')
+class TestPkg(object):
+
+    def test_no_options(self, parser, pyu, db):
         subparser = make_subparser(parser)
         add_package_parser(subparser)
-        assert parser.parse_args(['pkg'])
+        pyu.update_config(pyu.config, db)
+        pyu.setup()
+        pyu.make_keys(3)
+        db._sync_db()
+        opts, other = parser.parse_known_args(['pkg'])
+        with pytest.raises(SystemExit):
+            pkg(opts)
 
-    def test_upload(self, parser):
+    def test_execution(self, parser, pyu, db):
         subparser = make_subparser(parser)
-        add_upload_parser(subparser)
-        assert parser.parse_args(['upload'])
+        add_package_parser(subparser)
+        pyu.update_config(pyu.config, db)
+        pyu.setup()
+        pyu.make_keys(3)
+        db._sync_db()
+        cmd = ['pkg', '-P', '-S']
+        opts, other = parser.parse_known_args(cmd)
+        pkg(opts)
 
-    def test_version(self, parser):
+
+@pytest.mark.usefixtures('cleandir', 'parser', 'pyu', 'db')
+class TestUpdateRepo(object):
+
+    def test_no_options(self, parser, pyu, db):
+        pyu.update_config(pyu.config, db)
+        pyu.setup()
+        pyu.make_keys(3)
+        db._sync_db()
         subparser = make_subparser(parser)
-        add_version_parser(subparser)
-        assert parser.parse_args(['version'])
+        add_update_parser(subparser)
+        opts, other = parser.parse_known_args(['update'])
+        update(opts)

@@ -20,7 +20,7 @@ import os
 
 try:
     import bsdiff4
-except ImportError:
+except ImportError:  # pragma: no cover
     bsdiff4 = None
 
 from pyupdater.client.downloader import FileDownloader
@@ -31,7 +31,7 @@ from pyupdater.utils import (get_package_hashes,
                              Version)
 from pyupdater.utils.exceptions import PatcherError
 
-if bsdiff4 is None:
+if bsdiff4 is None:  # pragma: no cover
     from pyupdater.utils import bsdiff4_py as bsdiff4
 
 log = logging.getLogger(__name__)
@@ -171,7 +171,7 @@ class Patcher(object):
                 info['patch_urls'] = self.update_urls
                 info['patch_hash'] = platform_info['patch_hash']
                 self.patch_data.append(info)
-            except Exception as err:
+            except Exception as err:  # pragma: no cover
                 log.debug(str(err), exc_info=True)
                 log.error('Missing required patch meta-data')
                 return False
@@ -186,8 +186,11 @@ class Patcher(object):
             version_key = '{}*{}'.format(settings.UPDATES_KEY, name)
             version_info = self.star_access_update_data(version_key)
             versions = map(Version, version_info.keys())
-        except KeyError:
+        except KeyError:  # pragma: no cover
             log.debug('No updates found in updates dict')
+            # Will cause error to be thrown in _get_pacth_info
+            # which will cause patch update to return False
+            versions = [1]
 
         # Ensuring we apply patches in correct order
         versions = sorted(versions)
@@ -253,7 +256,7 @@ class Patcher(object):
                 log.error(err)
                 raise PatcherError('Patch failed to apply')
 
-    def _write_update_to_disk(self):
+    def _write_update_to_disk(self):  # pragma: no cover
         # Writes updated binary to disk
         log.debug('Writing update to disk')
         filename_key = '{}*{}*{}*{}*{}'.format(settings.UPDATES_KEY, self.name,

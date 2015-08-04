@@ -29,7 +29,7 @@ s_dir = settings.USER_DATA_FOLDER
 
 
 @pytest.mark.usefixtures('cleandir', 'db', 'pyu')
-class TestPackageHanlder(object):
+class TestUtils(object):
 
     def test_init(self, db):
         data_dir = os.getcwd()
@@ -50,6 +50,10 @@ class TestPackageHanlder(object):
         config.from_object(t_config)
         p = PackageHandler(config, db)
         p.process_packages()
+
+
+@pytest.mark.usefixtures('cleandir', 'db', 'pyu')
+class TestExecution(object):
 
     def test_process_packages(self, db):
         data_dir = os.getcwd()
