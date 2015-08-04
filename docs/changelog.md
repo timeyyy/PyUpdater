@@ -8,11 +8,13 @@ Added
   - CI testing on windows
   - Conformation for revoking keys
   - Tox testing
+  - ETA provided to callbacks
   - Async download
     - download(async=True)
 
 Updated
 
+  - Sanatizing url attributes
   - Config is now a dict instead of class
   - Some py3 compat
   - Logging errors for 3rd party services
