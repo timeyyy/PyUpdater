@@ -123,4 +123,16 @@ class Storage(object):
             log.debug('Key type: {}'.format(type(key)))
             key = str(key)
 
-        return self.db.get(key)
+        data = self.db.get(key)
+        if data is not None:
+            try:
+                data = pickle.loads(data)
+            except:
+                log.debug('Not pickle data')
+                pass
+            try:
+                data = json.loads(data)
+            except Exception as err:
+                log.debug(self.db.get(key))
+                log.debug(err, exc_info=True)
+        return data

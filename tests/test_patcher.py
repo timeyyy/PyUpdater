@@ -31,8 +31,10 @@ version_file_url = ('https://s3-us-west-1.amazonaws.com/pyupdater-test'
                     '/version.json')
 json_data = json.loads(urllib2.urlopen(version_file_url).read())
 
+
 def cb(status):
     pass
+
 
 def cb2(status):
     raise IndexError

@@ -26,6 +26,7 @@ from tconfig import TConfig
 
 new_folder = os.path.join('pyu-data', 'new')
 
+
 @pytest.mark.usefixtures('cleandir')
 class TestNoRepo(object):
 
