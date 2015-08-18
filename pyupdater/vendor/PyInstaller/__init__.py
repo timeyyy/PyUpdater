@@ -8,54 +8,41 @@
 #-----------------------------------------------------------------------------
 
 
-__all__ = ('HOMEPATH', 'CONFIGDIR', 'PLATFORM',
-           'VERSION', 'get_version',
-           'is_py25', 'is_py26', 'is_py27',
-           'is_win', 'is_cygwin', 'is_darwin', 'is_unix', 'is_linux',
-           'is_solar', 'is_aix')
+__all__ = ('HOMEPATH', 'PLATFORM',
+           'VERSION', 'get_version')
 
 import os
 import sys
 
 
 # Fail hard if Python does not have minimum required version
-if sys.version_info < (2, 4):
-    raise SystemExit('PyInstaller requires at least Python 2.4, sorry.')
-
-
-# Extend PYTHONPATH with 3rd party libraries bundled with PyInstaller.
-# (otherwise e.g. macholib won't work on Mac OS X)
-from PyInstaller import lib
-sys.path.insert(0, lib.__path__[0])
+if sys.version_info < (3, 3) and sys.version_info[:2] != (2, 7):
+    raise SystemExit('PyInstaller requires at least Python 2.7 or 3.3+.')
 
 
 from PyInstaller import compat
+from PyInstaller.compat import is_darwin, is_win, is_py2
 from PyInstaller.utils import git
 
-# Uncomment this line for development of version 3.0.
-#VERSION = (3, 0, 0, 'dev', git.get_repo_revision())
-VERSION = (2, 1, 0)
 
-
-is_py25 = compat.is_py25
-is_py26 = compat.is_py26
-is_py27 = compat.is_py27
-
-is_win = compat.is_win
-is_cygwin = compat.is_cygwin
-is_darwin = compat.is_darwin
-
-is_linux = compat.is_linux
-is_solar = compat.is_solar
-is_aix = compat.is_aix
-
-is_unix = compat.is_unix
-
-
-# This ensures PyInstaller will work on Windows with paths containing
-# foreign characters.
-HOMEPATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+# Fail hard if Python on Windows does not have pywin32 installed.
 if is_win:
+    try:
+        from PyInstaller.utils.win32 import winutils
+        pywintypes = winutils.import_pywin32_module('pywintypes')
+    except ImportError:
+        raise SystemExit('PyInstaller cannot check for assembly dependencies.\n'
+                         'Please install PyWin32.\n'
+                         'http://sourceforge.net/projects/pywin32/')
+
+
+VERSION = (3, 0, 0, 'dev', git.get_repo_revision())
+
+
+# This ensures for Python 2 that PyInstaller will work on Windows with paths
+# containing foreign characters.
+HOMEPATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+if is_win and is_py2:
     try:
         unicode(HOMEPATH)
     except UnicodeDecodeError:
@@ -68,19 +55,6 @@ if is_win:
             pass
 
 
-if is_win:
-    CONFIGDIR = compat.getenv('APPDATA')
-    if not CONFIGDIR:
-        CONFIGDIR = os.path.expanduser('~\\Application Data')
-elif is_darwin:
-    CONFIGDIR = os.path.expanduser('~/Library/Application Support')
-else:
-    # According to XDG specification
-    # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
-    CONFIGDIR = compat.getenv('XDG_DATA_HOME')
-    if not CONFIGDIR:
-        CONFIGDIR = os.path.expanduser('~/.local/share')
-CONFIGDIR = os.path.join(CONFIGDIR, 'pyinstaller')
 
 
 ## Default values of paths where to put files created by PyInstaller.
@@ -100,11 +74,6 @@ if compat.machine():
     PLATFORM += '-' + compat.machine()
 
 
-# path extensions for module seach
-# FIXME this should not be a global variable
-__pathex__ = []
-
-
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])
     if VERSION[2]:
@@ -112,6 +81,6 @@ def get_version():
     if len(VERSION) >= 4 and VERSION[3]:
         version = '%s%s' % (version, VERSION[3])
         # include git revision in version string
-        if VERSION[3] == 'dev' and VERSION[4] > 0:
+        if VERSION[3] == 'dev' and len(VERSION) >= 5 and len(VERSION[4]) > 0:
             version = '%s-%s' % (version, VERSION[4])
     return version

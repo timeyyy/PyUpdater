@@ -30,8 +30,8 @@ from pyupdater.utils import (check_repo,
                              Version)
 
 from PyInstaller.main import run as pyi_build
-from PyInstaller import makespec as _pyi_makespec
-from PyInstaller import build as _pyi_build
+from PyInstaller.building import makespec as _pyi_makespec
+from PyInstaller.building import build_main as _pyi_build
 from PyInstaller import compat as _pyi_compat
 from PyInstaller import log as _pyi_log
 

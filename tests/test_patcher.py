@@ -18,7 +18,10 @@ from __future__ import unicode_literals
 import json
 import os
 import shutil
-import urllib2
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 import pytest
 
@@ -29,7 +32,7 @@ TEST_DATA_DIR = os.path.join(os.getcwd(), 'tests', 'test data',
 
 version_file_url = ('https://s3-us-west-1.amazonaws.com/pyupdater-test'
                     '/version.json')
-json_data = json.loads(urllib2.urlopen(version_file_url).read())
+json_data = json.loads(urlopen(version_file_url).read())
 
 
 def cb(status):
