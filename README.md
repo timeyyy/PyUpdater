@@ -59,18 +59,18 @@ or
     $ pyupdater upload --service s3
 
 
-######For help & extra commands
+###### For help & extra commands
 
     $ pyupdater -h
     $ pyupdater command -h
 
 
 ###### Using programmatically
-######[Click Here](https://github.com/JMSwag/PyUpdater/tree/master/demos "Example Usage") To See Example Work Flow
+###### [Click Here](https://github.com/JMSwag/PyUpdater/tree/master/demos "Example Usage") To See Example Work Flow
 
 
 ## Write your own upload plugin
-######Its up to Plugin authors to get credentials from users. Easiest would be to have env vars set.
+###### It's up to Plugin authors to get credentials from users. Easiest would be to have env vars set.
 
     from pyi_updater.uploader import BaseUploader
 
