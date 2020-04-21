@@ -16,19 +16,19 @@
 
 ## To Install
 
-######Stable Lite:
+###### Stable Lite:
 
     $ pip install -U PyUpdater
 
-######Stable Full:
+###### Stable Full:
 
     $ pip install -U PyUpdater[all]
 
-######Dev:
+###### Dev:
 
     $ pip install -U https://github.com/JMSwag/PyUpdater/tarball/master
 
-######Extras: S3 & SCP upload plugins are available with
+###### Extras: S3 & SCP upload plugins are available with
 
     $ pip install -U PyUpdater[s3]
 
@@ -36,7 +36,7 @@ or
 
     $ pip install -U PyUpdater[scp]
 
-######Patch support:
+###### Patch support:
 
     $ pip install -U PyUpdater[patch]
 
