@@ -1,5 +1,5 @@
 appdirs == 1.4.0
-certifi == 2015.04.28
+certifi == 2022.12.7
 ed25519 == 1.4
 jms-utils >= 0.6.2
 requests == 2.7.0
